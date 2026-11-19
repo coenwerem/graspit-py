@@ -11,7 +11,7 @@ publication for experiments run in GraspIt! or MuJoCo.
 ## arXiv Preprint
 
 The companion software paper is forthcoming. Publication updates
-will appear on [Clinton Enwerem’s research page](https://clintonenwerem.com/research.html).
+will appear here and on my [research page](https://clintonenwerem.com/research.html).
 
 ## Simulator and Planning References
 
