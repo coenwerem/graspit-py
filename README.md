@@ -22,25 +22,13 @@ docker buildx build --load -f docker/Dockerfile -t graspit-py .
 See the [installation guide](docs/INSTALL.md) for a native build and
 [the online documentation](https://coenwerem.github.io/graspit-python-wrapper/) for planning examples, [supported hands](https://coenwerem.github.io/graspit-python-wrapper/hands.html), and API details.
 
-## Record a first grasp
+## Work with a supported hand
 
-Run the [three-finger hand and cube example](docs/quickstart.md) to export
-both models, close the hand, and save the contacts and wrench scores. The
-[planning example](docs/planning.md) uses the exported XML to rank approaches.
-
-## Verify a MuJoCo hand export
-
-The included three-finger model exercises affine joint couplings and
-rigidly attached geometry. The example exports the hand, assigns joint
-coordinates in both simulators, and reports palm-frame vertex errors for
-each link. It uses only the models bundled with the wrapper.
-
-```sh
-docker run --rm graspit-py xvfb-run -a python \
-    /src/examples/check_export_geometry.py \
-    /src/tests/data/gripper.xml palm \
-    /src/examples/parity-test-configs.json /tmp/export-geometry
-```
+The manual shows verified grasps for the RealHand L6, LEAP, and PSYONIC
+Ability. The [L6 quickstart](docs/quickstart.md) uses a user-supplied
+MuJoCo model to export the hand and plan cube grasps. The
+[export guide](docs/export.md) shows the L6 in the source workcell and in
+GraspIt! and explains how to compare link geometry.
 
 ## Plan a grasp
 

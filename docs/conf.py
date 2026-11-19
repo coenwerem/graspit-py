@@ -9,3 +9,5 @@ nitpicky = True
 html_theme = "furo"
 html_title = project
 html_show_sourcelink = False
+html_static_path = ["_static"]
+html_css_files = ["hand-gallery.css"]

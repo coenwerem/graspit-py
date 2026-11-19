@@ -1,15 +1,23 @@
 # Export a MuJoCo hand and object
 
-```{figure} figures/mujoco-export.png
-:alt: Side-by-side views of the MuJoCo source gripper collision geometry and the exported gripper loaded by GraspIt at equal joint coordinates.
+````{container} hand-gallery export-gallery
+```{figure} figures/export-source-workcell.png
+:alt: MuJoCo source workcell with two A7 arms and RealHand L6 hands during key insertion.
 
-(a) MuJoCo collision geometry. (b) Exported OFF geometry posed using
-native GraspIt! link transforms at the same joint coordinates. The
-[geometry checker](https://github.com/coenwerem/graspit-python-wrapper/blob/main/examples/check_export_geometry.py)
-compares corresponding vertex sets across three configurations and seven
-links. The maximum symmetric Hausdorff distance for this example is
-0.0144 mm.
+**MuJoCo source** · Recorded bimanual insertion
 ```
+```{figure} figures/export-grasp-frames.png
+:alt: Exported right RealHand L6 at the planned grasp with the key.
+
+**GraspIt! export** · Right L6 in its planned key grasp
+```
+````
+
+The panels illustrate the source workcell and exported hand at two
+stages of the experiment. The numerical geometry check uses the same
+joint coordinates in both simulators. Across 49 configurations and
+12 links of the DexReach RealHand L6, its maximum symmetric Hausdorff
+vertex discrepancy was 7.86 nm.
 
 See [geometry and grasp quality](theory.md) for the reference-angle
 conversion.
@@ -88,35 +96,18 @@ target palm pose and joint values in your arm kinematics or controller.
 Inside the reference container, the geometry comparison measures the
 maximum symmetric Hausdorff distance between corresponding palm-frame
 link vertices. Supply a list of configurations with entries in exported
-DOF order. The bundled example uses three configurations of a three-finger
-hand:
+DOF order. The command below uses the scene and configuration file
+mounted under `input/`. Replace `l6_hand_base_link` with your palm body
+name when using a different model.
 
 ```bash
-docker run --rm graspit-py xvfb-run -a python /src/examples/check_export_geometry.py \
-  /src/tests/data/gripper.xml palm /src/examples/parity-test-configs.json /tmp/parity
-```
-
-The command prints the maximum vertex discrepancy in millimeters by link,
-the largest change between requested and applied DOF values, and the
-tolerance result. Use a host mount for the output path to keep the JSON
-report after the container exits.
-
-## Regenerate the figures
-
-After running the [first-grasp](quickstart.md) and [planning](planning.md)
-examples, capture the source and exported meshes and the two saved
-candidate poses. From the repository root:
-
-```bash
-docker buildx build --load -f docker/Dockerfile -t graspit-py .
+mkdir -p output
 docker run --rm --user "$(id -u):$(id -g)" \
-  -v "$PWD/output:/output" graspit-py \
-  xvfb-run -a python /src/docs/examples/render_evidence.py capture \
-  /output/first-grasp /output/geometry.npz
-python docs/examples/render_evidence.py render \
-  output/geometry.npz docs/figures
+  -v "$PWD/input:/input:ro" -v "$PWD/output:/output" graspit-py \
+  xvfb-run -a python /src/examples/check_export_geometry.py \
+    /input/scene.xml l6_hand_base_link /input/configurations.json /output/parity
 ```
 
-The render step uses NumPy and Matplotlib from the local Python
-environment. The capture step queries the native link poses from
-GraspIt! and writes the collision triangles in millimeters.
+The command records per-link errors in millimeters, the largest difference
+between requested and applied DOF values, and the tolerance result in
+`output/parity/geometry-check.json`.

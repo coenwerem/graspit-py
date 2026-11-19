@@ -8,41 +8,39 @@ and execution belong to the application consuming these configurations.
 
 ## Run the planner
 
-Run the [first-grasp example](quickstart.md) to obtain the bundled hand
-and cube exports. From the repository root:
+Use [the RealHand L6 setup](quickstart.md) to export the hand and cube and
+run the planner. The CLI also accepts GraspIt! robot and object XML for
+other hands in the [supported model class](hands.md).
 
-```bash
-docker run --rm --user "$(id -u):$(id -g)" \
-  -v "$PWD/output:/output" graspit-py \
-  xvfb-run -a python -m graspit_python_wrapper.planning \
-  --robot /output/first-grasp/hand/hand.xml \
-  --object /output/first-grasp/object/cube.xml \
-  --config /src/docs/examples/gripper-planning.json \
-  --top-k 2 --out /output/first-grasp/candidates.json
-```
-
-For a native build, replace the Docker invocation with
-`xvfb-run -a .venv/bin/python -m graspit_python_wrapper.planning` and
-use the corresponding local paths under `output/` and `docs/`.
-
-```{literalinclude} examples/gripper-planning.json
-:language: json
-:caption: Approach, friction, and task settings for the three-finger hand.
-```
-
+(generated-grasps)=
 ## Generated grasps
 
-```{figure} figures/generated-grasps.png
-:alt: The planner's first and second ranked hand configurations around the cube, with recorded contact points highlighted in orange.
+````{container} hand-gallery
+```{figure} figures/l6-insertion.png
+:alt: Planned RealHand L6 key grasp from the bimanual insertion experiment.
 
-The two highest-ranked candidates from the command above. Each has
-three recorded contacts. Orange markers show their projected positions, including points behind the visible mesh. Lower-tail task quality is
-0.04039 in (a) and 0.0007907 in (b). The hand meshes are posed from the
-returned palm transforms and joint coordinates in native GraspIt!.
+**RealHand L6** · Planned key grasp, $\varepsilon=0.00460$.
 ```
+```{figure} figures/leap-hold.png
+:alt: Final MuJoCo cube hold with the LEAP Hand.
 
-See [geometry and grasp quality](theory.md) for the wrench construction and
-lower-tail objective.
+**LEAP Hand** · Final cube hold, $\varepsilon=0.0708$.
+```
+```{figure} figures/ability-hold.png
+:alt: Final MuJoCo hold of a tapered cylinder with the PSYONIC Ability Hand.
+
+**PSYONIC Ability** · Final cylinder hold, $\varepsilon=0.167$.
+```
+````
+
+Ferrari–Canny $\varepsilon$ describes the planned GraspIt! closure in
+each case. The L6 panel uses the native planned link poses. The LEAP and
+Ability panels reconstruct recorded MuJoCo hold states from their
+respective simulations. These three grasps come from the insertion and
+lift studies.
+
+See [geometry and grasp quality](theory.md) for wrench construction and
+the lower-tail objective.
 
 ## Configure the search
 
