@@ -1,17 +1,21 @@
-# Supported hands
+# Supported Hands
 
-The wrapper loads articulated GraspIt! robot XML. The MuJoCo exporter
-supports palms with serial revolute finger chains, fixed geometry, and
-affine couplings from driven hinges to independent hinges. Use the
-[export guide](export.md) to prepare a model with this topology.
+The wrapper loads articulated hand models expressed in GraspIt! robot
+XML. The [MuJoCo exporter](export.md) covers palms with serial revolute
+finger chains. Each finger has one hinge per moving body, and fixed
+parts are attached to their nearest moving link or the palm. A driven
+hinge can be related to an independent hinge by an affine equality.
+The [kinematics guide](theory.md) gives the coordinate convention.
 
-| Hand | Verified coverage | Model availability |
+| Hand | Export Geometry Evaluated | Grasp Planning and Simulation |
 |---|---|---|
-| RealHand L6 | MuJoCo export and link geometry over 49 configurations. Grasp planning and simulated bimanual A7–L6 key insertion. | Supply your own hand and collision meshes. |
-| LEAP Hand | MuJoCo export and link geometry over three configurations. Grasp planning and simulated ZArm–LEAP lift-and-hold. | Supply your own hand and collision meshes. |
-| PSYONIC Ability Hand | MuJoCo export and link geometry over 12 configurations. Grasp planning and simulated Franka–Ability lift-and-hold. | Supply your own hand and collision meshes. |
+| RealHand L6, right | 49 joint configurations | Planned key grasp and bimanual A7–L6 insertion |
+| LEAP Hand | Three joint configurations | Planned cube grasp and ZArm–LEAP lift-and-hold |
+| PSYONIC Ability Hand | 12 joint configurations | Planned tapered-cylinder grasp and Franka–Ability lift-and-hold |
 
-The [hand gallery](index.md) shows grasps on all three models. Simulation validation covers the listed model revisions and
-configurations. A new model needs its own palm frame, approach axes,
-joint limits, and collision geometry. The calling application supplies
-arm kinematics, controllers, and any hardware integration.
+Use a local copy of the hand model and its collision meshes. A model
+configuration specifies the palm root, approach axes and grasp center,
+joint limits, and the independent joint order for preshapes. The
+{ref}`gallery <generated-grasps>` shows the planned and simulated
+configurations from these evaluations. The application supplies arm
+kinematics and controllers.

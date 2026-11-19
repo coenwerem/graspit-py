@@ -1,17 +1,18 @@
-# graspit_python_wrapper
+# GraspIt! Python Wrapper
 
-Plan and evaluate multifingered grasps in Python using the
-[GraspIt! simulator](https://graspit-simulator.github.io/). Use the native
-bindings to pose and close a hand, retrieve object-frame contacts and link
-geometry, and compute GraspIt! wrench scores. The contact planner ranks
-candidate approaches under pose and friction uncertainty. The MuJoCo exporter
-writes GraspIt! hand and object models with a named joint map for reconstructing
-planned configurations in MuJoCo.
+`graspit_python_wrapper` exposes the [GraspIt! simulator](https://graspit-simulator.github.io/)
+as a Python library for grasp synthesis and evaluation with multifingered
+hands. The native bindings provide hand pose and joint control, autograsp,
+collision queries, contact geometry, and wrench-space metrics. The contact
+planner ranks simulated closures by Ferrari–Canny quality or task-wrench
+capacity under approach and friction uncertainty. The MuJoCo exporter
+generates GraspIt! hand and object descriptions and records the joint
+correspondence for transferring a planned configuration back to MuJoCo.
 
-## Install on Linux
+## Installation on Linux
 
 The reference build uses Ubuntu 24.04 and Python 3.12. Docker builds the
-pinned public GraspIt! source with the bundled compatibility patch.
+pinned public GraspIt! source with the supplied compatibility patch.
 
 ```sh
 git clone https://github.com/coenwerem/graspit-python-wrapper.git
@@ -19,39 +20,35 @@ cd graspit-python-wrapper
 docker buildx build --load -f docker/Dockerfile -t graspit-py .
 ```
 
-See the [installation guide](docs/INSTALL.md) for a native build and
-[the online documentation](https://coenwerem.github.io/graspit-python-wrapper/) for planning examples, [supported hands](https://coenwerem.github.io/graspit-python-wrapper/hands.html), and API details.
+The [manual](https://clintonenwerem.com/graspit-python-wrapper/) covers
+[installation](docs/INSTALL.md), [model export](docs/export.md), [grasp
+planning](docs/planning.md), and the [Python API](docs/api.md).
 
-## Work with a supported hand
+## Grasp Planning
 
-The manual shows verified grasps for the RealHand L6, LEAP, and PSYONIC
-Ability. The [L6 quickstart](docs/quickstart.md) uses a user-supplied
-MuJoCo model to export the hand and plan cube grasps. The
-[export guide](docs/export.md) shows the L6 in the source workcell and in
-GraspIt! and explains how to compare link geometry.
-
-## Plan a grasp
-
-Supply a GraspIt! robot and object XML with a JSON configuration for the
-hand axes, approach search, and optional task loads. You can export a compiled
-MuJoCo hand and object using `export_hand` and `export_body` in
-`graspit_python_wrapper.convert.mjcf_hand`.
+The [RealHand L6 walkthrough](docs/quickstart.md) uses a user-supplied
+MuJoCo model of the right hand and a 50 mm cube. For an existing GraspIt!
+model, pass the robot XML, object XML, and a JSON configuration defining
+the hand axes, approach search, and any task loads. From the directory
+containing those files, run the planner in the Docker image.
 
 ```sh
-xvfb-run -a python -m graspit_python_wrapper.planning \
+docker run --rm --user "$(id -u):$(id -g)" -v "$PWD:/work" graspit-py \
+    xvfb-run -a python -m graspit_python_wrapper.planning \
     --robot hand.xml --object object.xml \
     --config problem.json --out candidates.json
 ```
 
-GraspIt! translations and contact points use millimeters. The exporter reads
-MuJoCo positions in meters. The wrapper exposes joint angles in radians and
-quaternions in scalar-first order. The planner returns contact normals
-pointing into the object and reports poses in the object frame. Arm inverse
-kinematics and trajectory planning run in the calling application.
+Each candidate contains the object-relative palm pose, closed joint
+coordinates, object-frame contacts, and sampled wrench scores. The
+[theory guide](docs/theory.md) defines those quantities and their
+coordinate conventions. The [supported-hands guide](docs/hands.md)
+documents export and simulation coverage for the RealHand L6, LEAP
+Hand, and PSYONIC Ability Hand. The calling application supplies arm
+kinematics, trajectory planning, and execution.
 
-## License and citation
+## License and Citation
 
-This project is licensed under GPL-3.0-or-later. Cite the wrapper using
-[CITATION.cff](CITATION.cff) and cite
-[Miller and Allen's GraspIt! paper](https://doi.org/10.1109/MRA.2004.1371616)
-when using the simulator.
+The wrapper is licensed under GPL-3.0-or-later. Cite the wrapper using
+[CITATION.cff](CITATION.cff) and the simulator using the
+[GraspIt! paper by Miller and Allen](https://doi.org/10.1109/MRA.2004.1371616).

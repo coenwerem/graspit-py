@@ -1,15 +1,17 @@
 # Python API
 
-The native bindings, planner, exporter, and numerical utilities can be
-used separately. GraspIt! runs one main world per process. Use separate
-processes for independent native scenes and a virtual X display for
-headless execution.
+The native bindings expose simulator operations. The contact planner
+uses those operations to generate and rank approach candidates. The
+MuJoCo exporter operates on a compiled MuJoCo model, and the numerical
+utilities operate on arrays or exported XML. GraspIt! has one main
+world per process. Use a process per independent native scene and a
+virtual X display for headless execution.
 
-## Native bindings
+## Native Bindings
 
-Import `graspit_python_wrapper.core.bindings`. Call `initialize()`
-before loading geometry. The constructor `World()` wraps the simulator
-world and `clear()` removes the current robots and bodies.
+Import `graspit_python_wrapper.core.bindings` and call `initialize()`.
+Construct `World()` and call `world.init()` before loading geometry.
+Call `world.clear()` to remove the loaded robots and bodies.
 
 | Operation | API |
 |---|---|
@@ -30,11 +32,11 @@ Construct `Grasp(world, graspable_body_index=0)` and call `compute()`
 after placing and closing the hand. Read `object_contact_geometry()` for
 points in millimeters and inward normals in the object frame.
 `epsilon_quality()` and `volume_quality()` return the native GraspIt!
-wrench-space metrics. For collision checking, use `World.no_collision()`.
-`Grasp.is_non_penetrating()` reports validity under GraspIt!'s grasp
-criteria.
+wrench-space metrics. `Grasp.is_non_penetrating()` reports the validity
+of the grasp under GraspIt!'s grasp criteria. To query collision in the
+world, call `World.no_collision()`.
 
-## Contact planner
+## Contact Planner
 
 Import `ContactPlanner`, `HandFrame`, and `PlannerConfig` from
 `graspit_python_wrapper.planning`. Set the hand and object in the
@@ -42,7 +44,11 @@ world before constructing the planner. The planner captures the current
 object pose and center of mass on construction.
 
 ```python
-from graspit_python_wrapper.planning import ContactPlanner, HandFrame, PlannerConfig
+from graspit_python_wrapper.planning import (
+    ContactPlanner,
+    HandFrame,
+    PlannerConfig,
+)
 
 frame = HandFrame(
     approach_axis=(0, 0, 1),
@@ -61,14 +67,15 @@ config = PlannerConfig(
 candidates = ContactPlanner(world, body_index=0, config=config, hand=frame).plan(top_k=2)
 ```
 
-Each candidate is a `GraspCandidate`. Call `to_dict()` for the CLI
-JSON representation. The [planning guide](planning.md) describes the
-settings and returned arrays.
+Each `GraspCandidate` contains the nominal hand pose, closed
+coordinates, contacts, and sampled scores. `to_dict()` returns the
+representation written by the CLI. The [planning guide](planning.md)
+defines the settings and returned arrays.
 
-## MuJoCo exporter
+## MuJoCo Exporter
 
-Import from `graspit_python_wrapper.convert.mjcf_hand` after installing
-the `mjcf` extra.
+Install the `mjcf` extra or `mujoco>=3.1`, then import from
+`graspit_python_wrapper.convert.mjcf_hand`.
 
 | Function | Result |
 |---|---|
@@ -76,7 +83,7 @@ the `mjcf` extra.
 | `export_body(model, body, out_dir, ...)` | Path to the GraspIt! object XML. |
 | `dofs_from_qpos(hand, model, qpos)` | Independent MuJoCo hinge coordinates in GraspIt! order. |
 
-## Numerical utilities
+## Numerical Utilities
 
 These modules can be imported from the source checkout without a native
 GraspIt! build when NumPy and SciPy are available.

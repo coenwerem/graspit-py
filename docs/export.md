@@ -1,31 +1,39 @@
-# Export a MuJoCo hand and object
+# MuJoCo Model Export
+
+The exporter converts the hand and object geometry in a compiled
+MuJoCo model to GraspIt! XML and OFF meshes. It records an affine map
+from GraspIt! coordinates to source hinges and a correspondence between
+exported links and source bodies. Together these records allow planning
+in GraspIt! and reconstruction of the resulting configuration in
+MuJoCo. The [kinematics guide](theory.md) derives the reference-angle
+conversion.
+
+Bimanual insertion and planned closure are illustrated below. To
+compare geometry independently of the depicted states, each simulator
+was evaluated at corresponding joint coordinates. Across 49
+configurations of the right RealHand L6 and 12 links, the maximum
+symmetric Hausdorff distance between corresponding link-vertex sets
+was 7.86 nm.
 
 ````{container} hand-gallery export-gallery
 ```{figure} figures/export-source-workcell.png
 :alt: MuJoCo source workcell with two A7 arms and RealHand L6 hands during key insertion.
 
-**MuJoCo source** · Recorded bimanual insertion
+MuJoCo source workcell during a recorded bimanual insertion.
 ```
 ```{figure} figures/export-grasp-frames.png
-:alt: Exported right RealHand L6 at the planned grasp with the key.
+:alt: Exported right RealHand L6 at its planned grasp with the key.
 
-**GraspIt! export** · Right L6 in its planned key grasp
+GraspIt! configuration of the exported right L6 at the planned key grasp.
 ```
 ````
 
-The panels illustrate the source workcell and exported hand at two
-stages of the experiment. The numerical geometry check uses the same
-joint coordinates in both simulators. Across 49 configurations and
-12 links of the DexReach RealHand L6, its maximum symmetric Hausdorff
-vertex discrepancy was 7.86 nm.
+## Export a Hand and Object
 
-See [geometry and grasp quality](theory.md) for the reference-angle
-conversion.
-
-The exporter accepts a compiled MuJoCo model, including a model loaded
-from MJCF or URDF. Choose the palm body as the root of the hand. The
-portion of the model above the palm, such as a robot arm, stays in
-MuJoCo.
+Load an MJCF or URDF scene in MuJoCo and pass the compiled model to the
+exporter. Select the palm as the hand root and the rigid object's body
+as the object root. The hand export covers the palm and its finger
+subtree. The robot arm and workcell remain in the source scene.
 
 ```python
 import mujoco
@@ -37,46 +45,40 @@ hand = export_hand(model, "palm", "output/hand", name="my_hand")
 object_xml = export_body(model, "object", "output/object")
 ```
 
-Load `hand.robot_xml` and `object_xml` in GraspIt! or pass them to the
-[planner](planning.md). Keep the hand XML beside its `iv/` directory
-and the object XML beside its OFF mesh.
+Pass `hand.robot_xml` and `object_xml` to the
+[contact planner](planning.md). Keep the hand XML adjacent to its
+`iv/` directory and the object XML adjacent to its OFF mesh. Mesh
+vertices in both exports use millimeters. The object export records
+mass in grams.
 
-## Supported models
+## Prepare the Source Model
 
-Each finger is a serial chain with one hinge on each jointed body.
-Jointless parts are merged into the nearest jointed ancestor or the palm.
-The hand exporter copies participating collision meshes and tessellates
-boxes, spheres, capsules, cylinders, and ellipsoids. Geometry with both
-`contype` and `conaffinity` equal to zero is excluded. Supply collision
-geometry for the palm and each articulated link.
+Each finger is a serial chain with one hinge on each moving body.
+Fixed bodies are assigned to the nearest moving ancestor or to the
+palm. The hand exporter transfers collision meshes and tessellates
+boxes, spheres, capsules, cylinders, and ellipsoids. A geometry
+participates if it has nonzero spatial extent and either `contype`
+or `conaffinity` is nonzero. Supply participating geometry for the
+palm and each articulated link.
 
-A joint can be coupled to an independent hinge by an affine MuJoCo
-joint equality. Nonlinear equalities and couplings driven by another dependent
-joint fall outside the supported model. Use `preshape_joints` to give
-specified independent joints zero autograsp velocity. The named
-joints then hold at their preshape during closure.
+The supported joint equalities express one driven hinge as an affine
+function of one independent hinge. Use `preshape_joints` to assign
+zero autograsp velocity to named independent coordinates, such as a
+thumb opposition joint held at a prescribed setting.
 
-The MuJoCo [joint equality reference](https://mujoco.readthedocs.io/en/stable/XMLreference.html#equality-joint)
-gives the source convention for affine couplings.
+For rigid objects, `export_body` expresses the geometry of the named
+body and its descendants in the named body's frame at the reference
+configuration. Pass `include_descendants=False` to select the named
+body alone.
 
-`export_body` expresses the geometry of the named body and its descendants
-in the body's frame at the reference configuration. Use this operation
-for a rigid object. Pass `include_descendants=False` to export only the
-named body. Mesh vertices are stored in millimeters and mass in grams.
+## Reconstruct the Hand in MuJoCo
 
-## Recover the MuJoCo joint values
-
-The exporter writes a JSON file alongside the hand XML. Its `dof_joints`
-field gives the independent coordinates in GraspIt! order. Each joint
-record in `chains` gives the MuJoCo joint name, the driving DOF index,
-the scale `ratio`, and the angular offset `offset_rad`. GraspIt! DOF
-values and MuJoCo hinge coordinates are in radians.
-
-For driven hinge $y$ and driver $x$, MuJoCo expresses an affine
-equality as $y-y_0=a_0+a_1(x-x_0)$, where $x_0$ and $y_0$ are reference
-positions from `qpos0`. The exported ratio is $a_1$ and the offset in
-absolute coordinates is $y_0+a_0-a_1x_0$. Apply the map to a selected
-candidate as follows:
+The JSON manifest beside the hand XML lists independent coordinates
+in `dof_joints`. Each record in `chains` identifies the source
+hinge, the driving DOF index, the multiplier `ratio`, and the angular
+offset `offset_rad`. Apply this map to the closed DOF vector of a
+`GraspCandidate`. The operation preserves the other coordinates in
+the MuJoCo state.
 
 ```python
 qpos = data.qpos.copy()
@@ -86,19 +88,19 @@ for chain in hand.chains:
         qpos[address] = joint.ratio * candidate.dofs[joint.dof] + joint.offset_rad
 ```
 
-The candidate's `T_object_hand` maps hand-frame coordinates into the
-object frame. Its translation is in millimeters. Divide that translation
-by 1000 before composing it with a MuJoCo object pose. Use the resulting
-target palm pose and joint values in your arm kinematics or controller.
+`candidate.T_object_hand` maps palm coordinates into object
+coordinates. The serialized key is `T_object_hand_mm`. Convert the
+translation from millimeters to meters, then left-multiply the
+transform by the source object's world pose. The resulting world-frame
+palm pose is a target for the calling application's arm kinematics.
 
-## Compare link geometry
+## Verify Link Geometry
 
-Inside the reference container, the geometry comparison measures the
-maximum symmetric Hausdorff distance between corresponding palm-frame
-link vertices. Supply a list of configurations with entries in exported
-DOF order. The command below uses the scene and configuration file
-mounted under `input/`. Replace `l6_hand_base_link` with your palm body
-name when using a different model.
+The repository provides `examples/check_export_geometry.py` to evaluate
+corresponding export and source link vertices in the palm frame. Supply
+the source scene, palm body name, and a JSON list of joint vectors in
+exported DOF order, in radians. The command below uses the Docker image
+from [Installation](INSTALL.md) and writes the comparison to `output/parity/`.
 
 ```bash
 mkdir -p output
@@ -108,6 +110,6 @@ docker run --rm --user "$(id -u):$(id -g)" \
     /input/scene.xml l6_hand_base_link /input/configurations.json /output/parity
 ```
 
-The command records per-link errors in millimeters, the largest difference
-between requested and applied DOF values, and the tolerance result in
-`output/parity/geometry-check.json`.
+`geometry-check.json` records the symmetric Hausdorff vertex distance
+for each link and configuration in millimeters, the greatest
+requested-to-applied DOF discrepancy, and the tolerance result.

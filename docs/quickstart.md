@@ -1,9 +1,10 @@
-# Plan with a RealHand L6
+# Grasp Planning with a RealHand L6
 
-This example uses the six-coordinate right RealHand L6 and a 50 mm cube.
-Supply a MuJoCo scene with the right hand and its collision meshes. The reference configuration uses palm body
-`l6_hand_base_link` and the independent joint order listed below. The
-vendor hand and mesh files are obtained separately.
+This walkthrough exports a six-coordinate right RealHand L6 and
+plans grasps on a 50 mm cube. It requires the image from
+[Installation](INSTALL.md) and a local right-hand MuJoCo scene with
+collision meshes. The reference hand uses palm body
+`l6_hand_base_link` and the following independent joint order.
 
 ```text
 l6_thumb_cmc_roll
@@ -14,10 +15,12 @@ l6_ring_mcp_pitch
 l6_pinky_mcp_pitch
 ```
 
-Place the scene under `input/` with any relative mesh paths preserved.
-From the repository root, use the image from [Installation](INSTALL.md)
-to export the hand and object. Change the body names in the example if
-your scene uses different names.
+## Export the Hand and Cube
+
+Place `scene.xml` and the associated meshes under `input/` and
+preserve the relative mesh paths. Check the palm and thumb joint
+names against the source scene. Run the export from the repository
+root.
 
 ```bash
 mkdir -p output
@@ -44,11 +47,14 @@ print(hand.dof_joints)
 PYTHON
 ```
 
-Verify the printed joint order against the list above before using the
-included preshapes. The configuration places the support plane 25 mm
-below the cube center and uses the specified L6 palm frame. With a
-different hand or model frame, set the two hand axes, grasp center, and
-preshapes for your model before planning.
+## Generate and Inspect Grasps
+
+Compare the printed DOF order with the order above before applying
+the included preshapes. The configuration places the support plane
+25 mm below the cube center and specifies the approach axes and
+grasp center in the reference palm frame. For another model, adapt
+these three frame parameters and express each preshape in its
+exported DOF order.
 
 ```bash
 docker run --rm --user "$(id -u):$(id -g)" \
@@ -61,10 +67,27 @@ docker run --rm --user "$(id -u):$(id -g)" \
 
 ```{literalinclude} examples/realhand-l6-cube.json
 :language: json
-:caption: Preshapes and approach settings for the six-coordinate L6 model.
+:caption: Approach settings, preshapes, and wrench-scoring parameters for the six-coordinate L6.
 ```
 
-The result records ranked object-relative palm poses, closed joint
-coordinates, contacts, and sampled scores. See [grasp planning](planning.md)
-for the field definitions and [MuJoCo export](export.md) for reconstructing
-a selected grasp in the source model.
+The CLI writes ranked grasps to `output/candidates.json`. The first
+record has the greatest ranking score among the admitted grasps.
+Inspect its contact count and score using Python's standard library.
+For an empty list, the top-level `rejections` field identifies the
+geometric criteria the nominal approaches failed to meet.
+
+```python
+import json
+from pathlib import Path
+
+result = json.loads(Path("output/candidates.json").read_text())
+if result["candidates"]:
+    candidate = result["candidates"][0]
+    print(len(candidate["contacts"]), candidate["epsilon_cvar"])
+else:
+    print(result["rejections"])
+```
+
+See [grasp planning](planning.md) for score and pose conventions and
+[MuJoCo export](export.md) for reconstructing a selected grasp in the
+source model.

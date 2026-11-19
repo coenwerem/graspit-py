@@ -1,106 +1,132 @@
-# Plan grasps under uncertainty
+# Grasp Planning under Uncertainty
 
-The contact planner advances the hand along an approach, closes its
-fingers, and computes grasp quality from the resulting object-frame
-contacts. It returns ranked configurations for the input hand and
-object. Arm reachability, arm collision checking, trajectory generation,
-and execution belong to the application consuming these configurations.
+A candidate approach specifies a travel direction, palm roll, finger
+preshape, and set of joints to close. For a given hand and object, the
+contact planner enumerates these commands, simulates the approach and
+finger closure, and ranks the admitted configurations by modeled
+wrench capacity. The output has the contact geometry and scoring
+samples needed to reproduce the ranking. The calling application
+evaluates arm reachability and plans and executes the arm trajectory.
 
-## Run the planner
+## Set the Hand Frame
 
-Use [the RealHand L6 setup](quickstart.md) to export the hand and cube and
-run the planner. The CLI also accepts GraspIt! robot and object XML for
-other hands in the [supported model class](hands.md).
+The `hand` configuration defines a palm-frame approach axis, a second
+axis along the fingers, and a grasp center. The approach axis points
+toward the object. The planner projects the finger axis onto its
+orthogonal plane to define roll, so the two input axes must be nonzero
+and nonparallel. The grasp center $g$ is a hand-fixed point near the
+region where the fingers close. If $R$ denotes the planned
+palm-to-object rotation, $c$ the object center of mass, $d$ the unit
+travel direction, and $s$ the standoff distance, the starting palm
+translation is $c-sd-Rg$. Thus the grasp center begins $s$ millimeters
+from $c$ along the approach line. The [RealHand L6
+walkthrough](quickstart.md) shows the axes and coordinates for an
+example model. Explicit preshapes can also be sampled from a
+low-dimensional posture subspace before running the planner. See
+[Ciocarlie and Allen](https://doi.org/10.1177/0278364909105606)
+for dexterous grasp synthesis over such subspaces.
 
-(generated-grasps)=
-## Generated grasps
+## Specify Candidate Commands and Contact Constraints
 
-````{container} hand-gallery
-```{figure} figures/l6-insertion.png
-:alt: Planned RealHand L6 key grasp from the bimanual insertion experiment.
-
-**RealHand L6** · Planned key grasp, $\varepsilon=0.00460$.
-```
-```{figure} figures/leap-hold.png
-:alt: Final MuJoCo cube hold with the LEAP Hand.
-
-**LEAP Hand** · Final cube hold, $\varepsilon=0.0708$.
-```
-```{figure} figures/ability-hold.png
-:alt: Final MuJoCo hold of a tapered cylinder with the PSYONIC Ability Hand.
-
-**PSYONIC Ability** · Final cylinder hold, $\varepsilon=0.167$.
-```
-````
-
-Ferrari–Canny $\varepsilon$ describes the planned GraspIt! closure in
-each case. The L6 panel uses the native planned link poses. The LEAP and
-Ability panels reconstruct recorded MuJoCo hold states from their
-respective simulations. These three grasps come from the insertion and
-lift studies.
-
-See [geometry and grasp quality](theory.md) for wrench construction and
-the lower-tail objective.
-
-## Configure the search
-
-The JSON `hand` object sets the approach axis, transverse finger axis,
-and grasp center in the palm frame. The two axes must be nonzero and
-nonparallel. They establish the direction of travel and the reference for
-roll. Match these vectors to the hand's geometry when changing models.
-
-The `planner` object controls the set of candidate commands and the
-conditions for admitting a closure.
+The planner advances the open hand in discrete increments along $d$
+until an increment would cause collision. It starts closure at the
+last collision-free placement, with the requested clearance subtracted
+from the distance traveled. GraspIt! advances the selected finger
+coordinates under autograsp. The planner records closures with enough
+object contacts and applies the configured contact-region predicate.
+Support and keep-out predicates inspect the final nominal hand vertices.
+This provides a geometric filter for the candidate bank. The calling
+application verifies continuous hand and arm clearance during execution.
 
 | Setting | Meaning |
 |---|---|
-| `approaches` | Rows of `[dx, dy, dz, roll_deg]` in the object frame. Omit to sample `n_directions` directions and `n_rolls` rolls. |
-| `preshapes` | Open joint vectors in GraspIt! DOF order, in radians. |
-| `closing_sets` | Zero-based DOF lists. A DOF outside the selected list holds its preshape during closure. |
-| `standoff_mm`, `approach_step_mm`, `clearance_mm` | Search start, travel increment, and retreat from the contact boundary. |
-| `min_contacts` | Minimum number of object contacts required after closure. |
-| `support_normal`, `support_offset_mm` | Support half-space in the object frame. The normal points away from the support. A unit normal makes the offset a distance in millimeters. |
-| `contact_region_mm` | Allowed contact box as `[[xmin, ymin, zmin], [xmax, ymax, zmax]]` in the object frame. |
-| `keepout_boxes_mm` | Excluded boxes, each given by its center and half extents in the object frame. |
+| `approaches` | Explicit rows `[dx, dy, dz, roll_deg]` in the object frame. In their absence, `n_directions` gives the number of Fibonacci-sphere directions and `n_rolls` the number of equally spaced rolls per direction. |
+| `preshapes` | Starting joint vectors in exported DOF order, in radians. Every direction and roll is evaluated with every specified preshape and closing set. |
+| `closing_sets` | Lists of zero-based DOF indices. Coordinates outside the chosen list remain at preshape during closure. |
+| `standoff_mm`, `approach_step_mm`, `clearance_mm` | Initial approach distance, travel increment, and retreat from the last collision-free placement, all in millimeters. |
+| `min_contacts` | Minimum number of object contacts required at closure. |
+| `support_normal`, `support_offset_mm` | Support half-space in the object frame. The planner normalizes the vector and admits a nominal closure if every hand vertex lies at least the specified offset along it. |
+| `contact_region_mm` | Allowed contact box in object coordinates, given by its lower and upper corners as `[[xmin, ymin, zmin], [xmax, ymax, zmax]]`. |
+| `keepout_boxes_mm` | Excluded boxes in object coordinates, each given by its center and half extents. The filter rejects a nominal closure if any hand vertex lies strictly inside an excluded box. |
 
-## Choose the score
+## Select a Wrench Score
 
-The planner uses Ferrari–Canny epsilon by default. To evaluate specified
-loads, provide `task_forces_mm` as rows `[px, py, pz, fx, fy, fz]`.
-The point is expressed in the object frame in millimeters. The force
-vector is the nonzero contact force direction required to balance the
-external load. The planner normalizes each direction and computes the
-largest common magnitude supported by the modeled contact wrench space.
-For example, `[0, 0, 0, 0, 0, 1]` represents upward support at the
-object origin.
+The default score uses Ferrari–Canny epsilon to quantify the worst
+direction of resistance to a normalized wrench. For task-specific
+synthesis, supply `task_forces_mm` as rows
+`[px, py, pz, fx, fy, fz]`. The first three entries give the point of
+application in the object frame in millimeters. The final entries
+give the contact force direction required to balance the external
+load. The planner normalizes each nonzero force vector before
+constructing its wrench. For instance, `[0, 0, 0, 0, 0, 1]`
+represents upward support through the object-frame origin. The score
+is the greatest magnitude supported across the supplied directions.
 
-Each candidate is closed at its nominal approach and after
-`n_pose_samples` Gaussian perturbations of the approach. The
-parameters `pose_sigma_mm` and `pose_sigma_deg` give the translation and
-rotation-vector standard deviations, respectively. The candidate and
-`seed` determine its random stream. The planner reevaluates the
-wrench space at every `friction_samples` entry for every closure.
-Failed closures contribute zero. Use a nonempty friction grid.
+## Model Approach and Friction Uncertainty
 
-The ranking score is the average over the lowest `tail_mass` fraction
-of the scores, with fractional weight on the boundary sample when
-needed. `tail_mass=1` gives the mean. With zero pose samples and a
-single friction coefficient, the score is the nominal quality at that
-coefficient.
+The planner closes the hand once at the nominal approach and again for
+each of `n_pose_samples` perturbations. The parameters `pose_sigma_mm`
+and `pose_sigma_deg` set the componentwise standard deviations of
+isotropic Gaussian translation and rotation-vector errors. The
+translation, rotation, and travel direction are expressed in the
+object frame. The seed and command together determine the sampling
+stream. Each friction coefficient in `friction_samples` is applied
+to each realized contact set when constructing its wrench hull. The
+friction grid has equal weights, and a failed perturbed approach or
+closure contributes zero across its friction row.
 
-## Read the candidate file
+The planner ranks candidates by the lower-tail average over the
+lowest-scoring `tail_mass` fraction of pose–friction combinations.
+This score favors capacity in weak scenarios even when competing
+approaches have similar means. Set `tail_mass=1` for mean ranking.
+Set `n_pose_samples=0` and provide one friction coefficient for
+ranking at the specified nominal coefficient. The [theory guide](theory.md)
+defines both quality measures and the empirical tail calculation.
 
-The CLI returns candidates in descending order of `score`, with the
-object-relative palm pose (`T_object_hand_mm`), closed finger coordinates
-(`dofs_rad`), approach direction, roll, preshape, and contact geometry.
-The score arrays use pose rows and friction columns. Row zero is the
-nominal closure. The nominal fields use the middle grid entry, or the
-upper middle entry for an even-sized grid. The `rejections` field counts
-the causes for rejecting nominal candidates.
+## Interpret Candidate Records
 
-`native_epsilon` uses GraspIt!'s metric. `nominal_epsilon`,
-`expected_epsilon`, and `epsilon_cvar` describe the Python wrench
-scorer. When a task is set, `task_samples`, `nominal_task`, and
-`expected_task` describe the task-wrench scores, and `score` is their
-lower-tail mean. See [MuJoCo export](export.md) for mapping the planned
-pose and joints to the source model.
+The CLI orders the JSON records by decreasing `score` and writes the
+nominal palm placement `T_object_hand_mm`, closed coordinates `dofs_rad`,
+and per-contact positions and inward normals. The homogeneous transform
+maps palm coordinates into the object frame. Position arrays and
+transform translations use millimeters, and DOFs use radians. Preshape,
+travel direction, roll, and closing indices identify the approach.
+
+`epsilon_samples` and `task_samples` contain pose rows and friction
+columns. The first row is nominal. `nominal_epsilon` and `nominal_task`
+read the middle column of the nominal row, using the upper middle column for
+an even grid. `expected_epsilon` and `expected_task` are means over
+the corresponding arrays. `epsilon_cvar` stores the epsilon lower-tail
+mean even in task mode, where `score` instead stores the task
+lower-tail mean. `native_epsilon` comes from the simulator at the
+nominal closure and uses the simulator's wrench normalization. The
+top-level `rejections` field counts causes of nominal rejection.
+See [MuJoCo model export](export.md) for converting the palm and joint
+targets to the source model.
+
+(generated-grasps)=
+## Planned Grasps and Simulated Execution
+
+````{container} hand-gallery
+```{figure} figures/l6-insertion.png
+:alt: Planned RealHand L6 closure on the key used for bimanual insertion.
+
+**RealHand L6.** Planned key grasp, $\varepsilon=0.00460$.
+```
+```{figure} figures/leap-hold.png
+:alt: Recorded MuJoCo configuration of the LEAP Hand holding a cube.
+
+**LEAP Hand.** Simulated cube hold, $\varepsilon=0.0708$.
+```
+```{figure} figures/ability-hold.png
+:alt: Recorded MuJoCo configuration of the PSYONIC Ability Hand holding a tapered cylinder.
+
+**PSYONIC Ability Hand.** Simulated cylinder hold, $\varepsilon=0.167$.
+```
+````
+
+Each $\varepsilon$ value is the Ferrari–Canny score returned by
+GraspIt! for the planned closure. The L6 panel shows the planned
+closure on the insertion key. The other panels show final states of
+recorded lift-and-hold simulations in MuJoCo. In those panels the
+score belongs to the GraspIt! plan used to initialize each execution.
