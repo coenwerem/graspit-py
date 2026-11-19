@@ -1,5 +1,9 @@
 # GraspIt! Python Wrapper
 
+[Documentation](https://clintonenwerem.com/graspit-python-wrapper/) ·
+[GraspIt! Simulator](https://graspit-simulator.github.io/) ·
+[arXiv Preprint (Coming Soon)](https://clintonenwerem.com/graspit-python-wrapper/references.html#software-preprint)
+
 `graspit_python_wrapper` exposes the [GraspIt! simulator](https://graspit-simulator.github.io/)
 as a Python library for grasp synthesis and evaluation with multifingered
 hands. The native bindings provide hand pose and joint control, autograsp,
@@ -20,9 +24,8 @@ cd graspit-python-wrapper
 docker buildx build --load -f docker/Dockerfile -t graspit-py .
 ```
 
-The [manual](https://clintonenwerem.com/graspit-python-wrapper/) covers
-[installation](docs/INSTALL.md), [model export](docs/export.md), [grasp
-planning](docs/planning.md), and the [Python API](docs/api.md).
+The [installation guide](docs/INSTALL.md) also covers native builds
+and headless execution.
 
 ## Grasp Planning
 
@@ -47,8 +50,39 @@ documents export and simulation coverage for the RealHand L6, LEAP
 Hand, and PSYONIC Ability Hand. The calling application supplies arm
 kinematics, trajectory planning, and execution.
 
-## License and Citation
+## Planned Grasps and Simulated Execution
 
-The wrapper is licensed under GPL-3.0-or-later. Cite the wrapper using
-[CITATION.cff](CITATION.cff) and the simulator using the
-[GraspIt! paper by Miller and Allen](https://doi.org/10.1109/MRA.2004.1371616).
+| RealHand L6 | LEAP Hand | PSYONIC Ability Hand |
+| :---: | :---: | :---: |
+| <img src="docs/figures/l6-insertion.png" alt="RealHand L6 fingers closed on the blue insertion key" height="200"> | <img src="docs/figures/leap-hold.png" alt="LEAP Hand holding a blue cube" height="200"> | <img src="docs/figures/ability-hold.png" alt="PSYONIC Ability Hand holding a blue tapered cylinder" height="200"> |
+| Planned key grasp | Simulated cube hold | Simulated tapered-cylinder hold |
+
+The RealHand L6 image shows the planned GraspIt! closure. The LEAP
+and Ability images show final configurations from recorded MuJoCo
+lift-and-hold simulations. The [planning guide](docs/planning.md)
+reports the Ferrari–Canny score of each planned grasp.
+
+## MuJoCo Model Export
+
+| MuJoCo Source Workcell | Exported RealHand L6 in GraspIt! |
+| :---: | :---: |
+| <img src="docs/figures/export-source-workcell.png" alt="MuJoCo workcell with two A7 arms and RealHand L6 hands during bimanual key insertion" height="210"> | <img src="docs/figures/export-grasp-frames.png" alt="GraspIt! export of the right RealHand L6 at the planned insertion-key grasp" height="210"> |
+
+The MuJoCo panel shows a recorded bimanual key insertion. The
+GraspIt! panel shows the exported right hand closed on the key from
+a second viewpoint. The [export guide](docs/export.md) explains how
+to reconstruct planned configurations and compare link geometry.
+
+## Citation and References
+
+Cite the wrapper using [CITATION.cff](CITATION.cff) and record the
+software revision used. The wrapper is licensed under
+[GPL-3.0-or-later](LICENSE).
+
+- Miller, A. T., and Allen, P. K. (2004). [GraspIt! A Versatile Simulator for Robotic Grasping](https://www.cs.columbia.edu/~allen/PAPERS/graspit.final.pdf). *IEEE Robotics & Automation Magazine*, 11(4), 110–122.
+- Ferrari, C., and Canny, J. F. (1992). [Planning Optimal Grasps](https://doi.org/10.1109/ROBOT.1992.219918). *IEEE International Conference on Robotics and Automation*.
+- Todorov, E., Erez, T., and Tassa, Y. (2012). [MuJoCo: A Physics Engine for Model-Based Control](https://doi.org/10.1109/IROS.2012.6386109). *IEEE/RSJ International Conference on Intelligent Robots and Systems*.
+- Rockafellar, R. T., and Uryasev, S. (2002). [Conditional Value-at-Risk for General Loss Distributions](https://doi.org/10.1016/S0378-4266(02)00271-6). *Journal of Banking & Finance*, 26(7), 1443–1471.
+
+See the [manual references](https://clintonenwerem.com/graspit-python-wrapper/references.html)
+for sources on hand posture, frictional contact, and grasp wrench spaces.

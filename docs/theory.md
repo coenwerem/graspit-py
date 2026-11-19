@@ -56,8 +56,8 @@ $$
 A contact exerts a moment about $c$ through the force lever arm. The
 force basis at a point has three components. The moment about $c$ is
 therefore determined by $f_i$ and $p_i$. See
-[Murray, Li, and Sastry, Chapter 5](https://www.cds.caltech.edu/~murray/books/MLS/)
-and [Rimon and Burdick, Chapter 4](https://doi.org/10.1017/9781108552011)
+{ref}`Murray, Li, and Sastry, Chapter 5 <ref-murray-li-sastry>`
+and {ref}`Rimon and Burdick, Chapter 4 <ref-rimon-burdick>`
 for the grasp map and its contact models.
 
 ## Grasp Wrench Space and Force Closure
@@ -80,12 +80,11 @@ this constraint imposes a unit total normal-force budget. It is a
 contact-level normalization of wrench capacity. Force closure requires
 $0$ in the interior of $W$. If this condition holds, a sufficiently
 small wrench in every direction lies within the achievable set. See
-[Roa and Suárez](https://doi.org/10.1007/s10514-014-9402-3)
+{ref}`Roa and Suárez <ref-roa-suarez>`
 for the effect of force budgets and the moment scale on wrench-space metrics.
 
 For a full-dimensional hull $W=\{w:a_h^\top w\le b_h\ \forall h\}$ with
-$0$ in its interior, the [Ferrari–Canny
-metric](https://doi.org/10.1109/ROBOT.1992.219918) is
+$0$ in its interior, the {ref}`Ferrari–Canny metric <ref-ferrari-canny>` is
 
 $$
 \varepsilon=\min_h\frac{b_h}{\lVert a_h\rVert_2}.
@@ -153,7 +152,7 @@ results when at least $\beta$ of the mass has zero quality. At
 $\beta=1$ the ranking uses the sample mean. With one pose and one
 friction coefficient, it uses the nominal score at the specified
 coefficient. For the discrete probability treatment, see
-[Rockafellar and Uryasev](https://doi.org/10.1016/S0378-4266(02)00271-6).
+{ref}`Rockafellar and Uryasev <ref-rockafellar-uryasev>`.
 
 The [planning guide](planning.md) maps these quantities to configuration
 fields and candidate records.

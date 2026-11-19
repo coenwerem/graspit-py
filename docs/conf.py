@@ -11,3 +11,14 @@ html_title = project
 html_show_sourcelink = False
 html_static_path = ["_static"]
 html_css_files = ["hand-gallery.css"]
+
+html_theme_options = {
+    "footer_icons": [
+        {
+            "name": "Clinton Enwerem’s Homepage",
+            "url": "https://clintonenwerem.com/",
+            "html": "Clinton Enwerem",
+            "class": "author-homepage-link",
+        },
+    ],
+}

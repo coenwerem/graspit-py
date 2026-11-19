@@ -1,10 +1,11 @@
 # GraspIt! Python Wrapper
 
-The GraspIt! Python Wrapper provides direct access to the [GraspIt!
-simulator](https://doi.org/10.1109/MRA.2004.1371616) for planning and
-evaluating grasps with multifingered hands. A Python program can set the
-palm pose and finger coordinates, invoke closure, and retrieve object-frame
-contact positions and normals. This interface makes each simulated closure
+The GraspIt! Python Wrapper provides direct access to the
+[GraspIt! simulator](https://graspit-simulator.github.io/) for planning
+and evaluating grasps with multifingered hands. See
+{ref}`Miller and Allen <ref-miller-allen>` for the simulator's design.
+A Python program can set the palm pose and finger coordinates, invoke
+closure, and retrieve object-frame contact positions and normals. This interface makes each simulated closure
 available for inspection and external scoring. A planner built on the
 interface enumerates approaches and ranks their closures by general-purpose
 or task-specific wrench capacity under approach and friction uncertainty.
@@ -13,8 +14,10 @@ The MuJoCo exporter produces GraspIt! robot and object models from a
 compiled MuJoCo scene. It records the joint and link correspondence needed
 to transfer planned configurations to the source model. The application
 uses the resulting targets for arm kinematics, motion planning, and
-execution. See the [source repository](https://github.com/coenwerem/graspit-python-wrapper)
-for code, examples, and citation information.
+execution. The [source repository](https://github.com/coenwerem/graspit-python-wrapper)
+contains the code and examples. See [Citation and References](references.md)
+for software citation metadata and the
+{ref}`arXiv preprint (coming soon) <software-preprint>`.
 
 ````{container} hand-gallery
 ```{figure} figures/l6-insertion.png
@@ -51,6 +54,7 @@ planning
 hands
 theory
 api
+references
 ```
 
 ## Build the Manual

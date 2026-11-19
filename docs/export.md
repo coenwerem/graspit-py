@@ -6,11 +6,11 @@ from GraspIt! coordinates to source hinges and a correspondence between
 exported links and source bodies. Together these records allow planning
 in GraspIt! and reconstruction of the resulting configuration in
 MuJoCo. The [kinematics guide](theory.md) derives the reference-angle
-conversion.
+conversion. See {ref}`Todorov, Erez, and Tassa <ref-todorov-mujoco>`
+for the MuJoCo simulator.
 
-Bimanual insertion and planned closure are illustrated below. To
-compare geometry independently of the depicted states, each simulator
-was evaluated at corresponding joint coordinates. Across 49
+We evaluated each simulator at corresponding joint coordinates to
+compare the exported and source geometries. Across 49
 configurations of the right RealHand L6 and 12 links, the maximum
 symmetric Hausdorff distance between corresponding link-vertex sets
 was 7.86 nm.
@@ -22,7 +22,7 @@ was 7.86 nm.
 MuJoCo source workcell during a recorded bimanual insertion.
 ```
 ```{figure} figures/export-grasp-frames.png
-:alt: Exported right RealHand L6 at its planned grasp with the key.
+:alt: Exported right RealHand L6 at the planned grasp on the insertion key.
 
 GraspIt! configuration of the exported right L6 at the planned key grasp.
 ```

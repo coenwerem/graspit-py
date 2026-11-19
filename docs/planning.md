@@ -23,7 +23,7 @@ from $c$ along the approach line. The [RealHand L6
 walkthrough](quickstart.md) shows the axes and coordinates for an
 example model. Explicit preshapes can also be sampled from a
 low-dimensional posture subspace before running the planner. See
-[Ciocarlie and Allen](https://doi.org/10.1177/0278364909105606)
+{ref}`Ciocarlie and Allen <ref-ciocarlie-allen>`
 for dexterous grasp synthesis over such subspaces.
 
 ## Specify Candidate Commands and Contact Constraints
