@@ -1,5 +1,19 @@
 # Export a MuJoCo hand and object
 
+```{figure} figures/mujoco-export.png
+:alt: Side-by-side views of the MuJoCo source gripper collision geometry and the exported gripper loaded by GraspIt at equal joint coordinates.
+
+(a) MuJoCo collision geometry. (b) Exported OFF geometry posed using
+native GraspIt! link transforms at the same joint coordinates. The
+[geometry checker](https://github.com/coenwerem/graspit-python-wrapper/blob/main/examples/check_export_geometry.py)
+compares corresponding vertex sets across three configurations and seven
+links. The maximum symmetric Hausdorff distance for this example is
+0.0144 mm.
+```
+
+See [geometry and grasp quality](theory.md) for the reference-angle
+conversion.
+
 The exporter accepts a compiled MuJoCo model, including a model loaded
 from MJCF or URDF. Choose the palm body as the root of the hand. The
 portion of the model above the palm, such as a robot arm, stays in
@@ -86,3 +100,23 @@ The command prints the maximum vertex discrepancy in millimeters by link,
 the largest change between requested and applied DOF values, and the
 tolerance result. Use a host mount for the output path to keep the JSON
 report after the container exits.
+
+## Regenerate the figures
+
+After running the [first-grasp](quickstart.md) and [planning](planning.md)
+examples, capture the source and exported meshes and the two saved
+candidate poses. From the repository root:
+
+```bash
+docker buildx build --load -f docker/Dockerfile -t graspit-py .
+docker run --rm --user "$(id -u):$(id -g)" \
+  -v "$PWD/output:/output" graspit-py \
+  xvfb-run -a python /src/docs/examples/render_evidence.py capture \
+  /output/first-grasp /output/geometry.npz
+python docs/examples/render_evidence.py render \
+  output/geometry.npz docs/figures
+```
+
+The render step uses NumPy and Matplotlib from the local Python
+environment. The capture step queries the native link poses from
+GraspIt! and writes the collision triangles in millimeters.

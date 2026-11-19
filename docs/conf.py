@@ -6,9 +6,6 @@ exclude_patterns = ["_build", ".DS_Store"]
 myst_enable_extensions = ["dollarmath"]
 nitpicky = True
 
-html_theme = "alabaster"
+html_theme = "furo"
 html_title = project
 html_show_sourcelink = False
-html_theme_options = {
-    "description": "Model export, contact queries, and grasp planning",
-}

@@ -30,6 +30,20 @@ use the corresponding local paths under `output/` and `docs/`.
 :caption: Approach, friction, and task settings for the three-finger hand.
 ```
 
+## Generated grasps
+
+```{figure} figures/generated-grasps.png
+:alt: The planner's first and second ranked hand configurations around the cube, with recorded contact points highlighted in orange.
+
+The two highest-ranked candidates from the command above. Each has
+three recorded contacts. Orange markers show their projected positions, including points behind the visible mesh. Lower-tail task quality is
+0.04039 in (a) and 0.0007907 in (b). The hand meshes are posed from the
+returned palm transforms and joint coordinates in native GraspIt!.
+```
+
+See [geometry and grasp quality](theory.md) for the wrench construction and
+lower-tail objective.
+
 ## Configure the search
 
 The JSON `hand` object sets the approach axis, transverse finger axis,

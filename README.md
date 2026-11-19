@@ -20,7 +20,7 @@ docker buildx build --load -f docker/Dockerfile -t graspit-py .
 ```
 
 See the [installation guide](docs/INSTALL.md) for a native build and
-[the online documentation](https://coenwerem.github.io/graspit-python-wrapper/) for planning examples and API details.
+[the online documentation](https://coenwerem.github.io/graspit-python-wrapper/) for planning examples, [supported hands](https://coenwerem.github.io/graspit-python-wrapper/hands.html), and API details.
 
 ## Record a first grasp
 
