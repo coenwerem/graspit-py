@@ -83,6 +83,12 @@ Install the `mjcf` extra or `mujoco>=3.1`, then import from
 | `export_body(model, body, out_dir, ...)` | Path to the GraspIt! object XML. |
 | `dofs_from_qpos(hand, model, qpos)` | Independent MuJoCo hinge coordinates in GraspIt! order. |
 
+Both export functions accept `mesh_collision="convex_hull"` to export
+each mesh geom's compiled MuJoCo collision hull. The default,
+`mesh_collision="source"`, exports the source mesh triangles. See
+[MuJoCo Model Export](export.md) for the collision representation and
+geometry comparison workflow.
+
 ## Numerical Utilities
 
 These modules can be imported from the source checkout without a native

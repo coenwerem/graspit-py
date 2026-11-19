@@ -47,6 +47,11 @@ print(hand.dof_joints)
 PYTHON
 ```
 
+To plan on the collision hulls used by MuJoCo, pass
+`mesh_collision="convex_hull"` to `export_hand`. See
+[MuJoCo Model Export](export.md) for the corresponding object option
+and the geometry comparison command.
+
 ## Generate and Inspect Grasps
 
 Compare the printed DOF order with the order above before applying

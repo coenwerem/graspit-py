@@ -11,22 +11,25 @@ under ``palm_body`` is exported. Requirements on that subtree:
 
 Each hinge becomes a GraspIt revolute DH joint whose axis is the hinge axis
 at the model's reference configuration (qpos0); link meshes are re-expressed
-in the corresponding DH frames, so GraspIt link poses equal MuJoCo body poses
-for every joint vector. Independent hinges become GraspIt DOFs in chain order;
-coupled hinges use the driver's DOF and an offset in absolute joint coordinates.
+in the corresponding DH frames so each surface has the same pose in the palm
+frame in both models at corresponding joint coordinates. Independent hinges
+become GraspIt DOFs in chain order. Coupled hinges use the driver's DOF and an
+offset in absolute joint coordinates.
 
 Files: ``<out_dir>/<name>.xml`` (robot), ``<out_dir>/<name>.json`` (DOF and
 link correspondence to MuJoCo names) and ``<out_dir>/iv/*.xml|off`` (links).
 
 Geometry: collision geoms (nonzero contype or conaffinity) of type mesh, box,
 sphere, capsule, cylinder or ellipsoid, written as OFF triangle meshes in mm.
+Set ``mesh_collision='convex_hull'`` to export each mesh geom's compiled
+MuJoCo collision hull. The default ``'source'`` keeps the source mesh surface.
 """
 from __future__ import annotations
 
 import json
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Dict, List, Optional, Sequence, Tuple
+from typing import Dict, List, Literal, Optional, Sequence, Tuple
 
 import numpy as np
 
@@ -38,6 +41,7 @@ except ImportError as exc:  # pragma: no cover
 
 MM = 1000.0
 _EPS = 1e-9
+MeshCollision = Literal['source', 'convex_hull']
 
 
 @dataclass
@@ -107,15 +111,67 @@ def _cylinder(r, h, n=32):
     return v, np.array(f)
 
 
-def geom_mesh(model, g) -> Optional[Tuple[np.ndarray, np.ndarray]]:
-    """Vertices (geom frame, m) and triangles of geom ``g``, or None if unsupported."""
+def _check_mesh_collision_mode(mesh_collision):
+    if mesh_collision not in ('source', 'convex_hull'):
+        raise ValueError("mesh_collision must be 'source' or 'convex_hull'")
+
+
+def _check_plugin_geom(model, geom):
+    t = model.geom_type[geom]
+    plugins = getattr(model, 'geom_plugin', None)
+    if t == getattr(mujoco.mjtGeom, 'mjGEOM_SDF', -1) or (plugins is not None and plugins[geom] >= 0):
+        name = model.geom(geom).name or str(geom)
+        raise ValueError(f"geom {name!r}: convex_hull export requires a standard geom without SDF or plugin backing")
+
+
+def _compiled_convex_hull(model, mesh, source_vertices, geom):
+    """Extract triangles from the compiled mesh graph, preserving compiler choices."""
+    # MakeGraph() in MuJoCo's src/user/user_mesh.cc stores two counts, then vertex
+    # edge addresses, mesh-local vertex IDs, edge neighbors, and triangle IDs.
+    addr = int(model.mesh_graphadr[mesh])
+    graph = model.mesh_graph
+    name = model.geom(geom).name or str(geom)
+    if addr < 0 or addr + 2 > len(graph):
+        raise ValueError(f"geom {name!r} has no compiled convex hull")
+    n_vertices, n_faces = map(int, graph[addr:addr + 2])
+    vertex_start = addr + 2 + n_vertices
+    face_start = addr + 2 + 3 * n_vertices + 3 * n_faces
+    face_end = face_start + 3 * n_faces
+    if not 4 <= n_vertices <= len(source_vertices) or n_faces < 4 or face_end > len(graph):
+        raise ValueError(f"geom {name!r} has an invalid compiled convex hull")
+    vertex_ids = graph[vertex_start:vertex_start + n_vertices]
+    face_ids = graph[face_start:face_end].reshape(-1, 3)
+    if (len(np.unique(vertex_ids)) != n_vertices or np.any(vertex_ids < 0)
+            or np.any(vertex_ids >= len(source_vertices)) or np.any(face_ids < 0)
+            or np.any(face_ids >= len(source_vertices))):
+        raise ValueError(f"geom {name!r} has invalid compiled convex hull indices")
+    remap = np.full(len(source_vertices), -1, dtype=int)
+    remap[vertex_ids] = np.arange(n_vertices)
+    local_faces = remap[face_ids]
+    if np.any(local_faces < 0):
+        raise ValueError(f"geom {name!r} has faces outside its compiled convex hull")
+    return source_vertices[vertex_ids], local_faces
+
+
+def geom_mesh(model, g, *, mesh_collision: MeshCollision = 'source') -> Optional[Tuple[np.ndarray, np.ndarray]]:
+    """Return vertices (geom frame, m) and triangles for geom ``g``.
+
+    ``mesh_collision='convex_hull'`` uses MuJoCo's compiled collision hull for
+    each mesh geom. It raises an error for SDF, plugins or a missing hull.
+    """
+    _check_mesh_collision_mode(mesh_collision)
     T, size = mujoco.mjtGeom, model.geom_size[g]
     t = model.geom_type[g]
+    if mesh_collision == 'convex_hull':
+        _check_plugin_geom(model, g)
     if t == T.mjGEOM_MESH:
         mid = model.geom_dataid[g]
         va, vn = model.mesh_vertadr[mid], model.mesh_vertnum[mid]
+        vertices = model.mesh_vert[va:va + vn].astype(float)
+        if mesh_collision == 'convex_hull':
+            return _compiled_convex_hull(model, mid, vertices, g)
         fa, fn = model.mesh_faceadr[mid], model.mesh_facenum[mid]
-        return model.mesh_vert[va:va + vn].astype(float), model.mesh_face[fa:fa + fn].astype(int)
+        return vertices, model.mesh_face[fa:fa + fn].astype(int)
     if t == T.mjGEOM_BOX:
         return _box(size)
     if t == T.mjGEOM_SPHERE:
@@ -126,6 +182,9 @@ def geom_mesh(model, g) -> Optional[Tuple[np.ndarray, np.ndarray]]:
         return _uv_sphere([size[0]] * 3, cap=size[1])
     if t == T.mjGEOM_CYLINDER:
         return _cylinder(size[0], size[1])
+    if mesh_collision == 'convex_hull':
+        name = model.geom(g).name or str(g)
+        raise ValueError(f"geom {name!r} has no supported triangle proxy for convex_hull export")
     return None
 
 
@@ -218,23 +277,31 @@ def _hinge(model, body):
     return js[0]
 
 
-def _collision_geoms(model, bodies):
+def _collision_geoms(model, bodies, mesh_collision):
     """Collision geoms on ``bodies`` (zero-size geoms have no surface and are skipped)."""
-    return [g for g in range(model.ngeom) if model.geom_bodyid[g] in bodies
-            and (model.geom_contype[g] or model.geom_conaffinity[g])
-            and model.geom_rbound[g] > 0.0]
+    geoms = [g for g in range(model.ngeom) if model.geom_bodyid[g] in bodies
+             and (model.geom_contype[g] or model.geom_conaffinity[g])]
+    if mesh_collision == 'convex_hull':
+        for g in geoms:
+            _check_plugin_geom(model, g)
+    return [g for g in geoms if model.geom_rbound[g] > 0.0]
 
 
 def export_hand(model, palm_body: str, out_dir: str | Path, *, name: str = 'hand',
                 material: str = 'rubber', palm_material: str = 'plastic',
                 max_effort: float = 100.0,
-                preshape_joints: Sequence[str] = ()) -> ExportedHand:
+                preshape_joints: Sequence[str] = (),
+                mesh_collision: MeshCollision = 'source') -> ExportedHand:
     """Write ``<out_dir>/<name>.xml`` plus link XML/OFF files; see the module docstring.
 
     DOFs driven by ``preshape_joints`` (MuJoCo joint names) get a zero default
     velocity, so GraspIt's autograsp holds them at their preshape value instead
     of sweeping them to a limit (e.g. a thumb opposition joint).
+
+    ``mesh_collision='convex_hull'`` exports each compiled mesh collider
+    independently, including when multiple colliders belong to the same link.
     """
+    _check_mesh_collision_mode(mesh_collision)
     out_dir = Path(out_dir)
     link_dir = out_dir / 'iv'               # GraspIt resolves link files under <robot dir>/iv
     link_dir.mkdir(parents=True, exist_ok=True)
@@ -292,8 +359,8 @@ def export_hand(model, palm_body: str, out_dir: str | Path, *, name: str = 'hand
 
     def write_link(fname, bodies, frame_mm):
         verts, faces = [], []
-        for g in _collision_geoms(model, bodies):
-            res = geom_mesh(model, g)
+        for g in _collision_geoms(model, bodies, mesh_collision):
+            res = geom_mesh(model, g, mesh_collision=mesh_collision)
             if res is None:
                 continue
             v, f = res
@@ -373,13 +440,16 @@ def dofs_from_qpos(hand: ExportedHand, model, qpos: np.ndarray) -> np.ndarray:
 
 
 def export_body(model, body: str, out_dir: str | Path, *, name: Optional[str] = None,
-                material: str = 'plastic', include_descendants: bool = True) -> Path:
+                material: str = 'plastic', include_descendants: bool = True,
+                mesh_collision: MeshCollision = 'source') -> Path:
     """Write a MuJoCo body's collision geometry as a GraspIt graspable object.
 
     Geometry is expressed in the body frame (mm), so a GraspIt object at the
     identity pose coincides with the MuJoCo body frame; mass and centre of mass
-    are copied. Returns the object XML path.
+    are copied. ``mesh_collision='convex_hull'`` exports each compiled mesh
+    collider independently. Returns the object XML path.
     """
+    _check_mesh_collision_mode(mesh_collision)
     out_dir = Path(out_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
     name = name or body
@@ -389,8 +459,8 @@ def export_body(model, body: str, out_dir: str | Path, *, name: Optional[str] = 
     bodies = [root] + (_subtree(model, root) if include_descendants else [])
     P, R = data.xpos[root], data.xmat[root].reshape(3, 3)
     verts, faces = [], []
-    for g in _collision_geoms(model, bodies):
-        res = geom_mesh(model, g)
+    for g in _collision_geoms(model, bodies, mesh_collision):
+        res = geom_mesh(model, g, mesh_collision=mesh_collision)
         if res is None:
             continue
         v, f = res

@@ -10,7 +10,7 @@ conversion. See {ref}`Todorov, Erez, and Tassa <ref-todorov-mujoco>`
 for the MuJoCo simulator.
 
 We evaluated each simulator at corresponding joint coordinates to
-compare the exported and source geometries. Across 49
+compare the exported and source mesh geometries in `source` mode. Across 49
 configurations of the right RealHand L6 and 12 links, the maximum
 symmetric Hausdorff distance between corresponding link-vertex sets
 was 7.86 nm.
@@ -50,6 +50,28 @@ Pass `hand.robot_xml` and `object_xml` to the
 `iv/` directory and the object XML adjacent to its OFF mesh. Mesh
 vertices in both exports use millimeters. The object export records
 mass in grams.
+
+## Choose the Mesh Collision Representation
+
+By default, `mesh_collision="source"` exports the source mesh triangles,
+including concavities. To reproduce the collision geometry of standard
+MuJoCo mesh geoms, select the compiled hulls.
+
+```python
+hand = export_hand(model, "palm", "output/hand", name="my_hand",
+                   mesh_collision="convex_hull")
+object_xml = export_body(model, "object", "output/object",
+                         mesh_collision="convex_hull")
+```
+
+For each mesh geom, let $V_g$ denote the vertices of its compiled hull
+and $T_g$ its rigid transform into the export frame. The exported mesh
+contains the boundary triangles of $T_g\,\operatorname{conv}(V_g)$
+for each geom $g$. A link with two mesh geoms retains two independently
+transformed hulls in its OFF file. The exporter preserves the compiler's
+triangle connectivity and winding. Both modes use the same primitive
+tessellation and affine joint map. Hull mode raises an error for SDF
+or plugin colliders or when a mesh has no compiled hull.
 
 ## Prepare the Source Model
 
@@ -107,9 +129,12 @@ mkdir -p output
 docker run --rm --user "$(id -u):$(id -g)" \
   -v "$PWD/input:/input:ro" -v "$PWD/output:/output" graspit-py \
   xvfb-run -a python /src/examples/check_export_geometry.py \
-    /input/scene.xml l6_hand_base_link /input/configurations.json /output/parity
+    /input/scene.xml l6_hand_base_link /input/configurations.json /output/parity \
+    --mesh-collision convex_hull
 ```
 
-`geometry-check.json` records the symmetric Hausdorff vertex distance
-for each link and configuration in millimeters, the greatest
-requested-to-applied DOF discrepancy, and the tolerance result.
+Use `--mesh-collision source` to compare source mesh vertices. The
+`geometry-check.json` report records the mode, the maximum symmetric
+Hausdorff vertex distance in millimeters for each link across the
+configurations, the greatest requested-to-applied DOF discrepancy,
+and the tolerance result.

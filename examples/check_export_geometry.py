@@ -15,7 +15,7 @@ from graspit_python_wrapper.convert.mjcf_hand import export_hand, geom_mesh
 from graspit_python_wrapper.core import bindings as gp
 
 
-def compare(model, palm_name, hand, configs, tolerance):
+def compare(model, palm_name, hand, configs, tolerance, *, mesh_collision='source'):
     palm = model.body(palm_name).id
     data = mujoco.MjData(model)
     exported_joints = {model.joint(joint.mujoco_joint).id
@@ -37,7 +37,7 @@ def compare(model, palm_name, hand, configs, tolerance):
             body = model.body_parentid[body]
         if body not in owners:
             continue
-        mesh = geom_mesh(model, geom)
+        mesh = geom_mesh(model, geom, mesh_collision=mesh_collision)
         if mesh is not None:
             vertices, faces = mesh
             geoms[owners[body]].append((geom, vertices[np.unique(faces)]))
@@ -76,7 +76,8 @@ def compare(model, palm_name, hand, configs, tolerance):
                            cKDTree(source).query(native)[0].max())
             worst[name] = max(worst[name], float(distance))
     maximum = max(worst.values())
-    return dict(configurations=len(configs), links=len(worst), worst_link_mm=worst,
+    return dict(mesh_collision=mesh_collision, configurations=len(configs), links=len(worst),
+                worst_link_mm=worst,
                 max_mm=maximum, max_dof_clamp_rad=clamp, passed=maximum <= tolerance)
 
 
@@ -87,15 +88,17 @@ def main():
     parser.add_argument('configs', type=Path)
     parser.add_argument('output', type=Path)
     parser.add_argument('--tol-mm', type=float, default=0.1)
+    parser.add_argument('--mesh-collision', choices=('source', 'convex_hull'), default='source',
+                        help='mesh representation to export and compare (default: source)')
     args = parser.parse_args()
     model = mujoco.MjModel.from_xml_path(str(args.scene))
     args.output.mkdir(parents=True, exist_ok=True)
-    hand = export_hand(model, args.palm, args.output / 'hand')
+    hand = export_hand(model, args.palm, args.output / 'hand', mesh_collision=args.mesh_collision)
     configs = np.asarray(json.loads(args.configs.read_text()), dtype=float)
     if (configs.ndim != 2 or not len(configs) or configs.shape[1] != len(hand.dof_joints)
             or not np.isfinite(configs).all()):
         parser.error('expected finite configuration rows in exported DOF order')
-    report = compare(model, args.palm, hand, configs, args.tol_mm)
+    report = compare(model, args.palm, hand, configs, args.tol_mm, mesh_collision=args.mesh_collision)
     (args.output / 'geometry-check.json').write_text(json.dumps(report, indent=2) + '\n')
     print(json.dumps(report, indent=2))
     return 0 if report['passed'] else 1
