@@ -1,8 +1,7 @@
 # Plan with a RealHand L6
 
 This example uses the six-coordinate right RealHand L6 and a 50 mm cube.
-Supply a MuJoCo scene with the right hand, its collision meshes, and a
-cube body. The reference configuration uses palm body
+Supply a MuJoCo scene with the right hand and its collision meshes. The reference configuration uses palm body
 `l6_hand_base_link` and the independent joint order listed below. The
 vendor hand and mesh files are obtained separately.
 
@@ -31,7 +30,16 @@ from graspit_python_wrapper.convert.mjcf_hand import export_body, export_hand
 model = mujoco.MjModel.from_xml_path("/input/scene.xml")
 hand = export_hand(model, "l6_hand_base_link", "/output/hand", name="l6",
                    preshape_joints=["l6_thumb_cmc_roll"])
-export_body(model, "cube", "/output/object")
+cube = mujoco.MjModel.from_xml_string("""
+<mujoco>
+  <worldbody>
+    <body name="cube">
+      <geom type="box" size="0.025 0.025 0.025" mass="0.100"/>
+    </body>
+  </worldbody>
+</mujoco>
+""")
+export_body(cube, "cube", "/output/object")
 print(hand.dof_joints)
 PYTHON
 ```
