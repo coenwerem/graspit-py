@@ -1,0 +1,1753 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index db4771d..fcae914 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -1,6 +1,8 @@
+-cmake_minimum_required(VERSION 2.8.3)
++cmake_minimum_required(VERSION 3.5)
+ project(graspit)
+ 
++# Export compile commands for better IDE support
++set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+ 
+ set(GRASPIT_MAJOR_VERSION 4)
+ set(GRASPIT_MINOR_VERSION 0)
+@@ -27,8 +29,11 @@ set (GSRC ${PROJECT_SOURCE_DIR})
+ set(COLLISION_ENGINE GRASPIT_COLLISION CACHE PATH "back end for GraspIt! Collision detection, current options are GRASPIT_COLLISION, PQP_COLLISION.")
+ set(CGDB true CACHE PATH "compile CGDB sources as well")
+ set(PLY true CACHE PATH "compile PLY sources as well")
+-set(DYNAMICS_ENGINE GRASPIT_DYNAMICS CACHE PATH "back end for GraspIt! Dynamics, current options are GRASPIT_DYNAMICS, BULLET_DYNAMICS")
+-set(OPTIMIZATION_SOLVER NONE CACHE PATH "back end for GraspIt! optimization solver, current options are NONE, MOSEK, OASES, GUROBI")
++set(DYNAMICS_ENGINE GRASPIT_DYNAMICS CACHE STRING
++    "back end for GraspIt! Dynamics, current options are GRASPIT_DYNAMICS, BULLET_DYNAMICS")
++set(OPTIMIZATION_SOLVER "NONE" CACHE STRING "back end for GraspIt! optimization solver, current options are NONE, MOSEK, OASES, GUROBI")
++set_property(CACHE OPTIMIZATION_SOLVER PROPERTY STRINGS NONE MOSEK OASES GUROBI)
++set(MOSEK_ROOT "" CACHE PATH "Path to MOSEK installation root (contains tools/platform/<platform>/...)" )
+ set(BUILD_TESTS false CACHE PATH "build tests as well")
+ set(GRASPIT_DATA_DIR /home/$ENV{USER}/.graspit CACHE PATH "location to save graspit models, worlds and images")
+ 
+@@ -78,14 +83,31 @@ if (DYNAMICS_ENGINE STREQUAL BULLET_DYNAMICS)
+ 
+     set(BULLET_ROOT $ENV{BULLET_ROOT})
+     message(USING BULLET_ROOT=${BULLET_ROOT} from env variable BULLET_ROOT.)
+-    find_package(BULLET)
++    find_package(BULLET REQUIRED)
++
++    # Only add Bullet include paths when Bullet dynamics is selected.
++    set (GRASPIT_INCLUDES
++        ${GRASPIT_INCLUDES}
++        ${BULLET_INCLUDE_DIR}
++    )
+ 
+ endif(DYNAMICS_ENGINE STREQUAL BULLET_DYNAMICS)
+ 
+ if (OPTIMIZATION_SOLVER STREQUAL MOSEK)
+ 
+-    set(MOSEK_ROOT $ENV{MOSEK6_0_INSTALLDIR})
+-    message(USING MOSEK_ROOT=${MOSEK_ROOT} from env variable MOSEK6_0_INSTALLDIR.)
++    # Prefer an explicit cache variable, otherwise fall back to common MOSEK env vars.
++    if (NOT MOSEK_ROOT)
++        set(MOSEK_ROOT $ENV{MOSEK_ROOT})
++    endif()
++    if (NOT MOSEK_ROOT)
++        set(MOSEK_ROOT $ENV{MOSEK_HOME})
++    endif()
++    if (NOT MOSEK_ROOT)
++        # Legacy env var used by older GraspIt builds.
++        set(MOSEK_ROOT $ENV{MOSEK6_0_INSTALLDIR})
++    endif()
++
++    message("USING MOSEK_ROOT=${MOSEK_ROOT}")
+ 
+ endif (OPTIMIZATION_SOLVER STREQUAL MOSEK)
+ 
+@@ -551,46 +573,111 @@ if(DYNAMICS_ENGINE STREQUAL GRASPIT_DYNAMICS)
+         )
+ endif(DYNAMICS_ENGINE STREQUAL GRASPIT_DYNAMICS)
+ 
++if(DYNAMICS_ENGINE STREQUAL BULLET_DYNAMICS)
++    set (GRASPIT_DEFINES
++        ${GRASPIT_DEFINES}
++        -DBULLET_DYNAMICS)
++    set (GRASPIT_DYNAMICS_INCLUDES
++        ${GSRC}/include/graspit/dynamics/bulletDynamics.h
++        )
++    set (GRASPIT_DYNAMICS_SOURCES
++        ${GSRC}/src/dynamics/bulletDynamics.cpp
++        )
++endif(DYNAMICS_ENGINE STREQUAL BULLET_DYNAMICS)
++
+ #------------------------------------ Optimization Solver --------------------------------
+ if(OPTIMIZATION_SOLVER STREQUAL MOSEK)
++    if (NOT MOSEK_ROOT)
++        message(FATAL_ERROR "OPTIMIZATION_SOLVER=MOSEK but MOSEK_ROOT is not set. Set -DMOSEK_ROOT=/path/to/mosek or export MOSEK_HOME.")
++    endif()
++
++    # Determine MOSEK platform directory. Common on Linux is linux64x86.
++    set(MOSEK_PLATFORM_DIR "")
++    if (EXISTS "${MOSEK_ROOT}/tools/platform/linux64x86")
++        set(MOSEK_PLATFORM_DIR "${MOSEK_ROOT}/tools/platform/linux64x86")
++    else()
++        file(GLOB _mosek_platforms "${MOSEK_ROOT}/tools/platform/*")
++        list(LENGTH _mosek_platforms _mosek_platforms_len)
++        if (_mosek_platforms_len GREATER 0)
++            list(GET _mosek_platforms 0 MOSEK_PLATFORM_DIR)
++        endif()
++    endif()
++    if (NOT MOSEK_PLATFORM_DIR)
++        message(FATAL_ERROR "Could not find MOSEK tools/platform under MOSEK_ROOT='${MOSEK_ROOT}'.")
++    endif()
++
++    find_path(MOSEK_INCLUDE_DIR
++        NAMES mosek.h
++        PATHS
++            "${MOSEK_PLATFORM_DIR}/h"
++            "${MOSEK_ROOT}/h"
++        NO_DEFAULT_PATH
++    )
++    find_library(MOSEK_LIBRARY
++        NAMES mosek64 moseknoomp64
++        PATHS
++            "${MOSEK_PLATFORM_DIR}/bin"
++            "${MOSEK_PLATFORM_DIR}/lib"
++        NO_DEFAULT_PATH
++    )
++    if (NOT MOSEK_INCLUDE_DIR OR NOT MOSEK_LIBRARY)
++        message(FATAL_ERROR "MOSEK not found. Need mosek.h and libmosek (mosek64/moseknoomp64). Set MOSEK_ROOT (or MOSEK_HOME) to your MOSEK install root.")
++    endif()
++    get_filename_component(MOSEK_LIBRARY_DIR "${MOSEK_LIBRARY}" PATH)
++
+     set (GRASPIT_DEFINES
+         ${GRASPIT_DEFINES}
+         -DMOSEK_QP)
+     set (GRASPIT_INCLUDES
+         ${GRASPIT_INCLUDES}
+-        ${MOSEK_ROOT}/tools/platform/linux64x86/h)
++        ${MOSEK_INCLUDE_DIR})
+     set (GRASPIT_OPTIMIZATION_HEADERS
+-        ${GSRC}/src/math/mosek_qp.h 
++        ${GSRC}/include/graspit/math/mosek_qp.h
+         )
+     set (GRASPIT_OPTIMIZATION_SOURCES
+         ${GSRC}/src/math/mosek_qp.cpp
+         )
+-    find_library(QP_LIBRARIES
+-        NAMES moseknoomp64
+-        PATHS ${MOSEK_ROOT}/tools/platform/linux64x86/bin/
+-    )
++    set(QP_LIBRARIES ${MOSEK_LIBRARY})
+ endif(OPTIMIZATION_SOLVER STREQUAL MOSEK)
+ 
+ if(OPTIMIZATION_SOLVER STREQUAL OASES)
+     set (GRASPIT_DEFINES
+         ${GRASPIT_DEFINES}
+         -DOASES_QP)
+-    set (GRASPIT_INCLUDES
+-        ${GRASPIT_INCLUDES}
+-        ${OASES_ROOT}/INCLUDE)
++    # Support both old (source) layout and modern (installed) layout
++    if (EXISTS "${OASES_ROOT}/INCLUDE")
++        # Old source layout: OASES_ROOT/INCLUDE and OASES_ROOT/SRC
++        set (GRASPIT_INCLUDES
++            ${GRASPIT_INCLUDES}
++            ${OASES_ROOT}/INCLUDE)
++        find_library(QP_LIBRARIES
++            NAMES qpOASES
++            PATHS ${OASES_ROOT}/SRC/
++        )
++    else()
++        # Modern installed layout: OASES_ROOT/include/qpOASES contains headers
++        # GraspIt expects to include <QProblem.hpp>, so we add the qpOASES subdir
++        set (GRASPIT_INCLUDES
++            ${GRASPIT_INCLUDES}
++            ${OASES_ROOT}/include/qpOASES)
++        find_library(QP_LIBRARIES
++            NAMES qpOASES
++            PATHS ${OASES_ROOT}/lib
++        )
++    endif()
+     set (GRASPIT_OPTIMIZATION_HEADERS
+         ${GSRC}/src/math/qpoases.h  
+         )
+     set (GRASPIT_OPTIMIZATION_SOURCES
+         ${GSRC}/src/math/qpoases.cpp  
+         )
+-    find_library(QP_LIBRARIES
+-        NAMES qpOASES
+-        PATHS ${OASES_ROOT}/SRC/
+-    )
+ endif(OPTIMIZATION_SOLVER STREQUAL OASES)
+ 
+ if(OPTIMIZATION_SOLVER STREQUAL GUROBI)
++    if (NOT GUROBI_ROOT)
++        message(FATAL_ERROR "OPTIMIZATION_SOLVER=GUROBI but GUROBI_HOME/GUROBI_ROOT is not set. Please export GUROBI_HOME to your Gurobi install root (contains include/ and lib/).")
++    endif()
++
+     set (GRASPIT_DEFINES
+         ${GRASPIT_DEFINES}
+         -DGUROBI_SOLVER)
+@@ -603,14 +690,49 @@ if(OPTIMIZATION_SOLVER STREQUAL GUROBI)
+     set (GRASPIT_OPTIMIZATION_SOURCES
+         ${GSRC}/src/math/gurobi.cpp
+         )
++
++    # Gurobi's library naming varies by version and platform.
++    # - Core library: libgurobiXXX.so (e.g., gurobi110, gurobi100, ...)
++    # - C++ wrapper: typically libgurobi_c++.a or libgurobi_c++.so; older versions used libgurobi_g++5.2.a
+     find_library(GUROBI_CPP_LIBRARIES
+-        NAMES gurobi_g++5.2
++        NAMES
++            gurobi_c++
++            gurobi_g++8.5
++            gurobi_g++9.3
++            gurobi_g++11.2
++            gurobi_g++11
++            gurobi_g++5.2
++            gurobi_g++4.8
++            gurobi_g++4.2
+         PATHS ${GUROBI_ROOT}/lib/
+     )
+     find_library(GUROBI_LIBRARIES
+-        NAMES gurobi81
++        NAMES
++            gurobi130
++            gurobi120
++            gurobi110
++            gurobi101
++            gurobi100
++            gurobi95
++            gurobi92
++            gurobi91
++            gurobi90
++            gurobi81
++            gurobi80
++            gurobi75
++            gurobi70
++            gurobi
+         PATHS ${GUROBI_ROOT}/lib/
+     )
++
++    if (NOT GUROBI_LIBRARIES)
++        message(FATAL_ERROR "Could not find Gurobi core library under ${GUROBI_ROOT}/lib. Expected something like libgurobi110.so. Check GUROBI_HOME.")
++    endif()
++    if (NOT GUROBI_CPP_LIBRARIES)
++        message(FATAL_ERROR "Could not find Gurobi C++ wrapper library under ${GUROBI_ROOT}/lib. Expected something like libgurobi_c++.a/.so. Check GUROBI_HOME.")
++    endif()
++
++    get_filename_component(GUROBI_LIBRARY_DIR "${GUROBI_LIBRARIES}" PATH)
+ endif(OPTIMIZATION_SOLVER STREQUAL GUROBI)
+ 
+ #--------------------------------------- User interface: main window and dialogs ---------------------------------
+@@ -626,7 +748,6 @@ set (GRASPIT_INCLUDES
+     ${GRASPIT_UI_INCLUDES}
+     ${GRASPIT_CGDB_INCLUDES}
+     ${GRASPIT_PLY_INCLUDES}
+-    ${BULLET_INCLUDE_DIR}
+ )
+ 
+ set (GRASPIT_FORMS
+@@ -819,16 +940,35 @@ set(GRASPIT_LINK_LIBRARIES
+    ${QHULL_LIBRARIES}
+    ${SOQT_LIBRARY}
+    ${LAPACK_LIBRARIES}
+-   ${BULLET_LIBRARIES}
+    ${QP_LIBRARIES}
+-   ${GUROBI_LIBRARIES}
+-   ${GUROBI_CPP_LIBRARIES}
++    ${GUROBI_CPP_LIBRARIES}
++    ${GUROBI_LIBRARIES}
+ )
+ 
++if (DYNAMICS_ENGINE STREQUAL BULLET_DYNAMICS)
++    list(APPEND GRASPIT_LINK_LIBRARIES ${BULLET_LIBRARIES})
++endif()
++
+ ## Link the shared library and the executable
+ target_link_libraries(graspit ${GRASPIT_LINK_LIBRARIES} Qt5::Widgets Qt5::Network Qt5::Sql)
+ target_link_libraries(graspit_simulator graspit ${GRASPIT_LINK_LIBRARIES} Qt5::Widgets Qt5::Network Qt5::Sql)
+ 
++# Help the built binaries locate MOSEK when using a non-system install.
++if(OPTIMIZATION_SOLVER STREQUAL MOSEK)
++    if (MOSEK_LIBRARY_DIR)
++        set_target_properties(graspit PROPERTIES BUILD_RPATH "${MOSEK_LIBRARY_DIR}")
++        set_target_properties(graspit_simulator PROPERTIES BUILD_RPATH "${MOSEK_LIBRARY_DIR}")
++    endif()
++endif()
++
++# Help the built binaries locate Gurobi when using a non-system install.
++if(OPTIMIZATION_SOLVER STREQUAL GUROBI)
++    if (GUROBI_LIBRARY_DIR)
++        set_target_properties(graspit PROPERTIES BUILD_RPATH "${GUROBI_LIBRARY_DIR}")
++        set_target_properties(graspit_simulator PROPERTIES BUILD_RPATH "${GUROBI_LIBRARY_DIR}")
++    endif()
++endif()
++
+ ## Set install destination paths
+ set ( INCLUDE_DESTINATION ${CMAKE_INSTALL_PREFIX}/include/)
+ set ( LIB_DESTINATION ${CMAKE_INSTALL_PREFIX}/lib/)
+diff --git a/CMakeMacros/FindBULLET.cmake b/CMakeMacros/FindBULLET.cmake
+index f050488..1cec37e 100644
+--- a/CMakeMacros/FindBULLET.cmake
++++ b/CMakeMacros/FindBULLET.cmake
+@@ -46,18 +46,28 @@
+ # (To distribute this file outside of CMake, substitute the full
+ #  License text for the above reference.)
+ 
++message(STATUS "Using GraspIt custom FindBULLET.cmake (multiarch search enabled)")
++
+ macro(_FIND_BULLET_LIBRARY _var)
+   find_library(${_var}
+      NAMES
+         ${ARGN}
+      HINTS
+-        /usr/local/lib/
+         ${BULLET_ROOT}
+-        ${BULLET_ROOT}/lib/Release
+-        ${BULLET_ROOT}/lib/Debug
+-        ${BULLET_ROOT}/out/release8/libs
+-        ${BULLET_ROOT}/out/debug8/libs
+-     PATH_SUFFIXES lib
++        ${BULLET_ROOT}/lib
++        ${BULLET_ROOT}/lib64
++        ${BULLET_ROOT}/lib/x86_64-linux-gnu
++        /usr
++        /usr/lib
++        /usr/lib64
++        /usr/lib/x86_64-linux-gnu
++        /lib/x86_64-linux-gnu
++        /usr/local
++        /usr/local/lib
++     PATH_SUFFIXES
++        lib
++        lib64
++        x86_64-linux-gnu
+   )
+   mark_as_advanced(${_var})
+ endmacro()
+@@ -71,69 +81,47 @@ macro(_BULLET_APPEND_LIBRARIES _list _release)
+    endif()
+ endmacro()
+ 
++# NOTE:
++# This module must set BULLET_LIBRARIES to a list of required bullet libs.
++# Some older versions accidentally overwrite BULLET_LIBRARIES with only LinearMath.
++
++# Find include dir (keep existing)
+ find_path(BULLET_INCLUDE_DIR NAMES btBulletCollisionCommon.h
+-  HINTS
++  PATHS
+     ${BULLET_ROOT}/include
++    ${BULLET_ROOT}/include/bullet
+     ${BULLET_ROOT}/src
+-    /usr/local/bullet/include
+-    /usr/local/bullet/include
+-    /usr/local/include
+     /usr/include
+-  PATH_SUFFIXES bullet
+-)
+-
+-
+-
+-find_library(BULLET_LIBRARIES
+-    NAMES LinearMath BulletCollision 
+-    PATHS
+-    ${BULLET_ROOT}/lib
+-    $ENV{COIN3DDIR}/lib
+-    /usr/local/bullet/lib
+-    /usr/local/bullet/lib
+-    /usr/local/lib
+-)
+-
+-find_library(BULLET_LIBRARIES
+-    NAMES BulletCollision 
+-    PATHS
+-    ${BULLET_ROOT}/lib
+-    $ENV{COIN3DDIR}/lib
+-    /usr/local/bullet/lib
+-    /usr/local/bullet/lib
+-    /usr/local/lib
++    /usr/include/bullet
+ )
+ 
+-# Find the libraries
+-
++# Find component libraries (keep existing _FIND_BULLET_LIBRARY macro)
+ _FIND_BULLET_LIBRARY(BULLET_DYNAMICS_LIBRARY        BulletDynamics)
+-_FIND_BULLET_LIBRARY(BULLET_DYNAMICS_LIBRARY_DEBUG  BulletDynamics_Debug BulletDynamics_d)
+ _FIND_BULLET_LIBRARY(BULLET_COLLISION_LIBRARY       BulletCollision)
+-_FIND_BULLET_LIBRARY(BULLET_COLLISION_LIBRARY_DEBUG BulletCollision_Debug BulletCollision_d)
+-_FIND_BULLET_LIBRARY(BULLET_MATH_LIBRARY            BulletMath LinearMath)
+-_FIND_BULLET_LIBRARY(BULLET_MATH_LIBRARY            LinearMath LinearMath)
+-_FIND_BULLET_LIBRARY(BULLET_MATH_LIBRARY_DEBUG      BulletMath_Debug BulletMath_d LinearMath_Debug LinearMath_d)
++_FIND_BULLET_LIBRARY(BULLET_MATH_LIBRARY            LinearMath BulletMath)
+ _FIND_BULLET_LIBRARY(BULLET_SOFTBODY_LIBRARY        BulletSoftBody)
+-_FIND_BULLET_LIBRARY(BULLET_SOFTBODY_LIBRARY_DEBUG  BulletSoftBody_Debug BulletSoftBody_d)
+ 
+-if(BULLET_INCLUDE_DIR)
++# Mark found
++if(BULLET_INCLUDE_DIR AND BULLET_DYNAMICS_LIBRARY AND BULLET_COLLISION_LIBRARY AND BULLET_MATH_LIBRARY)
+   set(BULLET_FOUND 1)
+-  message("BULLET FOUND")
+-endif(BULLET_INCLUDE_DIR)
+-
+-# handle the QUIETLY and REQUIRED arguments and set BULLET_FOUND to TRUE if
+-# all listed variables are TRUE
+-#include(${CMAKE_CURRENT_LIST_DIR}/FindPackageHandleStandardArgs.cmake)
+-#FIND_PACKAGE_HANDLE_STANDARD_ARGS(Bullet DEFAULT_MSG
+-#    BULLET_DYNAMICS_LIBRARY BULLET_COLLISION_LIBRARY BULLET_MATH_LIBRARY
+-#    BULLET_SOFTBODY_LIBRARY BULLET_INCLUDE_DIR)
++else()
++  set(BULLET_FOUND 0)
++endif()
+ 
+ set(BULLET_INCLUDE_DIRS ${BULLET_INCLUDE_DIR})
+-if(BULLET_FOUND)
+-   _BULLET_APPEND_LIBRARIES(BULLET_LIBRARIES BULLET_DYNAMICS_LIBRARY)
+-   _BULLET_APPEND_LIBRARIES(BULLET_LIBRARIES BULLET_COLLISION_LIBRARY)
+-   _BULLET_APPEND_LIBRARIES(BULLET_LIBRARIES BULLET_MATH_LIBRARY)
+-   _BULLET_APPEND_LIBRARIES(BULLET_LIBRARIES BULLET_SOFTBODY_LIBRARY)
++
++# Construct the final link list
++set(BULLET_LIBRARIES
++  ${BULLET_DYNAMICS_LIBRARY}
++  ${BULLET_COLLISION_LIBRARY}
++  ${BULLET_MATH_LIBRARY}
++)
++
++# SoftBody is optional
++if(BULLET_SOFTBODY_LIBRARY)
++  list(APPEND BULLET_LIBRARIES ${BULLET_SOFTBODY_LIBRARY})
+ endif()
+ 
++message("BULLET FOUND: ${BULLET_FOUND}")
++message("BULLET INCLUDE: ${BULLET_INCLUDE_DIRS}")
+ message("BULLET LIBRARIES: ${BULLET_LIBRARIES}")
+\ No newline at end of file
+diff --git a/CMakeMacros/FindQhull.cmake b/CMakeMacros/FindQhull.cmake
+index 66461bb..87ffb82 100644
+--- a/CMakeMacros/FindQhull.cmake
++++ b/CMakeMacros/FindQhull.cmake
+@@ -87,11 +87,13 @@ mark_as_advanced(QHULL_LIBRARY QHULL_LIBRARY_DEBUG QHULL_INCLUDE_DIR)
+ 
+ if(QHULL_FOUND)
+   set(HAVE_QHULL ON)
+-  if(NOT QHULL_USE_STATIC)
+-    add_definitions("-Dqh_QHpointer")
+-    if(MSVC)
+-      add_definitions("-Dqh_QHpointer_dllimport")
+-    endif(MSVC)
+-  endif(NOT QHULL_USE_STATIC)
++  # Do not force qhull into pointer-mode (qh_QHpointer).
++  #
++  # Many distros ship `libqhull` built with static globals (`qh_qh` as a struct).
++  # Defining `qh_QHpointer` here changes the ABI expected by callers (treating
++  # `qh_qh` as a pointer), which can lead to crashes inside qhull (e.g. setjmp).
++  #
++  # If you need pointer-mode, link against a qhull build that was compiled with
++  # qh_QHpointer enabled (often via a separate re-entrant library).
+   message(STATUS "QHULL found (include: ${QHULL_INCLUDE_DIRS}, lib: ${QHULL_LIBRARIES})")
+ endif(QHULL_FOUND)
+diff --git a/CMakeMacros/FindSoQt.cmake b/CMakeMacros/FindSoQt.cmake
+new file mode 100644
+index 0000000..c522605
+--- /dev/null
++++ b/CMakeMacros/FindSoQt.cmake
+@@ -0,0 +1,59 @@
++# Compatibility Find module for SoQt.
++#
++# GraspIt!'s build calls `find_package(SoQt REQUIRED)`, but this repo ships a
++# legacy finder named `FindSoQt4.cmake`. Many systems also provide a modern
++# `SoQtConfig.cmake` (CONFIG package).
++#
++# This module bridges both worlds by:
++#  1) Trying CONFIG-mode first (preferred when available)
++#  2) Falling back to the legacy `FindSoQt4.cmake`
++#
++# It also populates the legacy variables used by GraspIt!:
++#   SOQT_INCLUDE_DIRS, SOQT_LIBRARY, SOQT_LINK_DIRS, SOQT_CXXFLAGS
++
++# Prefer a package config if the system provides one.
++find_package(SoQt CONFIG QUIET)
++
++if(SoQt_FOUND)
++  # Populate legacy variables when possible.
++  if(TARGET SoQt::SoQt)
++    set(SOQT_LIBRARY SoQt::SoQt)
++    get_target_property(_soqt_inc SoQt::SoQt INTERFACE_INCLUDE_DIRECTORIES)
++    if(_soqt_inc)
++      set(SOQT_INCLUDE_DIRS ${_soqt_inc})
++    endif()
++  elseif(DEFINED SoQt_LIBRARIES)
++    set(SOQT_LIBRARY ${SoQt_LIBRARIES})
++  endif()
++
++  if(DEFINED SoQt_INCLUDE_DIRS AND NOT DEFINED SOQT_INCLUDE_DIRS)
++    set(SOQT_INCLUDE_DIRS ${SoQt_INCLUDE_DIRS})
++  endif()
++
++  if(NOT DEFINED SOQT_LINK_DIRS)
++    set(SOQT_LINK_DIRS "")
++  endif()
++  if(NOT DEFINED SOQT_CXXFLAGS)
++    set(SOQT_CXXFLAGS "")
++  endif()
++
++  set(SOQT_LIBRARY_FOUND 1)
++  return()
++endif()
++
++# Fall back to the legacy module shipped with this repo.
++include(${CMAKE_CURRENT_LIST_DIR}/FindSoQt4.cmake)
++
++# Standardize the result variable for `find_package(SoQt ...)`.
++include(FindPackageHandleStandardArgs)
++
++# FindSoQt4 sets SOQT_LIBRARY_FOUND and fills SOQT_* variables.
++# We treat SOQT_LIBRARY and SOQT_INCLUDE_DIRS as the authoritative REQUIRED vars.
++find_package_handle_standard_args(
++  SoQt
++  REQUIRED_VARS SOQT_LIBRARY SOQT_INCLUDE_DIRS
++)
++
++if(SoQt_FOUND)
++  set(SOQT_LIBRARY_FOUND 1)
++endif()
+diff --git a/include/graspit/Collision/Graspit/collisionAlgorithms_inl.h b/include/graspit/Collision/Graspit/collisionAlgorithms_inl.h
+index 0deb382..9b87072 100644
+--- a/include/graspit/Collision/Graspit/collisionAlgorithms_inl.h
++++ b/include/graspit/Collision/Graspit/collisionAlgorithms_inl.h
+@@ -29,8 +29,15 @@
+   inlined, but in the future we might switch to a templated architecture.
+ */
+ 
++#ifndef GRASPIT_COLLISION_GRASPIT_COLLISIONALGORITHMS_INL_H
++#define GRASPIT_COLLISION_GRASPIT_COLLISIONALGORITHMS_INL_H
++
+ //#define PROF_ENABLED
+-#include "profiling.h"
++#include <graspit/profiling.h>
++
++// Ensure callback classes (e.g. ContactCallback) are declared even if this .inl
++// file is included directly.
++#include <graspit/Collision/Graspit/collisionAlgorithms.h>
+ 
+ PROF_DECLARE(COLLISION_RECURSION);
+ PROF_DECLARE(CONTACT_LEAF);
+@@ -116,7 +123,7 @@ void ContactCallback::leafTest(const Leaf *l1, const Leaf *l2)
+       int numContacts = triangleTriangleContact(t1, *it2, mThreshold * mThreshold,
+                                                 &contactPoints);
+       if (numContacts < 0) {
+-        DBGA("Collision found when looking for contacts");
++        // DBGA("Collision found when looking for contacts");
+       }
+       std::vector< std::pair<position, position> >::iterator it;
+       for (it = contactPoints.begin(); it != contactPoints.end(); it++) {
+@@ -275,3 +282,5 @@ RegionCallback::leafTest(const Leaf *l1, const Leaf *l2)
+ }
+ 
+ } //namespace Collision
++
++#endif // GRASPIT_COLLISION_GRASPIT_COLLISIONALGORITHMS_INL_H
+diff --git a/include/graspit/bodySensor.h b/include/graspit/bodySensor.h
+index fa5f0a9..3b90a07 100644
+--- a/include/graspit/bodySensor.h
++++ b/include/graspit/bodySensor.h
+@@ -73,4 +73,4 @@ class TactileSensor : public BodySensor
+ };
+ 
+ 
+-#endif
++#endif
+\ No newline at end of file
+diff --git a/include/graspit/dynamics/bulletDynamics.h b/include/graspit/dynamics/bulletDynamics.h
+index 97574fe..653a4ed 100644
+--- a/include/graspit/dynamics/bulletDynamics.h
++++ b/include/graspit/dynamics/bulletDynamics.h
+@@ -28,7 +28,7 @@
+ 
+ #include <LinearMath/btAlignedObjectArray.h>
+ 
+-#include "graspit/dynamicsEngine.h"
++#include "graspit/dynamics/dynamicsEngine.h"
+ #include "graspit/joint.h"
+ 
+ class btDiscreteDynamicsWorld;
+diff --git a/include/graspit/robot.h b/include/graspit/robot.h
+index fb02ba6..28c2ed7 100644
+--- a/include/graspit/robot.h
++++ b/include/graspit/robot.h
+@@ -628,7 +628,7 @@ void Robot::getDOFVals(double *dofVals) const {
+   save the entire state of the DOFs, including all breakaway information.
+   However, those functions work with QStrings, while we needed to save
+   the state as one value per DOF for external reasons. Hence the need for
+-  this hack-ish function.
++  this hack function.
+ */
+ void Robot::storeDOFVals(double *dofVals) const {
+   for (int d = 0; d < numDOF; d++) { dofVals[d] = dofVec[d]->getSaveVal(); }
+diff --git a/include/graspit/world.h b/include/graspit/world.h
+index 5b42143..ed68029 100644
+--- a/include/graspit/world.h
++++ b/include/graspit/world.h
+@@ -379,6 +379,11 @@ class World : public QObject {
+     //! Creates a robot, loads it from a file and adds it to the world
+     Robot *importRobot(QString filename);
+ 
++    //! Creates a robot from a URDF file and adds it to the world
++    Robot *importRobotFromURDF(QString filename, const TiXmlElement *root);
++
++    int loadRobotFromURDF(Robot *robot, const TiXmlElement *root, QString rootPath);
++
+     //! Adds an already populated robot to the world,and possibly to the scene graph
+     void addRobot(Robot *robot, bool addToScene = true);
+ 
+@@ -463,6 +468,14 @@ class World : public QObject {
+     //! One complete step of the dynamics simulation.
+     void stepDynamics();
+ 
++    //! Turns on dynamics without scheduling an Inventor idle sensor.
++    //! Useful for headless/manual stepping (e.g., from Python).
++    void turnOnDynamicsManual();
++
++    //! Performs one dynamics step without rescheduling an idle sensor.
++    //! Returns the dynamics engine return code (typically 0 on success, -1 on error).
++    int stepDynamicsManual();
++
+     //! Calls upon each dynamic body to save its current dynamic state to the top of its stack of states.
+     void pushDynamicState();
+ 
+diff --git a/src/Collision/collisionInterface.cpp b/src/Collision/collisionInterface.cpp
+index d54e57b..f2cfba6 100644
+--- a/src/Collision/collisionInterface.cpp
++++ b/src/Collision/collisionInterface.cpp
+@@ -26,6 +26,8 @@
+ #include "graspit/Collision/collisionInterface.h"
+ 
+ #include <list>
++#include <vector>
++#include <algorithm>
+ 
+ //#define GRASPITDBG
+ #include "graspit/debug.h"
+@@ -162,93 +164,89 @@ CollisionInterface::replaceContactSetWithPerimeter(ContactReport &contactSet)
+   vec3 axis1 = (testLine).normalized();
+   vec3 axis2 = normal.cross(axis1);
+ 
+-  coordT *array = new coordT[contactSet.size() * 2];
+-  coordT *ptr = &array[0];
+-  volatile int ptCount = 0;
+-  for (cp = contactSet.begin(); cp != contactSet.end(); cp++) {
+-    *ptr++ = (cp->b1_pos - position::Zero()).dot(axis1);
+-    *ptr++ = (cp->b1_pos - position::Zero()).dot(axis2);
+-    ptCount++;
+-  }
++  // Project contacts to 2D for perimeter extraction.
++  // We intentionally avoid using qhull here: when GraspIt is embedded (e.g.
++  // via pybind11), some libqhull builds have been observed to crash inside the
++  // qhull global state during contact compaction.
+ 
+   ContactReport tmpSet = contactSet;
+-  contactSet.clear();
+-
+-  //qhull paramerers
+-  int exitcode, curlong, totlong;
+-  char options[200];
+-
+-  //serialize access to qhull which is not thread-safe
+-  qhull_mutex.lock();
+ 
+-  bool ismalloc = False;  // True if qh_freeqhull should 'free(array)'
+-  FILE *qhfp = fopen("logfile", "w");
+-  if (!qhfp) {
+-    fprintf(stderr, "Could not open qhull logfile!\n");
+-    qh_init_A(NULL, stdout, stderr, 0, NULL);
+-  } else {
+-    qh_init_A(NULL, qhfp, qhfp, 0, NULL);
++  struct Pt2 {
++    double x;
++    double y;
++    int idx;
++  };
++
++  std::vector<Pt2> pts;
++  pts.reserve(tmpSet.size());
++
++  int idx = 0;
++  for (cp = tmpSet.begin(); cp != tmpSet.end(); cp++, idx++) {
++    Pt2 p;
++    p.x = (cp->b1_pos - position::Zero()).dot(axis1);
++    p.y = (cp->b1_pos - position::Zero()).dot(axis2);
++    p.idx = idx;
++    pts.push_back(p);
+   }
+ 
+-  if ((exitcode = setjmp(qh errexit))) {
+-    delete [] array;
+-    if (qhfp) { fclose(qhfp); }
+-    qhull_mutex.unlock();
+-    return;
+-  }
+-
+-  sprintf(options, "qhull n Pp");
+-  try {
+-    qh_initflags(options);
+-    qh_init_B(&array[0], ptCount, 2, ismalloc);
+-    qh_qhull();
+-    qh_check_output();
+-  } catch (...) {
+-    //qhull has failed
+-    DBGA("QHull CompactSet failed!!!");
+-    //reinsert all original contacts
+-    contactSet.insert(contactSet.begin(), tmpSet.begin(), tmpSet.begin());
+-    delete [] array;
+-    fclose(qhfp);
+-    qhull_mutex.unlock();
+-    return;
++  auto cmp = [](const Pt2 &a, const Pt2 &b) {
++    if (a.x < b.x) return true;
++    if (a.x > b.x) return false;
++    return a.y < b.y;
++  };
++
++  auto cross = [](const Pt2 &o, const Pt2 &a, const Pt2 &b) {
++    return (a.x - o.x) * (b.y - o.y) - (a.y - o.y) * (b.x - o.x);
++  };
++
++  std::sort(pts.begin(), pts.end(), cmp);
++
++  // Monotonic chain convex hull. Keeps all points on the boundary within tolerance.
++  std::vector<Pt2> lower, upper;
++  lower.reserve(pts.size());
++  upper.reserve(pts.size());
++
++  for (const auto &p : pts) {
++    while (lower.size() >= 2) {
++      const auto &a = lower[lower.size() - 2];
++      const auto &b = lower[lower.size() - 1];
++      if (cross(a, b, p) > my_resabs) { break; }
++      lower.pop_back();
++    }
++    lower.push_back(p);
+   }
+-  fclose(qhfp);
+-
+-  vertexT *vertex;
+-  double x, y;
+-  ContactData tmpContact;
+-
+-  // keep only those vertices in the set that match the convex hull vertices
+-  FORALLvertices {
+-    x = vertex->point[0];
+-    y = vertex->point[1];
+-    tmpContact.b1_pos[0] = x * axis1[0] + y * axis2[0] + origin_pr[0];
+-    tmpContact.b1_pos[1] = x * axis1[1] + y * axis2[1] + origin_pr[1];
+-    tmpContact.b1_pos[2] = x * axis1[2] + y * axis2[2] + origin_pr[2];
+-    tmpContact.b1_normal = contactNormal;
+-
+-    for (cp = tmpSet.begin(); cp != tmpSet.end(); cp++) {
+-      if (fabs(cp->b1_pos[0] - tmpContact.b1_pos[0]) < my_resabs &&
+-      fabs(cp->b1_pos[1] - tmpContact.b1_pos[1]) < my_resabs &&
+-      fabs(cp->b1_pos[2] - tmpContact.b1_pos[2]) < my_resabs &&
+-      fabs(cp->b1_normal[0] - tmpContact.b1_normal[0]) < my_resabs &&
+-      fabs(cp->b1_normal[1] - tmpContact.b1_normal[1]) < my_resabs &&
+-      fabs(cp->b1_normal[2] - tmpContact.b1_normal[2]) < my_resabs) {
+-        break;
+-      }
++  for (auto it = pts.rbegin(); it != pts.rend(); ++it) {
++    const auto &p = *it;
++    while (upper.size() >= 2) {
++      const auto &a = upper[upper.size() - 2];
++      const auto &b = upper[upper.size() - 1];
++      if (cross(a, b, p) > my_resabs) { break; }
++      upper.pop_back();
+     }
+-    if (cp == tmpSet.end()) {
+-    } else {
+-      contactSet.push_back(*cp);
++    upper.push_back(p);
++  }
++
++  // Concatenate without duplicating endpoints.
++  std::vector<int> hullIdx;
++  hullIdx.reserve(lower.size() + upper.size());
++  for (size_t i = 0; i < lower.size(); i++) { hullIdx.push_back(lower[i].idx); }
++  for (size_t i = 1; i + 1 < upper.size(); i++) { hullIdx.push_back(upper[i].idx); }
++
++  // Rebuild compacted set using original contacts.
++  contactSet.clear();
++  contactSet.reserve(hullIdx.size());
++
++  // tmpSet is a vector; indices are stable.
++  for (int hi : hullIdx) {
++    if (hi >= 0 && hi < static_cast<int>(tmpSet.size())) {
++      contactSet.push_back(tmpSet[hi]);
+     }
+   }
+ 
+-  qh NOerrexit = True;
+-  qh_freeqhull(!qh_ALL);
+-  qh_memfreeshort(&curlong, &totlong);
+-  qhull_mutex.unlock();
+-  delete [] array;
++  // If something went wrong (degenerate hull), fall back to original.
++  if (contactSet.size() < 2) {
++    contactSet = tmpSet;
++  }
+ }
+ 
+ void
+diff --git a/src/DBase/DBPlanner/sql_database_manager.cpp b/src/DBase/DBPlanner/sql_database_manager.cpp
+index edaf4d0..0949f00 100644
+--- a/src/DBase/DBPlanner/sql_database_manager.cpp
++++ b/src/DBase/DBPlanner/sql_database_manager.cpp
+@@ -40,7 +40,7 @@ using std::vector;
+ using namespace std;
+ 
+ //#define PROF_ENABLED
+-#include "profiling.h"
++#include <graspit/profiling.h>
+ 
+ PROF_DECLARE(GET_GRASPS_SQL);
+ PROF_DECLARE(GET_GRASPS_GETCOLUMN);
+diff --git a/src/bodySensor.cpp b/src/bodySensor.cpp
+index baf24e9..c1b4665 100644
+--- a/src/bodySensor.cpp
++++ b/src/bodySensor.cpp
+@@ -162,6 +162,7 @@ bool TactileSensor::updateDynamicSensorModel()
+     double forceValue =  forces[ind];
+     mOutput.sensorReading[ind] = forceValue;
+   }
++  return true;
+ }
+ 
+ //! update sensor values if dynamics are OFF
+@@ -178,6 +179,7 @@ bool TactileSensor::updateStaticSensorModel()
+       mOutput.sensorReading[2] += 1;
+     }
+   }
++  return true;
+ }
+ 
+ //!Checks to see if there are any contacts that affect this sensor,
+@@ -194,6 +196,7 @@ TactileSensor::updateSensorModel() {
+     updateStaticSensorModel();
+   }
+   setColor();
++  return true;
+ }
+ 
+ //! sets the display color of the tactile sensor
+@@ -242,4 +245,4 @@ transf TactileSensor::getSensorTran()
+   transf linkInWorld = mBody->getTran();
+   transf res = linkInWorld % sensorInLink;
+   return res;
+-}
++}
+\ No newline at end of file
+diff --git a/src/contact/virtualContact.cpp b/src/contact/virtualContact.cpp
+index f1f397f..4a5d67f 100644
+--- a/src/contact/virtualContact.cpp
++++ b/src/contact/virtualContact.cpp
+@@ -183,7 +183,7 @@ VirtualContact::computeWrenches(bool useObjectData, bool simplify)
+   if (wrench) { delete [] wrench; }
+ 
+   if (simplify) {
+-    numFCWrenches = 1; //this is hack-ish, should be fixed
++    numFCWrenches = 1; //this is hack, should be fixed
+     wrench = new Wrench[1];
+     wrench[0].force = worldNormal;
+     wrench[0].torque = (radius.cross(worldNormal)) / mMaxRadius;
+diff --git a/src/dynamics/bulletDynamics.cpp b/src/dynamics/bulletDynamics.cpp
+index 84eedd0..0a2f6c6 100644
+--- a/src/dynamics/bulletDynamics.cpp
++++ b/src/dynamics/bulletDynamics.cpp
+@@ -24,7 +24,7 @@
+ //######################################################################
+ 
+ 
+-#include "bulletDynamics.h"
++#include "dynamics/bulletDynamics.h"
+ 
+ #include <btBulletDynamicsCommon.h>
+ #include <BulletCollision/CollisionShapes/btBvhTriangleMeshShape.h>
+@@ -35,14 +35,14 @@
+ #include <BulletDynamics/ConstraintSolver/btGearConstraint.h>
+ 
+ #include "body.h"
+-#include "dynJoint.h"
++#include "dynamics/dynJoint.h"
+ #include "robot.h"
+ #include "triangle.h"
+ #include "world.h"
+ 
+ #include "debug.h"
+-#include "dynamics.h"
+-#include "humanHand.h"
++#include "dynamics/dynamics.h"
++#include "robots/humanHand.h"
+ BulletDynamics::BulletDynamics(World *world)
+ {
+ 
+diff --git a/src/grasp.cpp b/src/grasp.cpp
+index c2d693c..be47a13 100644
+--- a/src/grasp.cpp
++++ b/src/grasp.cpp
+@@ -109,7 +109,7 @@ Grasp::~Grasp()
+   std::list<GWSprojection *>::iterator gpp;
+   std::list<GWS *>::iterator gp;
+ 
+-  std::cout << "Deleting grasp" << std::endl;
++  // std::cout << "Deleting grasp" << std::endl;
+ 
+   for (i = 0; i < numQM; i++) { removeQM(0); }
+   for (gpp = projectionList.begin(); gpp != projectionList.end(); gpp++) {
+@@ -160,7 +160,7 @@ Grasp::addGWS(const char *type)
+     gws = GWS::createInstance(type, this);
+ 
+     gwsList.push_back(gws);
+-    printf("created new %s GWS.\n", type);
++    // printf("created new %s GWS.\n", type);
+   }
+ 
+   gws->ref();  // add 1 to the reference count
+@@ -1064,18 +1064,30 @@ contactForceExistence(Matrix &F, Matrix &N, Matrix &Q, Matrix &beta, double *obj
+   Matrix lowerBounds(Matrix::ZEROES<Matrix>(beta.rows(), 1));
+   Matrix upperBounds(Matrix::MAX_VECTOR(beta.rows()));
+ 
+-  /*
+-  FILE *fp = fopen("gfo.txt","w");
+-  fprintf(fp,"N:\n");
+-  N.print(fp);
+-  fprintf(fp,"right hand:\n");
+-  right_hand.print(fp);
+-  fprintf(fp,"friction inequality:\n");
+-  F.print(fp);
+-  fprintf(fp,"Objective:\n");
+-  Q.print(fp);
+-  fclose(fp);
+-  */
++  // DEBUG: Log matrix dimensions and dump to file for inspection
++  DBGA("contactForceExistence: F=" << F.rows() << "x" << F.cols() 
++       << ", N=" << N.rows() << "x" << N.cols()
++       << ", Q=" << Q.rows() << "x" << Q.cols()
++       << ", beta=" << beta.rows() << "x" << beta.cols());
++  
++  FILE *fp = fopen("/tmp/gfo_debug.txt","w");
++  if (fp) {
++    fprintf(fp,"=== contactForceExistence debug ===\n");
++    fprintf(fp,"N (normal force sum, %dx%d):\n", N.rows(), N.cols());
++    N.print(fp);
++    fprintf(fp,"\nright hand: %g\n", right_hand.elem(0,0));
++    fprintf(fp,"\nF (friction constraints, %dx%d):\n", F.rows(), F.cols());
++    F.print(fp);
++    fprintf(fp,"\nQ (grasp map, %dx%d):\n", Q.rows(), Q.cols());
++    Q.print(fp);
++    fprintf(fp,"\nlowerBounds (%dx%d):\n", lowerBounds.rows(), lowerBounds.cols());
++    lowerBounds.print(fp);
++    fprintf(fp,"\nupperBounds (%dx%d):\n", upperBounds.rows(), upperBounds.cols());
++    upperBounds.print(fp);
++    fclose(fp);
++    DBGA("Wrote GFO debug to /tmp/gfo_debug.txt");
++  }
++  
+   int result = factorizedQPSolver(Q, N, right_hand, F, inEqZeroes,
+                                   lowerBounds, upperBounds,
+                                   beta, objVal);
+diff --git a/src/gws.cpp b/src/gws.cpp
+index 9587f60..50e2458 100644
+--- a/src/gws.cpp
++++ b/src/gws.cpp
+@@ -68,7 +68,7 @@ const std::vector<int> GWS::ALL_DIMENSIONS = std::vector<int>(6, 1);
+ */
+ GWS::~GWS()
+ {
+-  DBGA("deleting GWS");
++  // DBGA("deleting GWS");
+   clearGWS();
+ }
+ 
+@@ -464,43 +464,39 @@ GWS::buildHyperplanesFromWrenches(void *wr, int numWrenches,
+   coordT *wrenches = (coordT *)wr;
+   boolT ismalloc;
+   int curlong, totlong, exitcode;
+-  char options[200];
+   facetT *facet;
+   int i;
+ 
+   ismalloc = False;   // True if qh_freeqhull should 'free(array)'
+   FILE *qhfp = fopen("logfile-qhull", "w");
+-  if (!qhfp) {
+-    fprintf(stderr, "Could not open qhull logfile!\n");
+-    qh_init_A(NULL, stdout, stderr, 0, NULL);
+-  }
+-  else {
+-    qh_init_A(NULL, qhfp, qhfp, 0, NULL);
+-  }
+ 
++  int dimensions = 0;
++  for (int d = 0; d < 6; d++) {
++    if (useDimensions[d]) { dimensions++; }
++  }
+ 
+-  if ((exitcode = setjmp(qh errexit))) {
+-    DBGP("QUALITY: 0 volume, quick exit");
++  // Use the one-shot API to avoid qh_exit()/setjmp() issues when linked against
++  // system libqhull. It returns an error code instead of aborting the process.
++  // Note: qh_new_qhull may still write diagnostics to the provided streams.
++  const char *options = "qhull Pp n Qx QJ C-0.0001";
++  exitcode = qh_new_qhull(dimensions, numWrenches, &wrenches[0], ismalloc,
++                          const_cast<char *>(options),
++                          qhfp ? qhfp : stdout,
++                          qhfp ? qhfp : stderr);
++  if (exitcode) {
++    DBGP("QUALITY: 0 volume, qhull error exit");
+     qh NOerrexit = True;
+     qh_freeqhull(!qh_ALL);
+     qh_memfreeshort(&curlong, &totlong);
+-    if (curlong || totlong)
+-      fprintf(stderr, "qhull internal warning (main): did not free %d bytes of long memory (%d pieces)\n",
++    if (curlong || totlong) {
++      fprintf(stderr,
++              "qhull internal warning (main): did not free %d bytes of long memory (%d pieces)\n",
+               totlong, curlong);
++    }
+     if (qhfp) { fclose(qhfp); }
+     return FAILURE;
+   }
+ 
+-  int dimensions = 0;
+-  for (int d = 0; d < 6; d++) {
+-    if (useDimensions[d]) { dimensions++; }
+-  }
+-
+-  sprintf(options, "qhull Pp n Qx QJ C-0.0001");
+-  qh_initflags(options);
+-  qh_init_B(&wrenches[0], numWrenches, dimensions, ismalloc);
+-  qh_qhull();
+-  qh_check_output();
+   qh_getarea(qh facet_list);
+   if (qhfp) { fclose(qhfp); }
+ 
+@@ -539,6 +535,16 @@ GWS::buildHyperplanesFromWrenches(void *wr, int numWrenches,
+     i++;
+   }
+ 
++  // Always free qhull's global allocations so repeated quality evaluations are safe.
++  qh NOerrexit = True;
++  qh_freeqhull(!qh_ALL);
++  qh_memfreeshort(&curlong, &totlong);
++  if (curlong || totlong) {
++    fprintf(stderr,
++            "qhull internal warning (main): did not free %d bytes of long memory (%d pieces)\n",
++            totlong, curlong);
++  }
++
+   qh NOerrexit = True;
+   qh_freeqhull(!qh_ALL);
+   qh_memfreeshort(&curlong, &totlong);
+diff --git a/src/math/matrix.cpp b/src/math/matrix.cpp
+index a24ad85..1b513da 100644
+--- a/src/math/matrix.cpp
++++ b/src/math/matrix.cpp
+@@ -1208,23 +1208,29 @@ int QPSolver(const Matrix &Q, const Matrix &cj, const Matrix &Eq,
+   assert(lowerBounds.cols() == 1);
+   assert(upperBounds.cols() == 1);
+ 
++  int result = -1;
++
+ #ifdef MOSEK_QP
+-  int result = mosekNNSolverWrapper(Q, cj, Eq, b, InEq, ib,
+-                                    lowerBounds, upperBounds, sol,
+-                                    objVal);
++  result = mosekNNSolverWrapper(Q, cj, Eq, b, InEq, ib,
++                                lowerBounds, upperBounds, sol,
++                                objVal);
+ #elif defined OASES_QP
+-  int result = QPOASESSolverWrapperQP(Q, Eq, b, InEq, ib,
+-                                      lowerBounds, upperBounds, sol,
+-                                      objVal);
++  result = QPOASESSolverWrapperQP(Q, Eq, b, InEq, ib,
++                                  lowerBounds, upperBounds, sol,
++                                  objVal);
+ #elif defined GUROBI_SOLVER
+-  int result = gurobiSolverWrapper(Q, cj, Eq, b, InEq, ib,
+-                                   lowerBounds, upperBounds, sol,
+-                                   objVal);
++  result = gurobiSolverWrapper(Q, cj, Eq, b, InEq, ib,
++                               lowerBounds, upperBounds, sol,
++                               objVal);
+ #else
+-  int result = 0;
+-  objVal = objVal; // Fix for unreferenced formal parameter warning.
+   DBGA("No QP Solver installed");
+-  return 0;
++  // No solver compiled in: do not claim success.
++  // Also initialize outputs to avoid callers printing garbage values.
++  sol.setAllElements(0.0);
++  if (objVal) {
++    *objVal = std::numeric_limits<double>::quiet_NaN();
++  }
++  result = -1;
+ #endif
+ 
+   return result;
+@@ -1405,21 +1411,27 @@ LPSolver(const Matrix &cj,
+ 
+   Matrix Q(0,0);
+ 
++  int result = -1;
++
+ #ifdef MOSEK_QP
+-  int result = mosekNNSolverWrapper(Q, cj, Eq, b, InEq, ib,
+-                                    lowerBounds, upperBounds, sol, objVal);
++  result = mosekNNSolverWrapper(Q, cj, Eq, b, InEq, ib,
++                                lowerBounds, upperBounds, sol, objVal);
+ #elif defined OASES_QP
+-  int result = QPOASESSolverWrapperLP(cj, Eq, b, InEq, ib,
+-                                      lowerBounds, upperBounds, sol,
+-                                      objVal);
++  result = QPOASESSolverWrapperLP(cj, Eq, b, InEq, ib,
++                                  lowerBounds, upperBounds, sol,
++                                  objVal);
+ #elif defined GUROBI_SOLVER
+-  int result = gurobiSolverWrapper(Q, cj, Eq, b, InEq, ib,
+-                                   lowerBounds, upperBounds, sol, objVal);
++  result = gurobiSolverWrapper(Q, cj, Eq, b, InEq, ib,
++                               lowerBounds, upperBounds, sol, objVal);
+ #else
+-  int result = 0;
+-  objVal = objVal; // Fix for unreferenced formal parameter warning.
+   DBGA("No LP Solver installed");
+-  return result;
++  // No solver compiled in: do not claim success.
++  // Also initialize outputs to avoid callers printing garbage values.
++  sol.setAllElements(0.0);
++  if (objVal) {
++    *objVal = std::numeric_limits<double>::quiet_NaN();
++  }
++  result = -1;
+ #endif
+ 
+   return result;
+diff --git a/src/math/qpoases.cpp b/src/math/qpoases.cpp
+index bcaa3f6..9be0b7c 100644
+--- a/src/math/qpoases.cpp
++++ b/src/math/qpoases.cpp
+@@ -47,7 +47,7 @@ void oasesFromMatrix(std::vector<double> &O, const Matrix &M, double scale = 1.0
+   double value;
+   M.sequentialReset();
+   O.resize(0);
+-  O.resize(M.cols()*M.cols(), 0.0);
++  O.resize(M.rows()*M.cols(), 0.0);
+   while (M.nextSequentialElement(i, j, value)) {
+     O.at(i * M.cols() + j) = value / scale;
+   }
+@@ -69,13 +69,23 @@ int QPOASESSolverWrapperQP(const Matrix &Q,
+                            const Matrix &lowerBounds, const Matrix &upperBounds,
+                            Matrix &sol, double *objVal)
+ {
+-  // number of variables
+-  int nV = sol.cols();
+-  // number of constraints
+-  int nC = Eq.cols() + InEq.cols();
+-  // set up QProblem object
++  int nV = sol.rows();
++  int nC = Eq.rows() + InEq.rows();
++  
++  DBGA("QPOASESSolverWrapperQP: nV=" << nV << ", nC=" << nC 
++       << ", Q=" << Q.rows() << "x" << Q.cols()
++       << ", Eq=" << Eq.rows() << "x" << Eq.cols()
++       << ", InEq=" << InEq.rows() << "x" << InEq.cols()
++       << ", sol=" << sol.rows() << "x" << sol.cols());
++  
+   qpOASES::QProblem problem(nV, nC);
++  // qpOASES can be noisy on stderr (e.g. "Error number undefined") even when
++  // we handle return codes. Keep it quiet unless GraspIt debug is enabled.
++#ifdef GRASPITDBG
+   problem.setPrintLevel(qpOASES::PL_LOW);
++#else
++  problem.setPrintLevel(qpOASES::PL_NONE);
++#endif
+ 
+   //solvers are sensitive to numerical problems. Scale the problem down
+   //we will use this value to scale down the right hand side of equality
+@@ -93,6 +103,15 @@ int QPOASESSolverWrapperQP(const Matrix &Q,
+   std::vector<double> H;
+   oasesFromMatrix(H, Q);
+ 
++  // Add Tikhonov regularization to Hessian diagonal for numerical stability.
++  // qpOASES (active-set method) is sensitive to ill-conditioned Hessians.
++  // This small perturbation improves conditioning without significantly
++  // affecting the optimal solution.
++  const double tikhonov_reg = 1e-6;
++  for (int i = 0; i < nV; i++) {
++    H[i * nV + i] += tikhonov_reg;
++  }
++
+   //prepare the constraints matrix, first in Matrix form
+   SparseMatrix GA(Matrix::BLOCKCOLUMN<SparseMatrix>(Eq, InEq));
+   std::vector<double> A;
+@@ -101,28 +120,43 @@ int QPOASESSolverWrapperQP(const Matrix &Q,
+   SparseMatrix GubA(Matrix::BLOCKCOLUMN<SparseMatrix>(b, ib));
+   std::vector<double> ubA;
+   oasesFromMatrix(ubA, GubA, scale);
+-  //lower bounds; min inf for inequalities
+-  SparseMatrix GlbA(Matrix::BLOCKCOLUMN<SparseMatrix>(b, Matrix::MIN_VECTOR(ib.cols())));
++  // Lower bounds: equalities are fixed at b, inequalities are unbounded below.
++  // IMPORTANT: ib is a column vector with one row per inequality constraint.
++  // Using ib.cols() here (always 1) corrupts lbA sizing and can cause qpOASES
++  // to read out-of-bounds memory, leading to spurious infeasibility / warnings.
++  SparseMatrix GlbA(Matrix::BLOCKCOLUMN<SparseMatrix>(b, Matrix::MIN_VECTOR(ib.rows())));
+   std::vector<double> lbA;
+   oasesFromMatrix(lbA, GlbA, scale);
+ 
+-  //lower and upper bounds
++  // Lower/upper variable bounds.
++  // GraspIt uses +/- std::numeric_limits<double>::max() to mean unbounded.
++  // qpOASES expects bounds within +/- qpOASES::INFTY.
+   std::vector<double> lb;
+   lowerBounds.getData(&lb);
+   std::vector<double> ub;
+   upperBounds.getData(&ub);
+   for (size_t i = 0; i < lb.size(); i++) {
+-    if (lb[i] != std::numeric_limits<double>::max() && lb[i] != -std::numeric_limits<double>::max()) {
++    const bool lb_unbounded = (lb[i] == -std::numeric_limits<double>::max()) || (lb[i] == std::numeric_limits<double>::max());
++    const bool ub_unbounded = (ub[i] == -std::numeric_limits<double>::max()) || (ub[i] == std::numeric_limits<double>::max());
++
++    if (lb_unbounded) {
++      lb[i] = -qpOASES::INFTY;
++    } else {
+       lb[i] /= scale;
++      if (lb[i] < -qpOASES::INFTY) { lb[i] = -qpOASES::INFTY; }
+     }
+-    if (ub[i] != std::numeric_limits<double>::max() && ub[i] != -std::numeric_limits<double>::max()) {
++
++    if (ub_unbounded) {
++      ub[i] = qpOASES::INFTY;
++    } else {
+       ub[i] /= scale;
++      if (ub[i] > qpOASES::INFTY) { ub[i] = qpOASES::INFTY; }
+     }
+   }
+ 
+   //g vector, all zeroes
+   std::vector<double> g;
+-  g.resize(sol.cols(), 0.0);
++  g.resize(nV, 0.0);
+ 
+   // solve QP
+   int nWSR = 1000;
+@@ -148,7 +182,7 @@ int QPOASESSolverWrapperQP(const Matrix &Q,
+ 
+   // retrieve the solution
+   std::vector<double> xOpt;
+-  xOpt.resize(sol.cols());
++  xOpt.resize(nV);
+   retVal = problem.getPrimalSolution(&xOpt[0]);
+   if (retVal != qpOASES::SUCCESSFUL_RETURN) {
+     DBGA("qpOASES QP:failed to retrieve solution");
+@@ -174,13 +208,17 @@ int QPOASESSolverWrapperLP(const Matrix &Q,
+                            const Matrix &lowerBounds, const Matrix &upperBounds,
+                            Matrix &sol, double *objVal)
+ {
+-  // number of variables
+-  int nV = sol.cols();
+-  // number of constraints
+-  int nC = Eq.cols() + InEq.cols();
++  int nV = sol.rows();
++  int nC = Eq.rows() + InEq.rows();
+   // set up QProblem object, inform it of 0 Hessian (since we have an LP)
+   qpOASES::QProblem problem(nV, nC, qpOASES::HST_ZERO);
++  // qpOASES can be noisy on stderr (e.g. "Error number undefined") even when
++  // we handle return codes. Keep it quiet unless GraspIt debug is enabled.
++#ifdef GRASPITDBG
+   problem.setPrintLevel(qpOASES::PL_LOW);
++#else
++  problem.setPrintLevel(qpOASES::PL_NONE);
++#endif
+ 
+   //solvers are sensitive to numerical problems. Scale the problem down
+   //we will use this value to scale down the right hand side of equality
+@@ -207,22 +245,37 @@ int QPOASESSolverWrapperLP(const Matrix &Q,
+   SparseMatrix GubA(Matrix::BLOCKCOLUMN<SparseMatrix>(b, ib));
+   std::vector<double> ubA;
+   oasesFromMatrix(ubA, GubA, scale);
+-  //lower bounds; min inf for inequalities
+-  SparseMatrix GlbA(Matrix::BLOCKCOLUMN<SparseMatrix>(b, Matrix::MIN_VECTOR(ib.cols())));
++  // Lower bounds: equalities are fixed at b, inequalities are unbounded below.
++  // IMPORTANT: ib is a column vector with one row per inequality constraint.
++  // Using ib.cols() here (always 1) corrupts lbA sizing and can cause qpOASES
++  // to read out-of-bounds memory, leading to spurious infeasibility / warnings.
++  SparseMatrix GlbA(Matrix::BLOCKCOLUMN<SparseMatrix>(b, Matrix::MIN_VECTOR(ib.rows())));
+   std::vector<double> lbA;
+   oasesFromMatrix(lbA, GlbA, scale);
+ 
+-  //lower and upper bounds
++  // Lower/upper variable bounds.
++  // GraspIt uses +/- std::numeric_limits<double>::max() to mean unbounded.
++  // qpOASES expects bounds within +/- qpOASES::INFTY.
+   std::vector<double> lb;
+   lowerBounds.getData(&lb);
+   std::vector<double> ub;
+   upperBounds.getData(&ub);
+   for (size_t i = 0; i < lb.size(); i++) {
+-    if (lb[i] != std::numeric_limits<double>::max() && lb[i] != -std::numeric_limits<double>::max()) {
++    const bool lb_unbounded = (lb[i] == -std::numeric_limits<double>::max()) || (lb[i] == std::numeric_limits<double>::max());
++    const bool ub_unbounded = (ub[i] == -std::numeric_limits<double>::max()) || (ub[i] == std::numeric_limits<double>::max());
++
++    if (lb_unbounded) {
++      lb[i] = -qpOASES::INFTY;
++    } else {
+       lb[i] /= scale;
++      if (lb[i] < -qpOASES::INFTY) { lb[i] = -qpOASES::INFTY; }
+     }
+-    if (ub[i] != std::numeric_limits<double>::max() && ub[i] != -std::numeric_limits<double>::max()) {
++
++    if (ub_unbounded) {
++      ub[i] = qpOASES::INFTY;
++    } else {
+       ub[i] /= scale;
++      if (ub[i] > qpOASES::INFTY) { ub[i] = qpOASES::INFTY; }
+     }
+   }
+ 
+@@ -250,7 +303,7 @@ int QPOASESSolverWrapperLP(const Matrix &Q,
+ 
+   // retrieve the solution
+   std::vector<double> xOpt;
+-  xOpt.resize(sol.cols());
++  xOpt.resize(nV);
+   retVal = problem.getPrimalSolution(&xOpt[0]);
+   if (retVal != qpOASES::SUCCESSFUL_RETURN) {
+     DBGA("qpOASES LP: failed to retrieve solution");
+diff --git a/src/robot.cpp b/src/robot.cpp
+index bf8c7cf..1ef316b 100644
+--- a/src/robot.cpp
++++ b/src/robot.cpp
+@@ -462,6 +462,18 @@ Robot::loadContactData(QString filename)
+       int f = newContact->getFingerNum();
+       int l = newContact->getLinkNum();
+       if (f >= 0) {
++        if (f >= getNumChains()) {
++          DBGA("Virtual contact finger number " << f << " exceeds number of chains " << getNumChains() << "; skipping");
++          delete newContact;
++          child = child->NextSiblingElement();
++          continue;
++        }
++        if (l < 0 || l >= getChain(f)->getNumLinks()) {
++          DBGA("Virtual contact link number " << l << " out of range for chain " << f << "; skipping");
++          delete newContact;
++          child = child->NextSiblingElement();
++          continue;
++        }
+         newContact->setBody(getChain(f)->getLink(l));
+         getChain(f)->getLink(l)->addVirtualContact(newContact);
+       }else {
+@@ -1455,7 +1467,7 @@ Robot::interpolateJoints(double *initialVals, double *finalVals,
+     }
+     std::cerr << "min dist: " << minDist << std::endl << std::endl;
+ #endif
+-    DBGA("Robot joint interpolation error");
++    // DBGA("Robot joint interpolation error");
+     retVal = 0;
+   } else {
+     DBGP("Interpolation to t=" << t << " (deltat=" << deltat << ")");
+@@ -1635,7 +1647,7 @@ Robot::jumpDOFToContact(double *desiredVals, int *stoppedJoints, int *numCols)
+     //goal is to interpolate to current joint values
+     getJointValues(newJointVals);
+     if (!interpolateJoints(initialJointVals, newJointVals, &colReport, &interpolationTime)) {
+-      DBGA("Interpolation failed!");
++      // DBGA("Interpolation failed!");
+       interpolationError = true;
+       break;
+     }
+diff --git a/src/world.cpp b/src/world.cpp
+index fe991f2..a803ba5 100644
+--- a/src/world.cpp
++++ b/src/world.cpp
+@@ -769,8 +769,6 @@ World::loadFromXml(const TiXmlElement *root, QString rootPath)
+       }
+       if (myIVmgr) {
+         myIVmgr->setCamera(px, py, pz, q1, q2, q3, q4, fd);
+-      } else {
+-        DBGA("Could not set camera");
+       }
+       cameraFound = true;
+     }
+@@ -1015,6 +1013,14 @@ World::importRobot(QString filename)
+     return NULL;
+   }
+ 
++  // Check if this is a URDF file
++  QString rootName = root->Value();
++  bool isURDF = (rootName == "robot" && filename.endsWith(".urdf", Qt::CaseInsensitive));
++
++  if (isURDF) {
++    return importRobotFromURDF(filename, root);
++  }
++
+   QString line = root->Attribute("type");
+   if (line.isNull()) {
+     QTWARNING("Class Type not found");
+@@ -1042,6 +1048,312 @@ World::importRobot(QString filename)
+   return robot;
+ }
+ 
++/*! Imports a robot from a URDF file. This function parses the URDF XML structure
++    and converts it to GraspIt robot format on-the-fly.
++*/
++Robot *
++World::importRobotFromURDF(QString filename, const TiXmlElement *root)
++{
++  QString robotName = root->Attribute("name");
++  if (robotName.isNull()) {
++    QTWARNING("URDF robot name not found");
++    return NULL;
++  }
++
++  QTWARNING("Loading URDF robot: " + robotName + " from " + filename);
++
++  // Create a Hand robot (most URDF robots are hands/grippers)
++  Robot *robot = (Robot *) getWorldElementFactory().createElement("Hand", this, NULL);
++  if (!robot) {
++    QTWARNING("Unable to create Hand robot for URDF import");
++    return NULL;
++  }
++
++  QString rootPath = filename.section('/', 0, -2, QString::SectionIncludeTrailingSep);
++  robot->setName(robotName);
++  QString myFilename = relativePath(filename, getenv("GRASPIT"));
++  robot->setFilename(myFilename);
++
++  if (!QFile::exists(rootPath + "placeholder_palm.xml")) {
++    const char *graspitRoot = getenv("GRASPIT");
++    if (graspitRoot) {
++      QString candidate = QString::fromLatin1(graspitRoot);
++      if (!candidate.endsWith("/")) {
++        candidate += "/";
++      }
++      candidate += "models/robots/realhand/";
++      if (QFile::exists(candidate + "placeholder_palm.xml")) {
++        rootPath = candidate;
++      }
++    }
++  }
++
++  // Parse URDF and convert to GraspIt format
++  if (loadRobotFromURDF(robot, root, rootPath) == FAILURE) {
++    QTWARNING("Failed to load URDF robot from file");
++    delete robot;
++    return NULL;
++  }
++
++  addRobot(robot);
++  return robot;
++}
++
++/*! Loads robot data from a URDF XML structure and converts it to GraspIt format.
++    This is a complex conversion that parses URDF links and joints.
++*/
++int
++World::loadRobotFromURDF(Robot *robot, const TiXmlElement *root, QString rootPath)
++{
++  // Parse URDF robot name
++  QString robotName = root->Attribute("name");
++  if (robotName.isNull()) {
++    QTWARNING("URDF robot name not found");
++    return FAILURE;
++  }
++
++  // Find all links and joints
++  std::map<QString, const TiXmlElement*> links;
++  std::map<QString, const TiXmlElement*> joints;
++
++  const TiXmlElement *child = root->FirstChildElement();
++  while (child) {
++    QString elementName = child->Value();
++    if (elementName == "link") {
++      QString linkName = child->Attribute("name");
++      if (!linkName.isNull()) {
++        links[linkName] = child;
++      }
++    } else if (elementName == "joint") {
++      QString jointName = child->Attribute("name");
++      if (!jointName.isNull()) {
++        joints[jointName] = child;
++      }
++    }
++    child = child->NextSiblingElement();
++  }
++
++  // Find the base link (link with no parent joint)
++  QString baseLinkName;
++  std::set<QString> childLinks;
++  for (auto& jointPair : joints) {
++    const TiXmlElement *joint = jointPair.second;
++    const TiXmlElement *childElement = findXmlElement(joint, "child");
++    if (childElement) {
++      QString childLink = childElement->Attribute("link");
++      if (!childLink.isNull()) {
++        childLinks.insert(childLink);
++      }
++    }
++  }
++
++  for (auto& linkPair : links) {
++    if (childLinks.find(linkPair.first) == childLinks.end()) {
++      baseLinkName = linkPair.first;
++      break;
++    }
++  }
++
++  if (baseLinkName.isNull()) {
++    QTWARNING("Could not find base link in URDF");
++    return FAILURE;
++  }
++
++  QTWARNING("Found base link: " + baseLinkName);
++
++  // Create GraspIt XML structure from URDF
++  TiXmlElement graspitRoot("robot");
++  graspitRoot.SetAttribute("type", "Hand");
++  graspitRoot.SetAttribute("DBName", robotName.toStdString());
++
++  // Add palm (base link)
++  TiXmlElement palmElement("palm");
++  palmElement.SetAttribute("sensorType", "TactileSensor");
++  // Use placeholder for now - full mesh conversion would require URDF mesh processing
++  palmElement.InsertEndChild(TiXmlText("../placeholder_palm.xml"));
++  graspitRoot.InsertEndChild(palmElement);
++
++  // Process joints to create DOFs and chains
++  int dofIndex = 0;
++  std::map<QString, int> jointToDofMap;
++
++  // First pass: create DOFs for all joints
++  for (auto& jointPair : joints) {
++    const TiXmlElement *joint = jointPair.second;
++    QString jointType = joint->Attribute("type");
++
++    if (jointType == "revolute" || jointType == "prismatic") {
++      TiXmlElement dofElement("dof");
++      dofElement.SetAttribute("type", jointType == "revolute" ? "r" : "p");
++
++      const TiXmlElement *limitElement = findXmlElement(joint, "limit");
++      if (limitElement) {
++        const char *lower = limitElement->Attribute("lower");
++        const char *upper = limitElement->Attribute("upper");
++        if (lower && upper) {
++          TiXmlElement minValElement("minValue");
++          minValElement.InsertEndChild(TiXmlText(lower));
++          dofElement.InsertEndChild(minValElement);
++
++          TiXmlElement maxValElement("maxValue");
++          maxValElement.InsertEndChild(TiXmlText(upper));
++          dofElement.InsertEndChild(maxValElement);
++        }
++      }
++
++      // Default values
++      TiXmlElement velElement("defaultVelocity");
++      velElement.InsertEndChild(TiXmlText("1.0"));
++      dofElement.InsertEndChild(velElement);
++
++      TiXmlElement effortElement("maxEffort");
++      effortElement.InsertEndChild(TiXmlText("5.0e+10"));
++      dofElement.InsertEndChild(effortElement);
++
++      TiXmlElement kpElement("Kp");
++      kpElement.InsertEndChild(TiXmlText("1.0e+11"));
++      dofElement.InsertEndChild(kpElement);
++
++      TiXmlElement kdElement("Kd");
++      kdElement.InsertEndChild(TiXmlText("1.0e+7"));
++      dofElement.InsertEndChild(kdElement);
++
++      TiXmlElement scaleElement("draggerScale");
++      scaleElement.InsertEndChild(TiXmlText("20"));
++      dofElement.InsertEndChild(scaleElement);
++
++      graspitRoot.InsertEndChild(dofElement);
++      jointToDofMap[jointPair.first] = dofIndex++;
++    }
++  }
++
++  // Second pass: create kinematic chains
++  // For simplicity, create one chain per finger (simplified approach)
++  std::map<QString, std::vector<const TiXmlElement*>> chains;
++
++  for (auto& jointPair : joints) {
++    const TiXmlElement *joint = jointPair.second;
++    const TiXmlElement *childElement = findXmlElement(joint, "child");
++
++    if (childElement) {
++      QString childLink = childElement->Attribute("link");
++      QString parentLink;
++
++      const TiXmlElement *parentElement = findXmlElement(joint, "parent");
++      if (parentElement) {
++        parentLink = parentElement->Attribute("link");
++      }
++
++      // Simple chain building: group joints by their child link hierarchy
++      if (!parentLink.isNull() && parentLink != baseLinkName) {
++        // This is a continuing chain
++        for (auto& chain : chains) {
++          if (!chain.second.empty()) {
++            const TiXmlElement *lastJoint = chain.second.back();
++            const TiXmlElement *lastChild = findXmlElement(lastJoint, "child");
++            if (lastChild && QString(lastChild->Attribute("link")) == parentLink) {
++              chain.second.push_back(joint);
++              break;
++            }
++          }
++        }
++      } else {
++        // Start a new chain
++        chains[childLink].push_back(joint);
++      }
++    }
++  }
++
++  // Create chain elements in GraspIt format
++  for (auto& chain : chains) {
++    TiXmlElement chainElement("chain");
++
++    // Add transform (simplified - would need proper DH parameter conversion)
++    TiXmlElement transformElement("transform");
++    TiXmlElement translationElement("translation");
++    translationElement.InsertEndChild(TiXmlText("0 0 0"));
++    transformElement.InsertEndChild(translationElement);
++    TiXmlElement rotationElement("rotation");
++    rotationElement.InsertEndChild(TiXmlText("0 z"));
++    transformElement.InsertEndChild(rotationElement);
++    chainElement.InsertEndChild(transformElement);
++
++    // Add joints in the chain
++    for (const TiXmlElement *joint : chain.second) {
++      TiXmlElement jointElement("joint");
++
++      QString jointType = joint->Attribute("type");
++
++      if (jointType == "revolute") {
++        jointElement.SetAttribute("type", "Revolute");
++
++        // Add DH parameters (simplified)
++        TiXmlElement thetaElement("theta");
++        auto dofIt = jointToDofMap.find(joint->Attribute("name"));
++        if (dofIt != jointToDofMap.end()) {
++          QString thetaVal = QString("d%1").arg(dofIt->second);
++          thetaElement.InsertEndChild(TiXmlText(thetaVal.toStdString()));
++        } else {
++          thetaElement.InsertEndChild(TiXmlText("0"));
++        }
++        jointElement.InsertEndChild(thetaElement);
++
++        TiXmlElement dElement("d");
++        dElement.InsertEndChild(TiXmlText("0"));
++        jointElement.InsertEndChild(dElement);
++
++        TiXmlElement aElement("a");
++        aElement.InsertEndChild(TiXmlText("0"));
++        jointElement.InsertEndChild(aElement);
++
++        TiXmlElement alphaElement("alpha");
++        alphaElement.InsertEndChild(TiXmlText("0"));
++        jointElement.InsertEndChild(alphaElement);
++
++        // Add limits
++        const TiXmlElement *limitElement = findXmlElement(joint, "limit");
++        if (limitElement) {
++          const char *lower = limitElement->Attribute("lower");
++          const char *upper = limitElement->Attribute("upper");
++          if (lower) {
++            TiXmlElement minValElement("minValue");
++            minValElement.InsertEndChild(TiXmlText(lower));
++            jointElement.InsertEndChild(minValElement);
++          }
++          if (upper) {
++            TiXmlElement maxValElement("maxValue");
++            maxValElement.InsertEndChild(TiXmlText(upper));
++            jointElement.InsertEndChild(maxValElement);
++          }
++        }
++
++        TiXmlElement frictionElement("viscousFriction");
++        frictionElement.InsertEndChild(TiXmlText("5.0e+7"));
++        jointElement.InsertEndChild(frictionElement);
++
++      } else if (jointType == "prismatic") {
++        jointElement.SetAttribute("type", "Prismatic");
++        // Similar setup for prismatic joints...
++      }
++
++      chainElement.InsertEndChild(jointElement);
++    }
++
++    // Add link elements (placeholder)
++    for (size_t i = 0; i < chain.second.size(); i++) {
++      TiXmlElement linkElement("link");
++      linkElement.SetAttribute("dynamicJointType", "Revolute");
++      linkElement.InsertEndChild(TiXmlText("../placeholder_link.xml"));
++      chainElement.InsertEndChild(linkElement);
++    }
++
++    graspitRoot.InsertEndChild(chainElement);
++  }
++
++  // Load using existing GraspIt XML loading
++  return robot->loadFromXml(&graspitRoot, rootPath);
++}
++
+ /*! Adds to this world a robot that is already created, initialized and somehow
+ populated. This usually means a robot obtained by loading from a file or
+ cloning another body. It only adds the new robot to the scene graph of
+@@ -1796,6 +2108,20 @@ World::turnOnDynamics()
+   idleSensor->schedule();
+ }
+ 
++/*! Starts dynamic simulation without scheduling an idle sensor.
++
++This is intended for headless or externally controlled stepping (e.g., from
++Python), where the caller will invoke stepDynamicsManual() explicitly.
++*/
++void
++World::turnOnDynamicsManual()
++{
++  dynamicsOn = true;
++  mDynamicsEngine->turnOnDynamics();
++  if (idleSensor) { delete idleSensor; }
++  idleSensor = NULL;
++}
++
+ /*! Pauses dynamic simulation; no more time steps are computed*/
+ void
+ World::turnOffDynamics()
+@@ -1916,6 +2242,27 @@ World::stepDynamics()
+   if (idleSensor) { idleSensor->schedule(); }
+ }
+ 
++/*! Performs one dynamics step without rescheduling any idle sensor.
++
++Returns the dynamics engine return code (typically 0 on success; -1 on error).
++*/
++int
++World::stepDynamicsManual()
++{
++  int ret = mDynamicsEngine->stepDynamics();
++
++#ifdef BULLET_DYNAMICS
++  // GraspitDynamics updates worldTime internally, but BulletDynamics does not.
++  // When driving dynamics manually (no idle sensor), we advance worldTime here
++  // to keep the Python-visible clock consistent.
++  if (ret != -1) {
++    worldTime += dynamicsTimeStep;
++  }
++#endif
++
++  return ret;
++}
++
+ void World::selectTendon(Tendon *t)
+ {
+   if (isTendonSelected) {

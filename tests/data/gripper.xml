@@ -1,0 +1,42 @@
+<!-- Three-finger test hand: one opposing thumb and two coupled fingers.
+     The second finger's joint axes are slightly skewed to exercise the
+     nearly-parallel DH branch of the GraspIt exporter. Units: metres. -->
+<mujoco model="test_gripper">
+  <compiler angle="radian"/>
+  <worldbody>
+    <body name="palm" pos="0 0 0">
+      <geom type="box" size="0.055 0.04 0.01" pos="0 0 0"/>
+      <body name="f1_prox" pos="0.045 0.025 0.01">
+        <joint name="f1_mcp" type="hinge" axis="0 -1 0" range="0 1.4"/>
+        <geom type="capsule" fromto="0 0 0 0 0 0.04" size="0.008"/>
+        <body name="f1_dist" pos="0 0 0.04">
+          <joint name="f1_dip" type="hinge" axis="0 -1 0" range="0 1.6"/>
+          <geom type="capsule" fromto="0 0 0 0 0 0.03" size="0.007"/>
+          <body name="f1_tip" pos="0 0 0.03">
+            <geom type="sphere" size="0.007"/>
+          </body>
+        </body>
+      </body>
+      <body name="f2_prox" pos="0.045 -0.025 0.01">
+        <joint name="f2_mcp" type="hinge" axis="0.0002 -1 0" range="0 1.4"/>
+        <geom type="capsule" fromto="0 0 0 0 0 0.04" size="0.008"/>
+        <body name="f2_dist" pos="0 0 0.04">
+          <joint name="f2_dip" type="hinge" axis="-0.0002 -1 0" range="0 1.6"/>
+          <geom type="capsule" fromto="0 0 0 0 0 0.03" size="0.007"/>
+        </body>
+      </body>
+      <body name="th_prox" pos="-0.045 0 0.01" euler="0 0 3.14159265">
+        <joint name="th_mcp" type="hinge" axis="0 -1 0" range="0 1.4"/>
+        <geom type="box" size="0.008 0.008 0.02" pos="0 0 0.02"/>
+        <body name="th_dist" pos="0 0 0.04">
+          <joint name="th_dip" type="hinge" axis="1 0.3 0.1" range="-0.5 0.5"/>
+          <geom type="cylinder" size="0.007 0.015" pos="0 0 0.015"/>
+        </body>
+      </body>
+    </body>
+  </worldbody>
+  <equality>
+    <joint joint1="f1_dip" joint2="f1_mcp" polycoef="0 1.1 0 0 0"/>
+    <joint joint1="f2_dip" joint2="f2_mcp" polycoef="0 1.1 0 0 0"/>
+  </equality>
+</mujoco>

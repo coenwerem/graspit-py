@@ -1,0 +1,23 @@
+<mujoco model="nonzero reference angle gripper">
+  <compiler angle="radian"/>
+  <worldbody>
+    <body name="floating_body" pos="0 0 1">
+      <freejoint/>
+      <geom type="sphere" size=".01"/>
+    </body>
+    <body name="palm">
+      <geom type="box" size=".025 .025 .006"/>
+      <body name="proximal" pos=".02 0 .015">
+        <joint name="driver" axis="0 1 0" range="-.5 1" ref=".35"/>
+        <geom type="box" size=".005 .007 .020" pos="0 0 .020"/>
+        <body name="distal" pos="0 0 .045">
+          <joint name="driven" axis="0 1 0" range="-.8 .8" ref="-.20"/>
+          <geom type="box" size=".004 .006 .015" pos="0 0 .015"/>
+        </body>
+      </body>
+    </body>
+  </worldbody>
+  <equality>
+    <joint joint1="driven" joint2="driver" polycoef=".16 .70 0 0 0"/>
+  </equality>
+</mujoco>

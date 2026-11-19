@@ -1,0 +1,18 @@
+{
+  "hand": {
+    "approach_axis": [0, 0, 1],
+    "finger_axis": [1, 0, 0],
+    "grasp_center_mm": [0, 0, 65]
+  },
+  "planner": {
+    "approaches": [[0, 0, 1, 0], [0, 0, 1, 45], [0, 0, 1, 90]],
+    "standoff_mm": 80,
+    "pose_sigma_mm": 0.25,
+    "pose_sigma_deg": 0.5,
+    "n_pose_samples": 2,
+    "friction_samples": [0.3, 0.6, 0.9],
+    "tail_mass": 0.5,
+    "task_forces_mm": [[0, 0, 0, 0, 0, 1]],
+    "seed": 42
+  }
+}

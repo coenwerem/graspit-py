@@ -1,0 +1,106 @@
+docs/IMPLEMENTATION_SUMMARY.md
+docs/output.pdf
+*.vscode/*
+*.vscode/settings.json
+**/*.log
+*build/
+*.tmp
+.DS_Store
+.idea/
+*.iml
+out/
+dist/
+node_modules/
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+*install/
+.log/
+**/*.tex
+**/*.aux
+**/*.lof
+**/*.lot
+**/*.fls
+**/*.out
+*.bak
+**/*.pdf
+**logfile
+*.swp
+*.swo
+# Ignore Python bytecode files
+*.pyc
+*.pyo
+*.pyd
+# Ignore __pycache__ directories
+__pycache__/
+# belief_testbed_results/*
+**.cache/*
+bindings/.cache/
+**/*.zip
+logfile
+**/*.egg-info/
+bindings/.cache/clangd/index/graspit_bindings.cpp.0572EA17FA898BA7.idx
+bindings/.cache/clangd/index/graspit_bindings.cpp.0572EA17FA898BA7.pch
+core/_bindings.cpython-312-x86_64-linux-gnu.so
+core/_bindings.cpython-312-x86_64-linux-gnu.so
+bindings/.cache/*
+# bindings/compile_commands.json
+logfile-qhull
+# Ignore images under outputs
+outputs/**/*.png
+outputs/**/*.jpg
+outputs/**/*.jpeg
+outputs/**/*.gif
+outputs/**/*.bmp
+outputs/**/*.tif
+outputs/**/*.tiff
+outputs/**/*.svg
+outputs/**/*.webp
+outputs/pics_bkp/*
+outputs/res_bkp/*
+docs/API_REFERENCE.md
+docs/BELIEF_SPACE.md
+docs/BELIEF_EXPERIMENTS.md
+docs/NEW_RES_FEATURES.md
+docs/EXPERIMENT_RESULTS.md
+docs/DEVELOPMENT_GUIDE.md
+docs/OPTIM.md
+outputs/belief_rollouts/*.json
+!outputs/belief_rollouts/rollout_labels.example.json
+!figures/metrics/aggregated/a_ours/*.pdf
+# Ignore all markdown files in docs except INSTALL and TECHNICAL_DOCUMENTATION.md
+docs/**/*.md
+!docs/**/INSTALL.md
+!docs/**/TECHNICAL_DOCUMENTATION.md
+docs/tex/*
+docs/source/
+docs/_build/
+docs/.tox/
+docs/*.bat
+docs/Makefile
+**/.vscode/*
+**/*.h5
+grasp_database/Barrett/flask
+third_party/samples
+outputs/paper_experiments
+outputs/rs_renders
+outputs/rs_synthesis
+# Local recovery builds and run records
+outputs/recovery_20260924/
+
+# Local physical prediction data and figures
+outputs/corrected_risk_20260925/
+
+# Preserve completed runs and private handoff backups on the remote as well.
+# These exceptions also retain figures otherwise excluded above.
+!outputs/a7_learning_20261001/
+!outputs/a7_learning_20261001/**
+!outputs/research_backup_20261001/
+!outputs/research_backup_20261001/**
+
+# Reconstructible assembly providers and native rollout records.
+.venv-a7-assembly/
+outputs/a7_assembly_20261002/
+!docs/a7_assembly.md

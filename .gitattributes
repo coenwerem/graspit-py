@@ -1,0 +1,2 @@
+# Preserve the upstream source patch, including whitespace in context lines.
+docker/graspit-engine.patch -text whitespace=-blank-at-eol
