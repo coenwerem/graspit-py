@@ -83,6 +83,7 @@ software revision used. The wrapper is licensed under
 - Ferrari, C., and Canny, J. F. (1992). [Planning Optimal Grasps](https://doi.org/10.1109/ROBOT.1992.219918). *IEEE International Conference on Robotics and Automation*.
 - Todorov, E., Erez, T., and Tassa, Y. (2012). [MuJoCo: A Physics Engine for Model-Based Control](https://doi.org/10.1109/IROS.2012.6386109). *IEEE/RSJ International Conference on Intelligent Robots and Systems*.
 - Rockafellar, R. T., and Uryasev, S. (2002). [Conditional Value-at-Risk for General Loss Distributions](https://doi.org/10.1016/S0378-4266(02)00271-6). *Journal of Banking & Finance*, 26(7), 1443–1471.
+- Enwerem, C., Baras, J. S., and Belta, C. (2026). [FIRMGrasp: A Friction-Informed Risk Margin for Robust Grasp Synthesis](https://arxiv.org/abs/2607.25049). arXiv:2607.25049.
 
 See the [manual references](https://clintonenwerem.com/graspit-python-wrapper/references.html)
 for sources on hand posture, frictional contact, and grasp wrench spaces.

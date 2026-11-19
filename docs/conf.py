@@ -1,5 +1,7 @@
 """Sphinx configuration for the GraspIt! Python wrapper manual."""
 
+from markupsafe import Markup
+
 project = "GraspIt! Python Wrapper"
 extensions = ["myst_parser"]
 exclude_patterns = ["_build", ".DS_Store"]
@@ -12,13 +14,6 @@ html_show_sourcelink = False
 html_static_path = ["_static"]
 html_css_files = ["hand-gallery.css"]
 
-html_theme_options = {
-    "footer_icons": [
-        {
-            "name": "Clinton Enwerem’s Homepage",
-            "url": "https://clintonenwerem.com/",
-            "html": "Clinton Enwerem",
-            "class": "author-homepage-link",
-        },
-    ],
+html_context = {
+    "copyright": Markup('2026, <a href="https://clintonenwerem.com/">Clinton Enwerem</a>'),
 }

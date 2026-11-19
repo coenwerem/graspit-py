@@ -154,5 +154,11 @@ friction coefficient, it uses the nominal score at the specified
 coefficient. For the discrete probability treatment, see
 {ref}`Rockafellar and Uryasev <ref-rockafellar-uryasev>`.
 
+{ref}`FIRMGrasp <ref-firmgrasp>` evaluates the force-closure margin
+at the mean of the adverse friction tail. In the planner above, the
+tail is taken over the quality scores obtained after simulating
+closure and evaluating the friction grid. In task mode, each score
+is the supported load multiplier $Q$.
+
 The [planning guide](planning.md) maps these quantities to configuration
 fields and candidate records.

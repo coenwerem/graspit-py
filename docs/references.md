@@ -62,3 +62,8 @@ and Performance*. Autonomous Robots, 38, 65–88.
 Rockafellar, R. T., and Uryasev, S. (2002). *Conditional Value-at-Risk
 for General Loss Distributions*. Journal of Banking & Finance,
 26(7), 1443–1471. [DOI](https://doi.org/10.1016/S0378-4266(02)00271-6).
+
+(ref-firmgrasp)=
+Enwerem, C., Baras, J. S., and Belta, C. (2026). *FIRMGrasp:
+A Friction-Informed Risk Margin for Robust Grasp Synthesis*.
+[arXiv:2607.25049](https://arxiv.org/abs/2607.25049).
