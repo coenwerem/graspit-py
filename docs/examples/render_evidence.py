@@ -113,7 +113,7 @@ def render(capture_file, output):
                 ax.set(xlim=(center[0]-radius, center[0]+radius),
                        ylim=(center[1]-radius, center[1]+radius),
                        zlim=(center[2]-radius, center[2]+radius))
-                ax.set_box_aspect((1, 1, 1), zoom=1.24)
+                ax.set_box_aspect((1, 1, 1), zoom=1.12)
                 ax.set_proj_type("ortho")
                 ax.view_init(elev=32 if stem == "generated-grasps" else 21, azim=-70)
                 ax.set_axis_off()
