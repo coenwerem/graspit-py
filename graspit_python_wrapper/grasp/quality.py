@@ -433,17 +433,22 @@ def min_weight_force_closure(
     grasp_matrix: np.ndarray,
     tol: float = 1e-6,
 ) -> Tuple[float, bool]:
-    """Check force closure using min-weight LP formulation (Frogger-style).
+    """Compute the FRoGGeR min-weight LP and certify force closure in R^6.
 
-    Tests whether the origin lies in the interior of the convex hull of
-    primitive wrenches via the FRoGGeR min-weight LP.
+    With the LP backend, force closure requires an optimum above ``tol`` and
+    full wrench rank, evaluated with NumPy's default SVD tolerance. A positive
+    optimum for a rank-deficient set places the origin in its relative
+    interior, so its optimum is retained without certifying force closure.
 
     Args:
         grasp_matrix: (6, n_wrenches) matrix of primitive wrenches
-        tol: Numerical tolerance
+        tol: Positive-optimum threshold for the LP certificate
 
     Returns:
-        (l_star, is_force_closure) where l_star is the min-weight metric
+        (l_star, is_force_closure), retaining the LP optimum independently of
+        the rank condition. Without the LP backend, delegates to
+        ``compute_gws_epsilon``. The SciPy-free path returns a minimum-
+        singular-value proxy and its threshold indicator, not an LP certificate.
     """
     if not HAS_SCIPY:
         return compute_gws_epsilon(grasp_matrix)
@@ -486,7 +491,7 @@ def min_weight_force_closure(
 
         if result.success:
             l_opt = float(result.x[-1])
-            return l_opt, l_opt > tol
+            return l_opt, bool(l_opt > tol and np.linalg.matrix_rank(W) == 6)
         else:
             return 0.0, False
     except Exception:

@@ -4,7 +4,8 @@ import pytest
 
 from graspit_python_wrapper.core.types import ContactPoint
 from graspit_python_wrapper.grasp.quality import (analyze_gws, build_grasp_matrix_from_contacts,
-                                                  compute_task_wrench_quality, task_wrenches_from_forces)
+                                                  compute_task_wrench_quality, min_weight_force_closure,
+                                                  task_wrenches_from_forces)
 from graspit_python_wrapper.risk import cvar, lower_tail_mean
 
 
@@ -89,3 +90,22 @@ def test_task_quality_falls_with_the_load_lever_arm():
                                                                   np.zeros(3), 100.))
          for x in (0., 50., 150.)]
     assert q[0] > q[1] > q[2] > 0
+
+
+@pytest.mark.parametrize('rank,repetitions,expected_margin', [(1, 6, 1 / 12), (5, 1, 1 / 10)])
+def test_min_weight_positive_margin_requires_full_wrench_rank(rank, repetitions, expected_margin):
+    # Uniform weights balance each antipodal pair and attain the LP upper bound
+    # 1/n, but unspanned wrench directions prevent six-dimensional closure.
+    basis = np.eye(6)[:, :rank]
+    W = np.tile(np.hstack([basis, -basis]), (1, repetitions))
+    margin, is_force_closure = min_weight_force_closure(W)
+    assert margin == pytest.approx(expected_margin)
+    assert not is_force_closure
+
+
+def test_min_weight_full_rank_balanced_wrenches_are_force_closure():
+    # The 12 vertices +/-e_i span R^6 and attain the same uniform-weight optimum.
+    W = np.hstack([np.eye(6), -np.eye(6)])
+    margin, is_force_closure = min_weight_force_closure(W)
+    assert margin == pytest.approx(1 / 12)
+    assert is_force_closure

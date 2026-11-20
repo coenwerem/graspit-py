@@ -103,7 +103,14 @@ GraspIt! build when NumPy and SciPy are available.
   by `(chain, link)`.
 - `graspit_python_wrapper.grasp.quality` provides
   `build_grasp_matrix()`, `analyze_gws()`, and
-  `compute_task_wrench_quality()`. The grasp matrix stores
+  `compute_task_wrench_quality()`, and `min_weight_force_closure()`.
+  With SciPy, the min-weight routine returns the LP optimum and a Boolean
+  requiring a positive margin above tolerance and wrench-matrix rank six.
+  A positive margin in a lower-dimensional wrench subspace is retained
+  with a false force-closure predicate. Without SciPy, the epsilon and
+  min-weight entry points return a minimum-singular-value proxy and its
+  threshold indicator. Use SciPy for hull and LP force-closure analysis.
+  The grasp matrix stores
   force components first and normalized torque components second.
   Supply the same moment origin and torque scale for the contact wrench
   generators and the required task wrenches.
