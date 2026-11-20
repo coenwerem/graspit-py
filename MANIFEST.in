@@ -1,6 +1,6 @@
 include README.md LICENSE CITATION.cff CONTRIBUTING.md
 include bindings/CMakeLists.txt bindings/graspit_bindings.cpp
-recursive-include docs *.md *.png *.json
-recursive-include examples *.py *.json
+recursive-include docs *.md *.png *.json *.svg
+recursive-include examples *.py *.json *.sh *.xml *.md
 recursive-include tests *.py
 include docker/Dockerfile

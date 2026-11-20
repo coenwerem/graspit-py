@@ -1,0 +1,153 @@
+<mujoco model="xarm7_l6">
+  <compiler angle="radian"/>
+
+  <asset>
+    <mesh name="link_base" content_type="model/stl" file="arm/meshes/visual/link_base.stl"/>
+    <mesh name="link1" content_type="model/stl" file="arm/meshes/visual/link1.stl"/>
+    <mesh name="link2" content_type="model/stl" file="arm/meshes/visual/link2.stl"/>
+    <mesh name="link3" content_type="model/stl" file="arm/meshes/visual/link3.stl"/>
+    <mesh name="link4" content_type="model/stl" file="arm/meshes/visual/link4.stl"/>
+    <mesh name="link5" content_type="model/stl" file="arm/meshes/visual/link5.stl"/>
+    <mesh name="link6" content_type="model/stl" file="arm/meshes/visual/link6.stl"/>
+    <mesh name="end_tool" content_type="model/stl" file="arm/meshes/collision/end_tool.stl"/>
+    <mesh name="hand_base_link" content_type="model/stl" file="hand/meshes/hand_base_link.STL"/>
+    <mesh name="thumb_metacarpals_base1" content_type="model/stl" file="hand/meshes/thumb_metacarpals_base1.STL"/>
+    <mesh name="thumb_metacarpals" content_type="model/stl" file="hand/meshes/thumb_metacarpals.STL"/>
+    <mesh name="thumb_distal" content_type="model/stl" file="hand/meshes/thumb_distal.STL"/>
+    <mesh name="index_proximal" content_type="model/stl" file="hand/meshes/index_proximal.STL"/>
+    <mesh name="index_distal" content_type="model/stl" file="hand/meshes/index_distal.STL"/>
+    <mesh name="middle_proximal" content_type="model/stl" file="hand/meshes/middle_proximal.STL"/>
+    <mesh name="middle_distal" content_type="model/stl" file="hand/meshes/middle_distal.STL"/>
+    <mesh name="ring_proximal" content_type="model/stl" file="hand/meshes/ring_proximal.STL"/>
+    <mesh name="ring_distal" content_type="model/stl" file="hand/meshes/ring_distal.STL"/>
+    <mesh name="pinky_proximal" content_type="model/stl" file="hand/meshes/pinky_proximal.STL"/>
+    <mesh name="pinky_distal" content_type="model/stl" file="hand/meshes/pinky_distal.STL"/>
+  </asset>
+
+  <worldbody>
+    <body name="link_base">
+      <inertial pos="-0.021131 -0.0016302 0.056488" quat="0.696843 0.20176 0.10388 0.680376" mass="0.88556" diaginertia="0.00382023 0.00335282 0.00167725"/>
+      <geom quat="1 0 0 0" type="mesh" rgba="1 1 1 1" mesh="link_base"/>
+      <body name="link1" pos="0 0 0.267">
+        <inertial pos="-0.0002 0.02905 -0.01233" quat="0.978953 -0.202769 -0.00441616 -0.0227264" mass="2.382" diaginertia="0.00569127 0.00533384 0.00293865"/>
+        <joint name="joint1" range="-6.28319 6.28319" actuatorfrcrange="-163.2 163.2" damping="10" frictionloss="1"/>
+        <geom type="mesh" rgba="1 1 1 1" mesh="link1"/>
+        <body name="link2" quat="0.707105 -0.707108 0 0">
+          <inertial pos="0.00022 -0.12856 0.01735" quat="0.50198 0.86483 -0.00778841 0.00483285" mass="1.869" diaginertia="0.00959898 0.00937717 0.00201315"/>
+          <joint name="joint2" range="-2.059 2.0944" actuatorfrcrange="-163.2 163.2" damping="10" frictionloss="1"/>
+          <geom quat="1 0 0 0" type="mesh" rgba="1 1 1 1" mesh="link2"/>
+          <body name="link3" pos="0 -0.293 0" quat="0.707105 0.707108 0 0">
+            <inertial pos="0.0466 -0.02463 -0.00768" quat="0.913819 0.289775 0.281481 -0.0416456" mass="1.6383" diaginertia="0.00351721 0.00294089 0.00195868"/>
+            <joint name="joint3" range="-6.28319 6.28319" actuatorfrcrange="-81.6 81.6" damping="5" frictionloss="1"/>
+            <geom quat="1 0 0 0" type="mesh" rgba="1 1 1 1" mesh="link3"/>
+            <body name="link4" pos="0.0525 0 0" quat="0.707105 0.707108 0 0">
+              <inertial pos="0.07047 -0.11575 0.012" quat="0.422108 0.852026 -0.126025 0.282832" mass="1.7269" diaginertia="0.00657137 0.00647948 0.00186763"/>
+              <joint name="joint4" range="-0.19198 3.927" actuatorfrcrange="-81.6 81.6" damping="5" frictionloss="1"/>
+              <geom pos="-4.02456e-16 5.27356e-16 -2.91434e-16" quat="1 0 0 0" type="mesh" rgba="1 1 1 1" mesh="link4"/>
+              <body name="link5" pos="0.0775 -0.3425 0" quat="0.707105 0.707108 0 0">
+                <inertial pos="-0.00032 0.01604 -0.026" quat="0.999311 -0.0304457 0.000577067 0.0212082" mass="1.3203" diaginertia="0.00534729 0.00499076 0.0013489"/>
+                <joint name="joint5" range="-6.28319 6.28319" actuatorfrcrange="-81.6 81.6" damping="5" frictionloss="1"/>
+                <geom type="mesh" rgba="1 1 1 1" mesh="link5"/>
+                <body name="link6" quat="0.707105 0.707108 0 0">
+                  <inertial pos="0.06469 0.03278 0.02141" quat="-0.217672 0.772419 0.16258 0.574069" mass="1.325" diaginertia="0.00245421 0.00221646 0.00107273"/>
+                  <joint name="joint6" range="-1.69297 3.14159" actuatorfrcrange="-30.6 30.6" damping="2" frictionloss="1"/>
+                  <geom pos="-8.74301e-16 -2.01228e-16 -1.59595e-16" quat="1 0 0 0" type="mesh" rgba="1 1 1 1" mesh="link6"/>
+                  <body name="link7" pos="0.076 0.097 0" quat="0.707105 -0.707108 0 0">
+                    <inertial pos="0 -0.00677 -0.01098" quat="0.487612 0.512088 -0.512088 0.487612" mass="0.17" diaginertia="0.000132176 9.3e-05 5.85236e-05"/>
+                    <joint name="joint7" range="-6.28319 6.28319" actuatorfrcrange="-30.6 30.6" damping="2" frictionloss="1"/>
+                    <geom quat="1 0 0 0" type="mesh" rgba="0.753 0.753 0.753 1" mesh="end_tool"/>
+                    <body name="link_eef">
+                      <body name="l6_hand_base_link">
+                        <inertial pos="0.00199 0.00091 0.058381" quat="0.998047 -0.0428365 0.0154853 -0.0427503" mass="0.4185" diaginertia="0.000501146 0.000356518 0.000228936"/>
+                        <geom quat="1 0 0 0" type="mesh" rgba="0.796078 0.823529 0.937255 1" mesh="hand_base_link"/>
+                        <body name="l6_thumb_metacarpals_base1" pos="0.0078133 0.030812 0.025678" quat="1 -4.41249e-07 0 0">
+                          <inertial pos="0.0018663 0.00669006 0.00130032" quat="0.585097 0.362208 -0.681079 0.250198" mass="0.01" diaginertia="5.06087e-07 4.2803e-07 1.87993e-07"/>
+                          <joint name="l6_thumb_cmc_roll" range="-0.087266 1.25664" actuatorfrcrange="-0.588 0.588" damping="0.02" frictionloss="0.0541667" axis="0 0 -1"/>
+                          <geom quat="0.999848 -0.0174522 0 0" type="mesh" rgba="0.796078 0.823529 0.937255 1" mesh="thumb_metacarpals_base1"/>
+                          <body name="l6_thumb_metacarpals" pos="0.0054997 0.0134181 0.00274999" quat="0.833269 -0.515669 0.104915 -0.169532">
+                            <inertial pos="0.00769271 -0.0859662 0.0235283" quat="0.990283 -0.024236 0.00247073 0.136913" mass="0.065" diaginertia="8.40719e-06 8.40492e-06 1.99389e-06"/>
+                            <joint name="l6_thumb_cmc_pitch" range="0 0.78539" actuatorfrcrange="-1.008 1.008" damping="0.02" frictionloss="0.0375" axis="1 0 0"/>
+                            <geom type="mesh" rgba="0.796078 0.823529 0.937255 1" mesh="thumb_metacarpals"/>
+                            <body name="l6_thumb_distal" pos="0 -0.0061 0.0827">
+                              <inertial pos="0.00769271 -0.0798662 -0.0591717" quat="0.701716 0.0301619 -0.0339069 0.71101" mass="0.018" diaginertia="1.71744e-06 1.55459e-06 9.10462e-07"/>
+                              <joint name="l6_thumb_dip" range="0 0.963287" actuatorfrcrange="-5 5" axis="1 0 0"/>
+                              <geom quat="1 0 0 0" type="mesh" rgba="0.796078 0.823529 0.937255 1" mesh="thumb_distal"/>
+                              <body name="l6_thumb_tip" pos="0 -0.0035 0.026" quat="0.707105 0 0 -0.707108">
+                                <inertial pos="0 0 0" mass="1e-06" diaginertia="1e-09 1e-09 1e-09"/>
+                              </body>
+                            </body>
+                          </body>
+                        </body>
+                        <body name="l6_index_proximal" pos="-0.00066821 0.033467 0.11622" quat="0.999048 -0.0436192 0 0">
+                          <inertial pos="0.001776 0.00011 0.012556" quat="0.990076 -0.00310765 -0.139922 0.0127095" mass="0.008553" diaginertia="8.37546e-07 8.00477e-07 3.1702e-07"/>
+                          <joint name="l6_index_mcp_pitch" range="0 1.13446" actuatorfrcrange="-0.574 0.574" damping="0.01" frictionloss="0.04" axis="0 1 0"/>
+                          <geom quat="1 0 0 0" type="mesh" rgba="0.796078 0.823529 0.937255 1" mesh="index_proximal"/>
+                          <body name="l6_index_distal" pos="0.0009359 0 0.028002">
+                            <inertial pos="0.0134 -0.002262 0.016992" quat="0.722869 0.211074 0.255966 0.606127" mass="0.018408" diaginertia="3.72426e-06 3.71075e-06 5.91045e-07"/>
+                            <joint name="l6_index_dip" range="0 1.27704" actuatorfrcrange="-5 5" axis="0 1 0"/>
+                            <geom quat="1 0 0 0" type="mesh" rgba="0.796078 0.823529 0.937255 1" mesh="index_distal"/>
+                            <body name="l6_index_tip" pos="0.0341 0 0.034">
+                              <inertial pos="0 0 0" mass="1e-06" diaginertia="1e-09 1e-09 1e-09"/>
+                            </body>
+                          </body>
+                        </body>
+                        <body name="l6_middle_proximal" pos="-0.00066821 0.0134013 0.12272" quat="0.999848 -0.0174526 0 0">
+                          <inertial pos="0.001776 0.00011 0.012556" quat="0.990076 -0.00310765 -0.139922 0.0127095" mass="0.008553" diaginertia="8.37546e-07 8.00477e-07 3.1702e-07"/>
+                          <joint name="l6_middle_mcp_pitch" range="0 1.13446" actuatorfrcrange="-0.574 0.574" damping="0.01" frictionloss="0.0270833" axis="0 1 0"/>
+                          <geom quat="1 0 0 0" type="mesh" rgba="0.796078 0.823529 0.937255 1" mesh="middle_proximal"/>
+                          <body name="l6_middle_distal" pos="0.0009359 0 0.028002">
+                            <inertial pos="0.0134 -0.002262 0.016992" quat="0.722869 0.211074 0.255966 0.606127" mass="0.018408" diaginertia="3.72426e-06 3.71075e-06 5.91045e-07"/>
+                            <joint name="l6_middle_dip" range="0 1.27704" actuatorfrcrange="-5 5" axis="0 1 0"/>
+                            <geom quat="1 0 0 0" type="mesh" rgba="0.796078 0.823529 0.937255 1" mesh="middle_distal"/>
+                            <body name="l6_middle_tip" pos="0.0341 0 0.034">
+                              <inertial pos="0 0 0" mass="1e-06" diaginertia="1e-09 1e-09 1e-09"/>
+                            </body>
+                          </body>
+                        </body>
+                        <body name="l6_ring_proximal" pos="-0.00067368 -0.006217 0.11872" quat="0.999962 0.00872639 0 0">
+                          <inertial pos="0.001776 0.00011 0.012556" quat="0.990076 -0.00310765 -0.139922 0.0127095" mass="0.008553" diaginertia="8.37546e-07 8.00477e-07 3.1702e-07"/>
+                          <joint name="l6_ring_mcp_pitch" range="0 1.13446" actuatorfrcrange="-0.574 0.574" damping="0.01" frictionloss="0.0229167" axis="0 1 0"/>
+                          <geom quat="1 0 0 0" type="mesh" rgba="0.796078 0.823529 0.937255 1" mesh="ring_proximal"/>
+                          <body name="l6_ring_distal" pos="0.0009359 0 0.028002">
+                            <inertial pos="0.0134 -0.002262 0.016992" quat="0.722869 0.211074 0.255966 0.606127" mass="0.018408" diaginertia="3.72426e-06 3.71075e-06 5.91045e-07"/>
+                            <joint name="l6_ring_dip" range="0 1.27704" actuatorfrcrange="-5 5" axis="0 1 0"/>
+                            <geom quat="1 0 0 0" type="mesh" rgba="0.796078 0.823529 0.937255 1" mesh="ring_distal"/>
+                            <body name="l6_ring_tip" pos="0.0341 0 0.034">
+                              <inertial pos="0 0 0" mass="1e-06" diaginertia="1e-09 1e-09 1e-09"/>
+                            </body>
+                          </body>
+                        </body>
+                        <body name="l6_pinky_proximal" pos="-0.00067852 -0.025314 0.11474" quat="0.999657 0.026177 0 0">
+                          <inertial pos="0.001776 0.00011 0.012556" quat="0.990076 -0.00310765 -0.139922 0.0127095" mass="0.008553" diaginertia="8.37546e-07 8.00477e-07 3.1702e-07"/>
+                          <joint name="l6_pinky_mcp_pitch" range="0 1.13446" actuatorfrcrange="-0.574 0.574" damping="0.01" frictionloss="0.01" axis="0 1 0"/>
+                          <geom quat="1 0 0 0" type="mesh" rgba="0.796078 0.823529 0.937255 1" mesh="pinky_proximal"/>
+                          <body name="l6_pinky_distal" pos="0.0009359 0 0.028002">
+                            <inertial pos="0.0134 -0.002262 0.016992" quat="0.722869 0.211074 0.255966 0.606127" mass="0.018408" diaginertia="3.72426e-06 3.71075e-06 5.91045e-07"/>
+                            <joint name="l6_pinky_dip" range="0 1.27704" actuatorfrcrange="-5 5" axis="0 1 0"/>
+                            <geom quat="1 0 0 0" type="mesh" rgba="0.796078 0.823529 0.937255 1" mesh="pinky_distal"/>
+                            <body name="l6_pinky_tip" pos="0.0341 0 0.034">
+                              <inertial pos="0 0 0" mass="1e-06" diaginertia="1e-09 1e-09 1e-09"/>
+                            </body>
+                          </body>
+                        </body>
+                        <body name="l6_grasp" pos="0.045 0.005 0.09" quat="9.38184e-07 0.707105 -9.38187e-07 0.707108"/>
+                      </body>
+                    </body>
+                  </body>
+                </body>
+              </body>
+            </body>
+          </body>
+        </body>
+      </body>
+    </body>
+  </worldbody>
+
+  <equality>
+    <joint joint1="l6_thumb_dip" joint2="l6_thumb_cmc_pitch" polycoef="0 1.22649 0 0 0"/>
+    <joint joint1="l6_index_dip" joint2="l6_index_mcp_pitch" polycoef="0 1.12568 0 0 0"/>
+    <joint joint1="l6_middle_dip" joint2="l6_middle_mcp_pitch" polycoef="0 1.12568 0 0 0"/>
+    <joint joint1="l6_ring_dip" joint2="l6_ring_mcp_pitch" polycoef="0 1.12568 0 0 0"/>
+    <joint joint1="l6_pinky_dip" joint2="l6_pinky_mcp_pitch" polycoef="0 1.12568 0 0 0"/>
+  </equality>
+</mujoco>

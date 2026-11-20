@@ -19,7 +19,7 @@ contains the code and examples. See [Citation and References](references.md)
 for software citation metadata and the
 {ref}`arXiv preprint (coming soon) <software-preprint>`.
 
-````{container} hand-gallery
+````{container} hand-gallery hand-gallery-overview
 ```{figure} figures/l6-insertion.png
 :alt: RealHand L6 at the planned grasp on a blue insertion key.
 
@@ -34,6 +34,24 @@ for software citation metadata and the
 :alt: PSYONIC Ability Hand holding a blue sphere.
 
 **PSYONIC Ability Hand.** Simulated sphere hold.
+```
+```{figure} figures/barrett-grasp-preview.png
+:target: hands.html#grasps-on-native-and-exported-hands
+:alt: Native Barrett hand closed around a cube with six verified contacts.
+
+**Barrett Hand.** Cube grasp.
+```
+```{figure} figures/shadow-grasp-preview.png
+:target: hands.html#grasps-on-native-and-exported-hands
+:alt: Exported Shadow hand grasping a sphere with all five fingers.
+
+**Shadow Hand.** Planned sphere grasp.
+```
+```{figure} figures/inspire-grasp-preview.png
+:target: hands.html#grasps-on-native-and-exported-hands
+:alt: Exported Inspire hand grasping a sphere with all five fingers.
+
+**Inspire Hand.** Planned sphere grasp.
 ```
 ````
 
