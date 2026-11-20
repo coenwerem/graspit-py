@@ -31,9 +31,9 @@ for software citation metadata and the
 **LEAP Hand.** Simulated cube hold.
 ```
 ```{figure} figures/ability-hold.png
-:alt: PSYONIC Ability Hand retaining a blue tapered cylinder.
+:alt: PSYONIC Ability Hand holding a blue sphere.
 
-**PSYONIC Ability Hand.** Simulated cylinder hold.
+**PSYONIC Ability Hand.** Simulated sphere hold.
 ```
 ````
 

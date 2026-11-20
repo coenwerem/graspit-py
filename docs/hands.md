@@ -11,7 +11,7 @@ The [kinematics guide](theory.md) gives the coordinate convention.
 |---|---|---|
 | RealHand L6, right | 49 joint configurations | Planned key grasp and bimanual A7–L6 insertion |
 | LEAP Hand | Three joint configurations | Planned cube grasp and ZArm–LEAP lift-and-hold |
-| PSYONIC Ability Hand | 12 joint configurations | Planned tapered-cylinder grasp and Franka–Ability lift-and-hold |
+| PSYONIC Ability Hand | 12 joint configurations | Planned sphere grasp and Franka–Ability lift-and-hold |
 
 Use a local copy of the hand model and its collision meshes. A model
 configuration specifies the palm root, approach axes and grasp center,

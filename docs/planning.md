@@ -119,9 +119,9 @@ targets to the source model.
 **LEAP Hand.** Simulated cube hold, $\varepsilon=0.0708$.
 ```
 ```{figure} figures/ability-hold.png
-:alt: Recorded MuJoCo configuration of the PSYONIC Ability Hand holding a tapered cylinder.
+:alt: Recorded MuJoCo configuration of the PSYONIC Ability Hand holding a sphere.
 
-**PSYONIC Ability Hand.** Simulated cylinder hold, $\varepsilon=0.167$.
+**PSYONIC Ability Hand.** Simulated sphere hold.
 ```
 ````
 

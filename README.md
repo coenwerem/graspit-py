@@ -54,13 +54,13 @@ kinematics, trajectory planning, and execution.
 
 | RealHand L6 | LEAP Hand | PSYONIC Ability Hand |
 | :---: | :---: | :---: |
-| <img src="docs/figures/l6-insertion.png" alt="RealHand L6 fingers closed on the blue insertion key" height="200"> | <img src="docs/figures/leap-hold.png" alt="LEAP Hand holding a blue cube" height="200"> | <img src="docs/figures/ability-hold.png" alt="PSYONIC Ability Hand holding a blue tapered cylinder" height="200"> |
-| Planned key grasp | Simulated cube hold | Simulated tapered-cylinder hold |
+| <img src="docs/figures/l6-insertion.png" alt="RealHand L6 fingers closed on the blue insertion key" height="200"> | <img src="docs/figures/leap-hold.png" alt="LEAP Hand holding a blue cube" height="200"> | <img src="docs/figures/ability-hold.png" alt="PSYONIC Ability Hand holding a blue sphere" height="200"> |
+| Planned key grasp | Simulated cube hold | Simulated sphere hold |
 
 The RealHand L6 image shows the planned GraspIt! closure. The LEAP
 and Ability images show final configurations from recorded MuJoCo
 lift-and-hold simulations. The [planning guide](docs/planning.md)
-reports the Ferrari–Canny score of each planned grasp.
+reports Ferrari–Canny scores for the RealHand L6 and LEAP grasps.
 
 ## MuJoCo Model Export
 

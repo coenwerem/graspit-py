@@ -56,7 +56,7 @@ Roa, M. A., and Suárez, R. (2015). *Grasp Quality Measures: Review
 and Performance*. Autonomous Robots, 38, 65–88.
 [DOI](https://doi.org/10.1007/s10514-014-9402-3).
 
-## Scoring under Uncertainty
+## Scoring Under Uncertainty
 
 (ref-rockafellar-uryasev)=
 Rockafellar, R. T., and Uryasev, S. (2002). *Conditional Value-at-Risk
