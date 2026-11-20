@@ -1,0 +1,511 @@
+{
+  "schema_version": 1,
+  "scope": "Native interface and zero-step kinematic geometry; no Shadow/Inspire dynamic execution validation.",
+  "native_image": "sha256:bb1153841c8cfdfc7ace9058832f6cc4058f6ae9a1a5b53bdd91199e5cf7225b",
+  "mujoco": "4.0.1",
+  "examples": {
+    "prepare_urdf_hand.py": "c8b1fe64bc9afc16630d844e11e05c531dd49372028bc0ab48350e68f51d8dbb",
+    "export_hand_profile.py": "228ebee3d0f4508bffe30af9443d9eb1024c5d8cff63164016e31b52be73a6ed",
+    "check_export_geometry.py": "e2eef5d2fcbcbf88da38095dcd3d78f8d4b53db4cc3409854d74a4bd2ceb07cd"
+  },
+  "models": {
+    "barrett": {
+      "source_url": "https://github.com/graspit-simulator/graspit/tree/master/models/robots/Barrett",
+      "native_robot_sha256": "fc44658cffb5bd4ae8a7e2c15ed18e152925e9aed97f906e4b5fb2495452a9fe",
+      "independent_dofs": 4,
+      "links": 9,
+      "cube_position_hand_mm": [
+        0,
+        0,
+        100.0
+      ],
+      "contacts": 6,
+      "epsilon": 0.14587165083213818,
+      "volume": 0.019394656079039545,
+      "closed_dof_rad": [
+        0.0,
+        1.1740000000000008,
+        1.1740000000000008,
+        1.1740000000000008
+      ],
+      "capability": "native XML loading, autograsp, contact geometry, wrench quality"
+    },
+    "inspire": {
+      "source_url": "https://github.com/dexsuite/dex-urdf/tree/main/robots/hands/inspire_hand",
+      "source_revision": "f5e7132",
+      "source_sha256": "bfc377800d1913a36d4bf4693ffce0003f8a2555bf2a803b9a02c1f24b055769",
+      "source_license": "MIT",
+      "profile": "examples/hand_profiles/inspire_right.json",
+      "profile_sha256": "9823ed19e8e5d22b4e23d6dd7ef8f081b37820bc7a004306abaa9b217746cd2c",
+      "prepared_scene_sha256": "856c874efa84e5b37b7762b0fff809e2bda2ac626ffaf0859f21f00205707f08",
+      "geometry_only": true,
+      "palm": "hand_base_link",
+      "independent_dofs": 6,
+      "hinges": 12,
+      "links": 13,
+      "modes": {
+        "source": {
+          "geometry": {
+            "mesh_collision": "source",
+            "configurations": 5,
+            "links": 13,
+            "worst_link_mm": {
+              "hand_base_link": 6.162832074072207e-06,
+              "thumb_proximal_base": 1.3264389454555464e-06,
+              "thumb_proximal": 2.34604770611928e-06,
+              "thumb_intermediate": 0.000711764784076115,
+              "thumb_distal": 0.0008360009921438401,
+              "index_proximal": 2.414808050518544e-06,
+              "index_intermediate": 2.323867572207573e-06,
+              "middle_proximal": 2.246586320881385e-06,
+              "middle_intermediate": 2.356650179185902e-06,
+              "ring_proximal": 2.2465862914519253e-06,
+              "ring_intermediate": 2.4023046868820354e-06,
+              "pinky_proximal": 2.2465868486053193e-06,
+              "pinky_intermediate": 2.2662719835691552e-06
+            },
+            "max_mm": 0.0008360009921438401,
+            "max_dof_clamp_rad": 0.0,
+            "passed": true
+          },
+          "limits_rad": [
+            [
+              0.0,
+              1.308
+            ],
+            [
+              0.0,
+              0.5997001499250375
+            ],
+            [
+              0.0,
+              1.47
+            ],
+            [
+              0.0,
+              1.47
+            ],
+            [
+              0.0,
+              1.47
+            ],
+            [
+              0.0,
+              1.47
+            ]
+          ],
+          "dof_joints": [
+            "thumb_proximal_yaw_joint",
+            "thumb_proximal_pitch_joint",
+            "index_proximal_joint",
+            "middle_proximal_joint",
+            "ring_proximal_joint",
+            "pinky_proximal_joint"
+          ]
+        },
+        "convex_hull": {
+          "geometry": {
+            "mesh_collision": "convex_hull",
+            "configurations": 5,
+            "links": 13,
+            "worst_link_mm": {
+              "hand_base_link": 6.162832074072207e-06,
+              "thumb_proximal_base": 1.3264389454555464e-06,
+              "thumb_proximal": 2.34604770611928e-06,
+              "thumb_intermediate": 0.000711764784076115,
+              "thumb_distal": 0.0012859668803901084,
+              "index_proximal": 2.467685940617023e-06,
+              "index_intermediate": 2.323867572207573e-06,
+              "middle_proximal": 2.4995151806774014e-06,
+              "middle_intermediate": 2.356650179185902e-06,
+              "ring_proximal": 2.4995152393194287e-06,
+              "ring_intermediate": 2.4023046868820354e-06,
+              "pinky_proximal": 2.499517196906864e-06,
+              "pinky_intermediate": 2.2662719835691552e-06
+            },
+            "max_mm": 0.0012859668803901084,
+            "max_dof_clamp_rad": 0.0,
+            "passed": true
+          },
+          "limits_rad": [
+            [
+              0.0,
+              1.308
+            ],
+            [
+              0.0,
+              0.5997001499250375
+            ],
+            [
+              0.0,
+              1.47
+            ],
+            [
+              0.0,
+              1.47
+            ],
+            [
+              0.0,
+              1.47
+            ],
+            [
+              0.0,
+              1.47
+            ]
+          ],
+          "dof_joints": [
+            "thumb_proximal_yaw_joint",
+            "thumb_proximal_pitch_joint",
+            "index_proximal_joint",
+            "middle_proximal_joint",
+            "ring_proximal_joint",
+            "pinky_proximal_joint"
+          ]
+        }
+      },
+      "couplings": [
+        {
+          "driven": "thumb_intermediate_joint",
+          "driver": "thumb_proximal_pitch_joint",
+          "ratio": 1.334,
+          "offset_rad": 0.0
+        },
+        {
+          "driven": "thumb_distal_joint",
+          "driver": "thumb_proximal_pitch_joint",
+          "ratio": 0.667,
+          "offset_rad": 0.0
+        },
+        {
+          "driven": "index_intermediate_joint",
+          "driver": "index_proximal_joint",
+          "ratio": 1.06399,
+          "offset_rad": -0.04545
+        },
+        {
+          "driven": "middle_intermediate_joint",
+          "driver": "middle_proximal_joint",
+          "ratio": 1.06399,
+          "offset_rad": -0.04545
+        },
+        {
+          "driven": "ring_intermediate_joint",
+          "driver": "ring_proximal_joint",
+          "ratio": 1.06399,
+          "offset_rad": -0.04545
+        },
+        {
+          "driven": "pinky_intermediate_joint",
+          "driver": "pinky_proximal_joint",
+          "ratio": 1.06399,
+          "offset_rad": -0.04545
+        }
+      ]
+    },
+    "shadow": {
+      "source_url": "https://github.com/RealHand-Robotics/XRoboToolkit_Realhand_Dexterous_Hand_Example",
+      "source_revision": null,
+      "source_sha256": "ccac52408d27772fb6e24f3a2762b1f983a4e187be875c756232269045780273",
+      "source_license": "Apache-2.0 asset notice; BSD-3-Clause URDF notice",
+      "profile": "examples/hand_profiles/shadow_right.json",
+      "profile_sha256": "028ca51f0263475781f75b3307a5ab1d0448a5a7e7e424d233c33643a46151e3",
+      "prepared_scene_sha256": "ccd471a2df9ba83d702339cfe4b9ee6502d12723c5a094e1b543063346416df9",
+      "geometry_only": true,
+      "palm": "palm",
+      "independent_dofs": 18,
+      "hinges": 22,
+      "links": 23,
+      "modes": {
+        "source": {
+          "geometry": {
+            "mesh_collision": "source",
+            "configurations": 5,
+            "links": 23,
+            "worst_link_mm": {
+              "palm": 3.921442563459745e-06,
+              "ffknuckle": 5.246182821015514e-07,
+              "ffproximal": 5.412684237228032e-07,
+              "ffmiddle": 1.2854503114147608e-06,
+              "ffdistal": 9.35018975876412e-07,
+              "mfknuckle": 5.246182828152063e-07,
+              "mfproximal": 5.41268420490495e-07,
+              "mfmiddle": 1.285450311300179e-06,
+              "mfdistal": 9.547574096140042e-07,
+              "rfknuckle": 5.246182832382564e-07,
+              "rfproximal": 5.412684297687134e-07,
+              "rfmiddle": 1.2854503567412173e-06,
+              "rfdistal": 9.547574559269053e-07,
+              "lfmetacarpal": 1.2156907848936495e-06,
+              "lfknuckle": 5.246674047117497e-07,
+              "lfproximal": 5.414806930646865e-07,
+              "lfmiddle": 1.285564597151273e-06,
+              "lfdistal": 9.549543782376352e-07,
+              "thbase": 7.799587597783663e-07,
+              "thproximal": 2.4183278048269518e-06,
+              "thhub": 1.054213735801981e-06,
+              "thmiddle": 1.1477998517346825e-06,
+              "thdistal": 1.1059766754963637e-06
+            },
+            "max_mm": 3.921442563459745e-06,
+            "max_dof_clamp_rad": 0.0,
+            "passed": true
+          },
+          "limits_rad": [
+            [
+              -0.349066,
+              0.349066
+            ],
+            [
+              -0.261799,
+              1.5708
+            ],
+            [
+              0.0,
+              1.5708
+            ],
+            [
+              -0.349066,
+              0.349066
+            ],
+            [
+              -0.261799,
+              1.5708
+            ],
+            [
+              0.0,
+              1.5708
+            ],
+            [
+              -0.349066,
+              0.349066
+            ],
+            [
+              -0.261799,
+              1.5708
+            ],
+            [
+              0.0,
+              1.5708
+            ],
+            [
+              0.0,
+              0.785398
+            ],
+            [
+              -0.349066,
+              0.349066
+            ],
+            [
+              -0.261799,
+              1.5708
+            ],
+            [
+              0.0,
+              1.5708
+            ],
+            [
+              -1.0472,
+              1.0472
+            ],
+            [
+              0.0,
+              1.22173
+            ],
+            [
+              -0.20944,
+              0.20944
+            ],
+            [
+              -0.698132,
+              0.698132
+            ],
+            [
+              -0.261799,
+              1.5708
+            ]
+          ],
+          "dof_joints": [
+            "rh_FFJ4",
+            "rh_FFJ3",
+            "rh_FFJ2",
+            "rh_MFJ4",
+            "rh_MFJ3",
+            "rh_MFJ2",
+            "rh_RFJ4",
+            "rh_RFJ3",
+            "rh_RFJ2",
+            "rh_LFJ5",
+            "rh_LFJ4",
+            "rh_LFJ3",
+            "rh_LFJ2",
+            "rh_THJ5",
+            "rh_THJ4",
+            "rh_THJ3",
+            "rh_THJ2",
+            "rh_THJ1"
+          ]
+        },
+        "convex_hull": {
+          "geometry": {
+            "mesh_collision": "convex_hull",
+            "configurations": 5,
+            "links": 23,
+            "worst_link_mm": {
+              "palm": 3.921442563459745e-06,
+              "ffknuckle": 5.246182821015514e-07,
+              "ffproximal": 5.412684237228032e-07,
+              "ffmiddle": 1.2854503114147608e-06,
+              "ffdistal": 9.35018975876412e-07,
+              "mfknuckle": 5.246182828152063e-07,
+              "mfproximal": 5.41268420490495e-07,
+              "mfmiddle": 1.285450311300179e-06,
+              "mfdistal": 9.547574096140042e-07,
+              "rfknuckle": 5.246182832382564e-07,
+              "rfproximal": 5.412684297687134e-07,
+              "rfmiddle": 1.2854503567412173e-06,
+              "rfdistal": 9.547574559269053e-07,
+              "lfmetacarpal": 1.2156907848936495e-06,
+              "lfknuckle": 5.246674047117497e-07,
+              "lfproximal": 5.414806930646865e-07,
+              "lfmiddle": 1.285564597151273e-06,
+              "lfdistal": 9.549543782376352e-07,
+              "thbase": 7.799587597783663e-07,
+              "thproximal": 2.4183278048269518e-06,
+              "thhub": 1.054213735801981e-06,
+              "thmiddle": 1.4151620654116855e-06,
+              "thdistal": 1.0019713761924544e-06
+            },
+            "max_mm": 3.921442563459745e-06,
+            "max_dof_clamp_rad": 0.0,
+            "passed": true
+          },
+          "limits_rad": [
+            [
+              -0.349066,
+              0.349066
+            ],
+            [
+              -0.261799,
+              1.5708
+            ],
+            [
+              0.0,
+              1.5708
+            ],
+            [
+              -0.349066,
+              0.349066
+            ],
+            [
+              -0.261799,
+              1.5708
+            ],
+            [
+              0.0,
+              1.5708
+            ],
+            [
+              -0.349066,
+              0.349066
+            ],
+            [
+              -0.261799,
+              1.5708
+            ],
+            [
+              0.0,
+              1.5708
+            ],
+            [
+              0.0,
+              0.785398
+            ],
+            [
+              -0.349066,
+              0.349066
+            ],
+            [
+              -0.261799,
+              1.5708
+            ],
+            [
+              0.0,
+              1.5708
+            ],
+            [
+              -1.0472,
+              1.0472
+            ],
+            [
+              0.0,
+              1.22173
+            ],
+            [
+              -0.20944,
+              0.20944
+            ],
+            [
+              -0.698132,
+              0.698132
+            ],
+            [
+              -0.261799,
+              1.5708
+            ]
+          ],
+          "dof_joints": [
+            "rh_FFJ4",
+            "rh_FFJ3",
+            "rh_FFJ2",
+            "rh_MFJ4",
+            "rh_MFJ3",
+            "rh_MFJ2",
+            "rh_RFJ4",
+            "rh_RFJ3",
+            "rh_RFJ2",
+            "rh_LFJ5",
+            "rh_LFJ4",
+            "rh_LFJ3",
+            "rh_LFJ2",
+            "rh_THJ5",
+            "rh_THJ4",
+            "rh_THJ3",
+            "rh_THJ2",
+            "rh_THJ1"
+          ]
+        }
+      },
+      "couplings": [
+        {
+          "driven": "rh_FFJ1",
+          "driver": "rh_FFJ2",
+          "ratio": 1.0,
+          "offset_rad": 0.0
+        },
+        {
+          "driven": "rh_MFJ1",
+          "driver": "rh_MFJ2",
+          "ratio": 1.0,
+          "offset_rad": 0.0
+        },
+        {
+          "driven": "rh_RFJ1",
+          "driver": "rh_RFJ2",
+          "ratio": 1.0,
+          "offset_rad": 0.0
+        },
+        {
+          "driven": "rh_LFJ1",
+          "driver": "rh_LFJ2",
+          "ratio": 1.0,
+          "offset_rad": 0.0
+        }
+      ]
+    }
+  },
+  "regression_suite": {
+    "passed": 53,
+    "duration_s": 19.76,
+    "log_sha256": "9b31c7ded208d8b82c4791e5b819469ecaa6ff607ccf8a103f5e2f42c86b6461"
+  }
+}

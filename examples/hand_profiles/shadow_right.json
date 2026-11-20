@@ -1,0 +1,55 @@
+{
+  "id": "shadow_right",
+  "palm": "palm",
+  "independent_dofs": 18,
+  "hinges": 22,
+  "preshape_joints": [
+    "rh_FFJ4",
+    "rh_MFJ4",
+    "rh_RFJ4",
+    "rh_LFJ5",
+    "rh_LFJ4",
+    "rh_THJ5"
+  ],
+  "couplings": {
+    "rh_FFJ1": [
+      1.0,
+      0.0
+    ],
+    "rh_MFJ1": [
+      1.0,
+      0.0
+    ],
+    "rh_RFJ1": [
+      1.0,
+      0.0
+    ],
+    "rh_LFJ1": [
+      1.0,
+      0.0
+    ]
+  },
+  "mimic_joints": {
+    "rh_FFJ1": {
+      "driver": "rh_FFJ2",
+      "ratio": 1.0,
+      "offset_rad": 0.0
+    },
+    "rh_MFJ1": {
+      "driver": "rh_MFJ2",
+      "ratio": 1.0,
+      "offset_rad": 0.0
+    },
+    "rh_RFJ1": {
+      "driver": "rh_RFJ2",
+      "ratio": 1.0,
+      "offset_rad": 0.0
+    },
+    "rh_LFJ1": {
+      "driver": "rh_LFJ2",
+      "ratio": 1.0,
+      "offset_rad": 0.0
+    }
+  },
+  "scope": "palm and finger kinematics; source wrist and actuator dynamics are excluded"
+}

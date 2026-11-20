@@ -46,8 +46,9 @@ Each candidate contains the object-relative palm pose, closed joint
 coordinates, object-frame contacts, and sampled wrench scores. The
 [theory guide](docs/theory.md) defines those quantities and their
 coordinate conventions. The [supported-hands guide](docs/hands.md)
-documents export and simulation coverage for the RealHand L6, LEAP
-Hand, and PSYONIC Ability Hand. The calling application supplies arm
+documents native Barrett support and export coverage for the RealHand L6,
+LEAP, PSYONIC Ability, Shadow, and Inspire hands. It provides runnable
+kinematic profiles and records the operations evaluated for each model. The calling application supplies arm
 kinematics, trajectory planning, and execution.
 
 ## Planned Grasps and Simulated Execution
@@ -72,6 +73,9 @@ The MuJoCo panel shows a recorded bimanual key insertion. The
 GraspIt! panel shows the exported right hand closed on the key from
 a second viewpoint. The [export guide](docs/export.md) explains how
 to reconstruct planned configurations and compare link geometry.
+
+The [visualization roadmap](docs/roadmap.md) specifies the planned standalone
+viewer for model correspondence, grasp records, contact normals, and frames.
 
 ## Citation and References
 

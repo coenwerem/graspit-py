@@ -1,0 +1,68 @@
+{
+  "id": "inspire_right",
+  "palm": "hand_base_link",
+  "independent_dofs": 6,
+  "hinges": 12,
+  "preshape_joints": [
+    "thumb_proximal_yaw_joint"
+  ],
+  "couplings": {
+    "thumb_intermediate_joint": [
+      1.334,
+      0.0
+    ],
+    "thumb_distal_joint": [
+      0.667,
+      0.0
+    ],
+    "index_intermediate_joint": [
+      1.06399,
+      -0.04545
+    ],
+    "middle_intermediate_joint": [
+      1.06399,
+      -0.04545
+    ],
+    "ring_intermediate_joint": [
+      1.06399,
+      -0.04545
+    ],
+    "pinky_intermediate_joint": [
+      1.06399,
+      -0.04545
+    ]
+  },
+  "mimic_joints": {
+    "thumb_intermediate_joint": {
+      "driver": "thumb_proximal_pitch_joint",
+      "ratio": 1.334,
+      "offset_rad": 0.0
+    },
+    "thumb_distal_joint": {
+      "driver": "thumb_proximal_pitch_joint",
+      "ratio": 0.667,
+      "offset_rad": 0.0
+    },
+    "index_intermediate_joint": {
+      "driver": "index_proximal_joint",
+      "ratio": 1.06399,
+      "offset_rad": -0.04545
+    },
+    "middle_intermediate_joint": {
+      "driver": "middle_proximal_joint",
+      "ratio": 1.06399,
+      "offset_rad": -0.04545
+    },
+    "ring_intermediate_joint": {
+      "driver": "ring_proximal_joint",
+      "ratio": 1.06399,
+      "offset_rad": -0.04545
+    },
+    "pinky_intermediate_joint": {
+      "driver": "pinky_proximal_joint",
+      "ratio": 1.06399,
+      "offset_rad": -0.04545
+    }
+  },
+  "scope": "palm and finger kinematics; source wrist and actuator dynamics are excluded"
+}

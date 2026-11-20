@@ -104,3 +104,6 @@ outputs/corrected_risk_20260925/
 .venv-a7-assembly/
 outputs/a7_assembly_20261002/
 !docs/a7_assembly.md
+
+# Public hand support and visualization design.
+!docs/roadmap.md
