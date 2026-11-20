@@ -1,0 +1,194 @@
+{
+  "hand": "barrett",
+  "palm": "BarrettBase",
+  "object_description": {
+    "name": "cube50",
+    "type": "box",
+    "size_m": [
+      0.025,
+      0.025,
+      0.025
+    ],
+    "size_semantics": "half extents in meters",
+    "edge_lengths_mm": [
+      50.0,
+      50.0,
+      50.0
+    ]
+  },
+  "T_OH_mm": [
+    [
+      1.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      1.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      1.0,
+      -100.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+    ]
+  ],
+  "T_HO_mm": [
+    [
+      1.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      1.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      1.0,
+      100.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+    ]
+  ],
+  "independent_joint_names": [
+    "d0",
+    "d1",
+    "d2",
+    "d3"
+  ],
+  "applied_closed_dof_rad": [
+    0.0,
+    1.1740000000000008,
+    1.1740000000000008,
+    1.1740000000000008
+  ],
+  "native_epsilon": 0.14587165083404535,
+  "native_volume": 0.019394624562869337,
+  "contact_count": 6,
+  "finger_chains": [
+    0,
+    1,
+    2
+  ],
+  "palm_contact_count": 0,
+  "coordinate_sha256": "4a5b502e85f7147751f1d78acae64da089f694bcf997874e75d8097394a59995",
+  "robot_sha256": "fc44658cffb5bd4ae8a7e2c15ed18e152925e9aed97f906e4b5fb2495452a9fe",
+  "object_xml_sha256": "0617a8cd46c8b9cffc981939e350cbfb410d2cd8ff1f062928d5759f69168933",
+  "schema_version": 1,
+  "scope": "GraspIt! closure and contact geometry",
+  "units": {
+    "translation": "mm",
+    "joint_angle": "rad",
+    "quaternion": "wxyz"
+  },
+  "contacts_object_frame": [
+    {
+      "position_mm": [
+        25.0,
+        25.0,
+        -1.3548932434118157
+      ],
+      "normal_inward": [
+        0.0,
+        -1.0,
+        7.52184384485445e-14
+      ],
+      "link": "Barrett_chain0_link2",
+      "chain": 0,
+      "link_index": 2
+    },
+    {
+      "position_mm": [
+        13.48999977111817,
+        25.0,
+        -2.769085704094831
+      ],
+      "normal_inward": [
+        0.0,
+        -1.0,
+        1.1178962778575558e-13
+      ],
+      "link": "Barrett_chain0_link2",
+      "chain": 0,
+      "link_index": 2
+    },
+    {
+      "position_mm": [
+        -13.51000022888185,
+        25.0,
+        -2.769085704094824
+      ],
+      "normal_inward": [
+        1.1178962778590554e-13,
+        -1.0,
+        0.0
+      ],
+      "link": "Barrett_chain1_link2",
+      "chain": 1,
+      "link_index": 2
+    },
+    {
+      "position_mm": [
+        -25.0,
+        25.0,
+        -2.7690857040948273
+      ],
+      "normal_inward": [
+        0.0,
+        -1.0,
+        -2.235792555717611e-13
+      ],
+      "link": "Barrett_chain1_link2",
+      "chain": 1,
+      "link_index": 2
+    },
+    {
+      "position_mm": [
+        10.510000228881871,
+        -25.0,
+        -1.3548932434118228
+      ],
+      "normal_inward": [
+        3.0083428763441245e-13,
+        1.0,
+        -1.5781820295046603e-13
+      ],
+      "link": "Barrett_chain2_link1",
+      "chain": 2,
+      "link_index": 1
+    },
+    {
+      "position_mm": [
+        -10.489999771118134,
+        -25.0,
+        -1.3548932434118157
+      ],
+      "normal_inward": [
+        2.2561584918584544e-13,
+        1.0,
+        2.148281552649678e-13
+      ],
+      "link": "Barrett_chain2_link1",
+      "chain": 2,
+      "link_index": 1
+    }
+  ]
+}

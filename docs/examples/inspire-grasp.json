@@ -1,0 +1,211 @@
+{
+  "hand": "inspire",
+  "palm": "hand_base_link",
+  "object_description": {
+    "name": "sphere60",
+    "type": "sphere",
+    "size_m": [
+      0.03
+    ],
+    "size_semantics": "radius in meters",
+    "diameter_mm": 60.0
+  },
+  "T_OH_mm": [
+    [
+      1.0,
+      0.0,
+      0.0,
+      65.0
+    ],
+    [
+      0.0,
+      1.0,
+      0.0,
+      155.0
+    ],
+    [
+      0.0,
+      0.0,
+      1.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+    ]
+  ],
+  "T_HO_mm": [
+    [
+      1.0,
+      0.0,
+      0.0,
+      -65.0
+    ],
+    [
+      0.0,
+      1.0,
+      0.0,
+      -155.0
+    ],
+    [
+      0.0,
+      0.0,
+      1.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+    ]
+  ],
+  "independent_joint_names": [
+    "thumb_proximal_yaw_joint",
+    "thumb_proximal_pitch_joint",
+    "index_proximal_joint",
+    "middle_proximal_joint",
+    "ring_proximal_joint",
+    "pinky_proximal_joint"
+  ],
+  "applied_closed_dof_rad": [
+    1.25,
+    0.19200000000000012,
+    0.5970000000000004,
+    0.4860000000000004,
+    0.5050000000000003,
+    0.7650000000000006
+  ],
+  "native_epsilon": 0.538707772934326,
+  "native_volume": 4.393495644850422,
+  "contact_count": 7,
+  "finger_chains": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "palm_contact_count": 0,
+  "coordinate_sha256": "88cc5bd719f9ad812a56bb62922c056a77344a6e88f931511022beb44d01db72",
+  "robot_sha256": "abfca2e1b2707006b7c3f624a67fb7fc1ae305d7e90f59f3710e1793506b00d3",
+  "manifest_sha256": "554638d20802caffd8612d764f8089f8cb8725fc72257c54f5c8ef0db73f3a5d",
+  "source_scene_sha256": "856c874efa84e5b37b7762b0fff809e2bda2ac626ffaf0859f21f00205707f08",
+  "object_xml_sha256": "3f8657aca31085dca5d962bdbfbfe9cbffaa7b73e9fef75b944a285d08f2d0f2",
+  "schema_version": 1,
+  "scope": "GraspIt! closure and contact geometry",
+  "units": {
+    "translation": "mm",
+    "joint_angle": "rad",
+    "quaternion": "wxyz"
+  },
+  "contacts_object_frame": [
+    {
+      "position_mm": [
+        -16.03204852847086,
+        17.638134002685547,
+        -17.914634752031773
+      ],
+      "normal_inward": [
+        0.5511544156550607,
+        -0.4390303825942456,
+        0.7095640445111908
+      ],
+      "link": "thumb_distal",
+      "chain": 0,
+      "link_index": 3
+    },
+    {
+      "position_mm": [
+        11.13718007102297,
+        -16.667967768849177,
+        -22.17077885073914
+      ],
+      "normal_inward": [
+        -0.23564792164329393,
+        0.5983811106607232,
+        0.7657741856641784
+      ],
+      "link": "index_intermediate",
+      "chain": 1,
+      "link_index": 1
+    },
+    {
+      "position_mm": [
+        7.916141620432242,
+        -17.901890435512964,
+        -22.525513607586372
+      ],
+      "normal_inward": [
+        -0.29991302069055065,
+        0.5610978506851763,
+        0.7715059183031229
+      ],
+      "link": "index_intermediate",
+      "chain": 1,
+      "link_index": 1
+    },
+    {
+      "position_mm": [
+        16.379017967436017,
+        -24.44330238932864,
+        -5.814025599761152
+      ],
+      "normal_inward": [
+        -0.5262198694889493,
+        0.8496482601218039,
+        -0.03450337703797379
+      ],
+      "link": "middle_intermediate",
+      "chain": 2,
+      "link_index": 1
+    },
+    {
+      "position_mm": [
+        15.881099163137907,
+        -22.70774021024464,
+        11.330584458223584
+      ],
+      "normal_inward": [
+        -0.6073226974176004,
+        0.7400243483086811,
+        -0.28900364203885304
+      ],
+      "link": "ring_intermediate",
+      "chain": 3,
+      "link_index": 1
+    },
+    {
+      "position_mm": [
+        9.0633972600505,
+        -1.3299103989163807,
+        28.40987311970355
+      ],
+      "normal_inward": [
+        -0.17391821703158253,
+        0.29601402241716274,
+        -0.9392167759984735
+      ],
+      "link": "pinky_intermediate",
+      "chain": 4,
+      "link_index": 1
+    },
+    {
+      "position_mm": [
+        6.152513073884904,
+        -2.2481175115636964,
+        29.20541562950669
+      ],
+      "normal_inward": [
+        -0.279014968845403,
+        0.08463810348577243,
+        -0.9565495484283763
+      ],
+      "link": "pinky_intermediate",
+      "chain": 4,
+      "link_index": 1
+    }
+  ]
+}

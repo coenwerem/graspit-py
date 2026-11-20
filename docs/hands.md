@@ -18,8 +18,33 @@ collision hulls.
 | LEAP Hand | MuJoCo export; 16 independent coordinates, 16 hinges | Three configurations, 17 links | Planned cube grasp and ZArm–LEAP lift-and-hold |
 | PSYONIC Ability Hand | MuJoCo export; 6 independent coordinates, 10 hinges | 12 configurations, 11 links | Planned sphere grasp and Franka–Ability lift-and-hold |
 | Barrett | Upstream native GraspIt! XML; 4 coordinates, 9 links | Native pose and contact queries | Cube closure, object-frame contacts, and wrench metrics |
-| Shadow Hand, right palm | MuJoCo export; 18 independent coordinates, 22 hinges | Five configurations in each mesh mode, 23 links | Native loading and link-geometry queries |
-| Inspire Hand, right | MuJoCo export; 6 independent coordinates, 12 hinges | Five configurations in each mesh mode, 13 links | Native loading, affine coupling, and link-geometry queries |
+| Shadow Hand, right palm | MuJoCo export; 18 independent coordinates, 22 hinges | Five configurations in each mesh mode, 23 links | Sphere closure, contacts, quality, and link-geometry queries |
+| Inspire Hand, right | MuJoCo export; 6 independent coordinates, 12 hinges | Five configurations in each mesh mode, 13 links | Sphere closure, contacts, quality, and affine coupling |
+
+## Grasps on Native and Exported Hands
+
+The grasps below were obtained through the native robot interface for
+Barrett and the MuJoCo export profiles for Shadow and Inspire. The
+Barrett object is a 50 mm cube. The Shadow and Inspire object is a
+sphere of 60 mm diameter. Each image uses the queried closed joint
+state and object pose. Green markers identify recorded contacts, and
+the annotations locate the fingers and palm/object coordinate frames.
+
+![Barrett, Shadow, and Inspire grasps with finger labels, palm and object frames, contact markers, and Ferrari–Canny scores](figures/supported-hand-grasps.png)
+
+| Hand | Object Contacts | Contacting Finger Chains | Native Ferrari–Canny Quality |
+|---|---:|---:|---:|
+| Barrett | 6 | 3 | 0.14587 |
+| Shadow | 11 | 5 | 0.42337 |
+| Inspire | 7 | 5 | 0.53871 |
+
+The contact records contain the object-frame positions and inward
+normals, object-relative palm pose, independent joint coordinates,
+and source asset hashes. These data connect the closure and numerical
+score to the illustrated configuration. The
+[Barrett](examples/barrett-grasp.json),
+[Shadow](examples/shadow-grasp.json), and
+[Inspire](examples/inspire-grasp.json) records are available for inspection.
 
 The Shadow profile covers the palm and fingers; the two wrist joints
 remain outside the exported subtree. Its four distal pairs use an

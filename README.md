@@ -63,6 +63,15 @@ and Ability images show final configurations from recorded MuJoCo
 lift-and-hold simulations. The [planning guide](docs/planning.md)
 reports Ferrari–Canny scores for the RealHand L6 and LEAP grasps.
 
+| Barrett Hand | Shadow Hand | Inspire Hand |
+| :---: | :---: | :---: |
+| <img src="docs/figures/barrett-grasp.png" alt="Native Barrett cube grasp with finger labels, contact markers, and palm and object frames" height="250"> | <img src="docs/figures/shadow-grasp.png" alt="Exported Shadow Hand sphere grasp with finger labels, contact markers, and palm and object frames" height="250"> | <img src="docs/figures/inspire-grasp.png" alt="Exported Inspire Hand sphere grasp with finger labels, contact markers, and palm and object frames" height="250"> |
+| Six contacts, Ferrari–Canny ε = 0.14587 | Eleven contacts, Ferrari–Canny ε = 0.42337 | Seven contacts, Ferrari–Canny ε = 0.53871 |
+
+These GraspIt! closures use the native Barrett model and the Shadow
+and Inspire export profiles. The [hand-model guide](docs/hands.md)
+provides the illustrated grasp records, model sources, and coordinate conventions.
+
 ## MuJoCo Model Export
 
 | MuJoCo Source Workcell | Exported RealHand L6 in GraspIt! |
