@@ -1,5 +1,7 @@
 # Visualization Roadmap
 
+The viewer is planned for a future release. Version 0.2.0 provides link-geometry queries and serialized grasp records for external visualization. The milestones below specify the planned scope; release dates have not been assigned.
+
 ## Standalone Model and Grasp Viewer
 
 A planned standalone viewer will present exported hands and saved grasp

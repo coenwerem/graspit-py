@@ -6,6 +6,7 @@ project = "graspit-py"
 extensions = ["myst_parser"]
 exclude_patterns = ["_build", ".DS_Store"]
 myst_enable_extensions = ["dollarmath"]
+myst_heading_anchors = 3
 nitpicky = True
 
 html_theme = "shibuya"

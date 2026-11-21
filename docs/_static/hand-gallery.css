@@ -34,3 +34,13 @@
     gap: 0.75rem;
   }
 }
+
+/* Full-width hand panels keep finger and frame annotations legible. */
+.hand-detail-gallery {
+  grid-template-columns: minmax(0, 1fr);
+  gap: 2rem;
+}
+.hand-detail-gallery img {
+  height: auto;
+  max-height: 38rem;
+}

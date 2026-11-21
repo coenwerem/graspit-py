@@ -8,9 +8,9 @@ and record the revision used. Cite the corresponding simulator
 publication for experiments run in GraspIt! or MuJoCo.
 
 (software-preprint)=
-## arXiv Preprint
+## Companion Paper
 
-The companion software paper is forthcoming. Publication updates
+The companion software paper is being prepared for submission. A preprint link
 will appear here and on my [research page](https://clintonenwerem.com/research.html).
 
 ## Simulator and Planning References
@@ -22,17 +22,23 @@ for Robotic Grasping*. IEEE Robotics & Automation Magazine, 11(4),
 [DOI](https://doi.org/10.1109/MRA.2004.1371616) ·
 [GraspIt! Project](https://graspit-simulator.github.io/).
 
+Simulator background for the [first-grasp walkthrough](quickstart.md) and [native API](api.md#native-bindings).
+
 (ref-todorov-mujoco)=
 Todorov, E., Erez, T., and Tassa, Y. (2012). *MuJoCo: A Physics
 Engine for Model-Based Control*. IEEE/RSJ International Conference on
 Intelligent Robots and Systems, 5026–5033.
 [DOI](https://doi.org/10.1109/IROS.2012.6386109).
 
+Simulation background for the source models in [MuJoCo model export](export.md).
+
 (ref-ciocarlie-allen)=
 Ciocarlie, M. T., and Allen, P. K. (2009). *Hand Posture Subspaces
 for Dexterous Robotic Grasping*. International Journal of Robotics
 Research, 28(7), 851–867.
 [DOI](https://doi.org/10.1177/0278364909105606).
+
+Posture-subspace background for preshape selection in the [planning guide](planning.md).
 
 ## Contact Mechanics and Grasp Quality
 
@@ -41,20 +47,28 @@ Murray, R. M., Li, Z., and Sastry, S. S. (1994). *A Mathematical
 Introduction to Robotic Manipulation*. CRC Press.
 [Book](https://www.cds.caltech.edu/~murray/books/MLS/).
 
+Chapter 5 develops the contact forces, grasp map, and force-closure conditions used in the [theory guide](theory.md).
+
 (ref-rimon-burdick)=
 Rimon, E., and Burdick, J. W. (2019). *The Mechanics of Robot
 Grasping*. Cambridge University Press.
 [DOI](https://doi.org/10.1017/9781108552011).
+
+Grasp mechanics and contact models underlying the [frictional point-contact formulation](theory.md#frictional-point-contacts).
 
 (ref-ferrari-canny)=
 Ferrari, C., and Canny, J. F. (1992). *Planning Optimal Grasps*.
 IEEE International Conference on Robotics and Automation.
 [DOI](https://doi.org/10.1109/ROBOT.1992.219918).
 
+The wrench-hull radius in the [theory guide](theory.md) follows this grasp-quality construction.
+
 (ref-roa-suarez)=
 Roa, M. A., and Suárez, R. (2015). *Grasp Quality Measures: Review
 and Performance*. Autonomous Robots, 38, 65–88.
 [DOI](https://doi.org/10.1007/s10514-014-9402-3).
+
+Force budgets and moment scaling provide context for [quality comparisons across hands](hands.md).
 
 ## Scoring Under Uncertainty
 
@@ -63,7 +77,11 @@ Rockafellar, R. T., and Uryasev, S. (2002). *Conditional Value-at-Risk
 for General Loss Distributions*. Journal of Banking & Finance,
 26(7), 1443–1471. [DOI](https://doi.org/10.1016/S0378-4266(02)00271-6).
 
+Discrete probability masses and fractional boundary samples support the [lower-tail calculation](theory.md#lower-tail-ranking).
+
 (ref-firmgrasp)=
 Enwerem, C., Baras, J. S., and Belta, C. (2026). *FIRMGrasp:
 A Friction-Informed Risk Margin for Robust Grasp Synthesis*.
 [arXiv:2607.25049](https://arxiv.org/abs/2607.25049).
+
+The [theory guide](theory.md#lower-tail-ranking) distinguishes an adverse friction-tail margin from a tail average of closure-quality samples.

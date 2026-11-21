@@ -1,6 +1,8 @@
 # graspit-py
 
-graspit-py provides direct access to the
+**graspit-py** is a Python library for planning and evaluating robotic grasps using simulated finger closure and contact-force analysis.
+
+It provides direct access to the
 [GraspIt! simulator](https://graspit-simulator.github.io/) for planning
 and evaluating grasps with multifingered hands. See
 {ref}`Miller and Allen <ref-miller-allen>` for the simulator's design.
@@ -17,7 +19,7 @@ uses the resulting targets for arm kinematics, motion planning, and
 execution. The [source repository](https://github.com/coenwerem/graspit-py)
 contains the code and examples. See [Citation and References](references.md)
 for software citation metadata and the
-{ref}`arXiv preprint (coming soon) <software-preprint>`.
+{ref}`companion paper <software-preprint>`. A preprint link will be added here when available.
 
 ````{container} hand-gallery hand-gallery-overview
 ```{figure} figures/l6-insertion.png
@@ -55,36 +57,34 @@ for software citation metadata and the
 ```
 ````
 
-Start with [Installation](INSTALL.md) and the [RealHand L6
+Start with [Installation](INSTALL.md) and the [first-grasp
 walkthrough](quickstart.md). The [planning guide](planning.md) explains
 approach specification, task loading, and the grasp records shown above.
 The [export guide](export.md) covers model conversion and transfer back
 to MuJoCo. The [theory guide](theory.md) derives the joint mapping and
 wrench scores used in both guides.
 
+## From Models to Grasp Records
+
+```{figure} figures/architecture.png
+:alt: Data flow from MuJoCo model conversion and Python approach settings through native closure, numerical wrench analysis, and grasp records for application clients.
+:target: _images/architecture.png
+
+Model conversion supplies geometry and the joint map. Native closure provides contacts, and numerical analysis supplies wrench-quality samples. A grasp record connects the selected command to its nominal contacts and scores. Select the figure for a full-size view.
+```
+
+The [API reference](api.md) groups the corresponding operations by scene setup, hand state, contacts, and geometry. The [theory guide](theory.md) connects their numerical inputs to the contact and wrench models.
+
 ```{toctree}
 :maxdepth: 2
 
 INSTALL
 quickstart
+theory
 export
 planning
 hands
-roadmap
-theory
 api
+roadmap
 references
 ```
-
-## Build the Manual
-
-The documentation build requires Python 3.11 or later. Run the
-following commands from the wrapper repository root.
-
-```bash
-python3 -m venv .venv-docs
-.venv-docs/bin/python -m pip install -r docs/requirements.txt
-.venv-docs/bin/python -m sphinx -nW -b html docs docs/_build/html
-```
-
-Open `docs/_build/html/index.html`.
