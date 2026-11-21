@@ -1,6 +1,6 @@
 """Plan grasps from the command line and write ranked candidates as JSON.
 
-    xvfb-run -a python -m graspit_python_wrapper.planning \
+    xvfb-run -a python -m graspit_py.planning \
         --robot hand.xml --object object.xml --config problem.json --out candidates.json
 
 ``problem.json`` holds ``hand`` (HandFrame fields) and ``planner``

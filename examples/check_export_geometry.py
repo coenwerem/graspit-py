@@ -11,8 +11,8 @@ import mujoco
 import numpy as np
 from scipy.spatial import cKDTree
 
-from graspit_python_wrapper.convert.mjcf_hand import export_hand, geom_mesh
-from graspit_python_wrapper.core import bindings as gp
+from graspit_py.convert.mjcf_hand import export_hand, geom_mesh
+from graspit_py.core import bindings as gp
 
 
 def compare(model, palm_name, hand, configs, tolerance, *, mesh_collision='source'):

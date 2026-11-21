@@ -41,7 +41,7 @@ RUN python3 -m venv /opt/venv \
 WORKDIR /src
 COPY . /src
 RUN pip wheel --no-build-isolation --no-deps . --wheel-dir /dist \
-    && pip install --no-deps /dist/graspit_python_wrapper-*.whl
+    && pip install --no-deps /dist/graspit_py-*.whl
 
 # Run from outside /src so tests import the installed wheel, not the source tree.
 WORKDIR /work

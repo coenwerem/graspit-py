@@ -1,10 +1,10 @@
-# GraspIt! Python Wrapper
+# graspit-py
 
-[Documentation](https://clintonenwerem.com/graspit-python-wrapper/) ·
+[Documentation](https://clintonenwerem.com/graspit-py/) ·
 [GraspIt! Simulator](https://graspit-simulator.github.io/) ·
-[arXiv Preprint (Coming Soon)](https://clintonenwerem.com/graspit-python-wrapper/references.html#software-preprint)
+[arXiv Preprint (Coming Soon)](https://clintonenwerem.com/graspit-py/references.html#software-preprint)
 
-`graspit_python_wrapper` exposes the [GraspIt! simulator](https://graspit-simulator.github.io/)
+`graspit-py` exposes the [GraspIt! simulator](https://graspit-simulator.github.io/)
 as a Python library for grasp synthesis and evaluation with multifingered
 hands. The native bindings provide hand pose and joint control, autograsp,
 collision queries, contact geometry, and wrench-space metrics. The contact
@@ -13,14 +13,24 @@ capacity under approach and friction uncertainty. The MuJoCo exporter
 generates GraspIt! hand and object descriptions and records the joint
 correspondence for transferring a planned configuration back to MuJoCo.
 
+Python imports use `graspit_py`:
+
+```python
+from graspit_py.core import bindings
+from graspit_py.planning import ContactPlanner, HandFrame, PlannerConfig
+```
+
+The original `graspit_python_wrapper` imports remain supported. Both names
+refer to the same modules, Python classes, and native GraspIt! state.
+
 ## Installation on Linux
 
 The reference build uses Ubuntu 24.04 and Python 3.12. Docker builds the
 pinned public GraspIt! source with the supplied compatibility patch.
 
 ```sh
-git clone https://github.com/coenwerem/graspit-python-wrapper.git
-cd graspit-python-wrapper
+git clone https://github.com/coenwerem/graspit-py.git
+cd graspit-py
 docker buildx build --load -f docker/Dockerfile -t graspit-py .
 ```
 
@@ -37,7 +47,7 @@ containing those files, run the planner in the Docker image.
 
 ```sh
 docker run --rm --user "$(id -u):$(id -g)" -v "$PWD:/work" graspit-py \
-    xvfb-run -a python -m graspit_python_wrapper.planning \
+    xvfb-run -a python -m graspit_py.planning \
     --robot hand.xml --object object.xml \
     --config problem.json --out candidates.json
 ```
@@ -98,5 +108,5 @@ software revision used. The wrapper is licensed under
 - Rockafellar, R. T., and Uryasev, S. (2002). [Conditional Value-at-Risk for General Loss Distributions](https://doi.org/10.1016/S0378-4266(02)00271-6). *Journal of Banking & Finance*, 26(7), 1443–1471.
 - Enwerem, C., Baras, J. S., and Belta, C. (2026). [FIRMGrasp: A Friction-Informed Risk Margin for Robust Grasp Synthesis](https://arxiv.org/abs/2607.25049). arXiv:2607.25049.
 
-See the [manual references](https://clintonenwerem.com/graspit-python-wrapper/references.html)
+See the [manual references](https://clintonenwerem.com/graspit-py/references.html)
 for sources on hand posture, frictional contact, and grasp wrench spaces.

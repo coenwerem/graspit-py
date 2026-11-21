@@ -8,9 +8,9 @@ import mujoco as mj
 import numpy as np
 from scipy.spatial.transform import Rotation
 
-from graspit_python_wrapper.convert.mjcf_hand import export_body, export_hand
-from graspit_python_wrapper.core import bindings as gp
-from graspit_python_wrapper.planning import ContactPlanner, HandFrame, PlannerConfig
+from graspit_py.convert.mjcf_hand import export_body, export_hand
+from graspit_py.core import bindings as gp
+from graspit_py.planning import ContactPlanner, HandFrame, PlannerConfig
 
 
 def main():

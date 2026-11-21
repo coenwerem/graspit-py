@@ -15,7 +15,7 @@ from pathlib import Path
 
 import numpy as np
 
-from graspit_python_wrapper.core import bindings as gp
+from graspit_py.core import bindings as gp
 
 
 def main():

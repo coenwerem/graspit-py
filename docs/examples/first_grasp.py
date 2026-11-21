@@ -6,8 +6,8 @@ from pathlib import Path
 
 import mujoco
 
-from graspit_python_wrapper.convert.mjcf_hand import export_body, export_hand
-from graspit_python_wrapper.core import bindings
+from graspit_py.convert.mjcf_hand import export_body, export_hand
+from graspit_py.core import bindings
 
 GRIPPER = Path(__file__).resolve().parents[2] / "tests" / "data" / "gripper.xml"
 

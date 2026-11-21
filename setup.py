@@ -81,14 +81,14 @@ ext_modules = [
 ]
 
 setup(
-    name="graspit_python_wrapper",
+    name="graspit-py",
     version="0.2.0",
     author="Clinton Enwerem",
     author_email="me@clintonenwerem.com",
     description="Python bindings and risk-sensitive contact planning for the GraspIt! grasping simulator",
     long_description=open("README.md").read(),
     long_description_content_type="text/markdown",
-    url="https://github.com/coenwerem/graspit-python-wrapper",
+    url="https://github.com/coenwerem/graspit-py",
     license="GPL-3.0-or-later",
     classifiers=[
         "License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",
@@ -100,6 +100,7 @@ setup(
     ext_modules=ext_modules,
     cmdclass={"build_ext": CMakeBuild},
     packages=find_namespace_packages(include=[
+        "graspit_py",
         "graspit_python_wrapper",
         "graspit_python_wrapper.core",
         "graspit_python_wrapper.grasp",

@@ -56,7 +56,7 @@ def main():
     parser.add_argument('--check', action='store_true', help='query native GraspIt link geometry under Xvfb')
     args = parser.parse_args()
     import mujoco
-    from graspit_python_wrapper.convert.mjcf_hand import export_hand
+    from graspit_py.convert.mjcf_hand import export_hand
 
     profile = json.loads(args.profile.read_text())
     model = mujoco.MjModel.from_xml_path(str(args.scene.resolve()))

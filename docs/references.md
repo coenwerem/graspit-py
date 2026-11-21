@@ -3,7 +3,7 @@
 ## Cite the Wrapper
 
 Cite the wrapper using the repository's
-[CITATION.cff](https://github.com/coenwerem/graspit-python-wrapper/blob/main/CITATION.cff)
+[CITATION.cff](https://github.com/coenwerem/graspit-py/blob/main/CITATION.cff)
 and record the revision used. Cite the corresponding simulator
 publication for experiments run in GraspIt! or MuJoCo.
 

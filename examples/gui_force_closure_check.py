@@ -31,7 +31,7 @@ def main() -> int:
             "DISPLAY is not set. Run under a graphical session, or use ssh -X / -Y to forward X11."
         )
 
-    from graspit_python_wrapper.core import bindings as gp
+    from graspit_py.core import bindings as gp
 
     hand_path, obj_path = args.robot.resolve(), args.object.resolve()
 

@@ -9,8 +9,8 @@ a local GraspIt! tree.
 Both installation paths start from the wrapper source.
 
 ```bash
-git clone https://github.com/coenwerem/graspit-python-wrapper.git
-cd graspit-python-wrapper
+git clone https://github.com/coenwerem/graspit-py.git
+cd graspit-py
 ```
 
 ## Docker Installation
@@ -21,7 +21,7 @@ command-line options.
 
 ```bash
 docker buildx build --load -f docker/Dockerfile -t graspit-py .
-docker run --rm graspit-py python -m graspit_python_wrapper.planning --help
+docker run --rm graspit-py python -m graspit_py.planning --help
 ```
 
 The Dockerfile builds the public GraspIt! engine at revision
@@ -57,12 +57,16 @@ cmake --build "$GRASPIT_BUILD_DIR" --target graspit --parallel 4
 ```
 
 Build and install the wrapper wheel in a virtual environment.
+When upgrading an existing environment, first run
+`.venv/bin/python -m pip uninstall graspit_python_wrapper` to remove
+the previous distribution. Install `graspit-py` afterward; existing
+Python import paths remain supported.
 
 ```bash
 python3 -m venv .venv
 .venv/bin/python -m pip install setuptools wheel
 .venv/bin/python -m pip wheel --no-build-isolation --no-deps . --wheel-dir dist
-.venv/bin/python -m pip install "dist/graspit_python_wrapper-0.2.0-"*.whl
+.venv/bin/python -m pip install "dist/graspit_py-0.2.0-"*.whl
 .venv/bin/python -m pip install "mujoco>=3.1"
 ```
 
@@ -72,6 +76,17 @@ directory and set `GRASPIT` to the source tree in each new shell.
 GraspIt! resolves its models and other resources relative to this
 path. Set `CMAKE_BUILD_PARALLEL_LEVEL` before building the wheel to
 limit parallel compilation.
+
+With the engine and build dependencies prepared as above, a direct
+GitHub installation is also available. The `mjcf` extra includes MuJoCo
+for model export.
+
+```bash
+.venv/bin/python -m pip install "graspit-py[mjcf] @ git+https://github.com/coenwerem/graspit-py.git"
+```
+
+The distribution is named `graspit-py`; Python imports use `graspit_py`.
+Existing `graspit_python_wrapper` imports continue to work.
 
 The solver-free build supports autograsp, collision queries, contact
 geometry, and wrench-space scoring. Quasistatic contact force optimization

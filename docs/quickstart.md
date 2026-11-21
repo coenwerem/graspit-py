@@ -28,7 +28,7 @@ docker run --rm -i --user "$(id -u):$(id -g)" \
   -v "$PWD/input:/input:ro" -v "$PWD/output:/output" graspit-py python - <<'PYTHON'
 import mujoco
 
-from graspit_python_wrapper.convert.mjcf_hand import export_body, export_hand
+from graspit_py.convert.mjcf_hand import export_body, export_hand
 
 model = mujoco.MjModel.from_xml_path("/input/scene.xml")
 hand = export_hand(model, "l6_hand_base_link", "/output/hand", name="l6",
@@ -64,7 +64,7 @@ exported DOF order.
 ```bash
 docker run --rm --user "$(id -u):$(id -g)" \
   -v "$PWD/output:/output" graspit-py \
-  xvfb-run -a python -m graspit_python_wrapper.planning \
+  xvfb-run -a python -m graspit_py.planning \
     --robot /output/hand/l6.xml --object /output/object/cube.xml \
     --config /src/docs/examples/realhand-l6-cube.json \
     --top-k 5 --out /output/candidates.json

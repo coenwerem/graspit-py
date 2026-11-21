@@ -1,6 +1,6 @@
 cff-version: 1.2.0
 message: "If you use this software, please cite it using these metadata, and record the commit you used."
-title: "graspit_python_wrapper: Python bindings and risk-sensitive contact planning for GraspIt!"
+title: "graspit-py: Python bindings and risk-sensitive contact planning for GraspIt!"
 type: software
 authors:
   - family-names: Enwerem
@@ -12,7 +12,7 @@ authors:
   - family-names: Belta
     given-names: Calin
     affiliation: "University of Maryland, College Park"
-repository-code: "https://github.com/coenwerem/graspit-python-wrapper"
+repository-code: "https://github.com/coenwerem/graspit-py"
 license: GPL-3.0-or-later
 version: "0.2.0"
 keywords:

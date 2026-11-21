@@ -1,8 +1,8 @@
-"""Sphinx configuration for the GraspIt! Python wrapper manual."""
+"""Sphinx configuration for the graspit-py manual."""
 
 from markupsafe import Markup
 
-project = "GraspIt! Python Wrapper"
+project = "graspit-py"
 extensions = ["myst_parser"]
 exclude_patterns = ["_build", ".DS_Store"]
 myst_enable_extensions = ["dollarmath"]

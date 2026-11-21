@@ -7,9 +7,13 @@ utilities operate on arrays or exported XML. GraspIt! has one main
 world per process. Use a process per independent native scene and a
 virtual X display for headless execution.
 
+The public import namespace is `graspit_py`. Existing
+`graspit_python_wrapper` imports remain supported and resolve to the
+same modules, classes, and native world state.
+
 ## Native Bindings
 
-Import `graspit_python_wrapper.core.bindings` and call `initialize()`.
+Import `graspit_py.core.bindings` and call `initialize()`.
 Construct `World()` and call `world.init()` before loading geometry.
 Call `world.clear()` to remove the loaded robots and bodies.
 
@@ -39,12 +43,12 @@ world, call `World.no_collision()`.
 ## Contact Planner
 
 Import `ContactPlanner`, `HandFrame`, and `PlannerConfig` from
-`graspit_python_wrapper.planning`. Set the hand and object in the
+`graspit_py.planning`. Set the hand and object in the
 world before constructing the planner. The planner captures the current
 object pose and center of mass on construction.
 
 ```python
-from graspit_python_wrapper.planning import (
+from graspit_py.planning import (
     ContactPlanner,
     HandFrame,
     PlannerConfig,
@@ -75,7 +79,7 @@ defines the settings and returned arrays.
 ## MuJoCo Exporter
 
 Install the `mjcf` extra or `mujoco>=3.1`, then import from
-`graspit_python_wrapper.convert.mjcf_hand`.
+`graspit_py.convert.mjcf_hand`.
 
 | Function | Result |
 |---|---|
@@ -94,14 +98,14 @@ geometry comparison workflow.
 These modules can be imported from the source checkout without a native
 GraspIt! build when NumPy and SciPy are available.
 
-- `graspit_python_wrapper.risk.lower_tail_mean(values, alpha=..., weights=...)`
+- `graspit_py.risk.lower_tail_mean(values, alpha=..., weights=...)`
   averages the smallest `alpha` probability mass of a quality distribution.
   `risk.cvar(costs, alpha=..., weights=...)` averages the largest `alpha`
   mass of a cost distribution. Optional weights are normalized to sum to one.
-- `graspit_python_wrapper.kinematics.load_chains(robot_xml)` reads Denavit–Hartenberg
+- `graspit_py.kinematics.load_chains(robot_xml)` reads Denavit–Hartenberg
   chains. `link_poses(chains, dofs)` returns palm-frame transforms keyed
   by `(chain, link)`.
-- `graspit_python_wrapper.grasp.quality` provides
+- `graspit_py.grasp.quality` provides
   `build_grasp_matrix()`, `analyze_gws()`, and
   `compute_task_wrench_quality()`, and `min_weight_force_closure()`.
   With SciPy, the min-weight routine returns the LP optimum and a Boolean

@@ -1,5 +1,5 @@
 """
-Core data types for GraspIt! Python wrapper.
+Core data types for graspit-py.
 """
 
 from dataclasses import dataclass

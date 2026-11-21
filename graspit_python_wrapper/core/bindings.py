@@ -1,4 +1,4 @@
-"""Core bindings for GraspIt! Python wrapper.
+"""Core bindings for graspit-py.
 
 Re-exports the compiled pybind11 extension (`._bindings`). Importing this
 module fails with an explanatory error when the extension has not been built

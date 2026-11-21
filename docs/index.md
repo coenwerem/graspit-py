@@ -1,6 +1,6 @@
-# GraspIt! Python Wrapper
+# graspit-py
 
-The GraspIt! Python Wrapper provides direct access to the
+graspit-py provides direct access to the
 [GraspIt! simulator](https://graspit-simulator.github.io/) for planning
 and evaluating grasps with multifingered hands. See
 {ref}`Miller and Allen <ref-miller-allen>` for the simulator's design.
@@ -14,7 +14,7 @@ The MuJoCo exporter produces GraspIt! robot and object models from a
 compiled MuJoCo scene. It records the joint and link correspondence needed
 to transfer planned configurations to the source model. The application
 uses the resulting targets for arm kinematics, motion planning, and
-execution. The [source repository](https://github.com/coenwerem/graspit-python-wrapper)
+execution. The [source repository](https://github.com/coenwerem/graspit-py)
 contains the code and examples. See [Citation and References](references.md)
 for software citation metadata and the
 {ref}`arXiv preprint (coming soon) <software-preprint>`.

@@ -3,7 +3,7 @@ import argparse
 import hashlib
 import json
 from pathlib import Path
-from graspit_python_wrapper.core import bindings as gp
+from graspit_py.core import bindings as gp
 
 
 def main():

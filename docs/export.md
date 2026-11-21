@@ -38,7 +38,7 @@ subtree. The robot arm and workcell remain in the source scene.
 ```python
 import mujoco
 
-from graspit_python_wrapper.convert.mjcf_hand import export_body, export_hand
+from graspit_py.convert.mjcf_hand import export_body, export_hand
 
 model = mujoco.MjModel.from_xml_path("scene.xml")
 hand = export_hand(model, "palm", "output/hand", name="my_hand")

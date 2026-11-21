@@ -1,5 +1,5 @@
 """
-Utility functions for the GraspIt! Python wrapper.
+Utility functions for the graspit-py.
 """
 
 from .geometry import *

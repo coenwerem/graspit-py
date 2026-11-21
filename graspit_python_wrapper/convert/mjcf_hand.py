@@ -36,8 +36,8 @@ import numpy as np
 try:
     import mujoco
 except ImportError as exc:  # pragma: no cover
-    raise ImportError('graspit_python_wrapper.convert needs the `mujoco` package '
-                      '(pip install graspit_python_wrapper[mjcf])') from exc
+    raise ImportError('graspit_py.convert needs the `mujoco` package '
+                      '(install the mjcf extra; see docs/INSTALL.md)') from exc
 
 MM = 1000.0
 _EPS = 1e-9
