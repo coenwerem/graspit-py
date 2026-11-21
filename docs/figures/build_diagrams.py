@@ -57,8 +57,11 @@ def direct_label(ax, text, xy_point, xy_text, color, fontsize=13):
 
 def save(fig, name):
     for extension in ("png", "pdf", "svg"):
-        fig.savefig(OUTPUT / f"{name}.{extension}", dpi=600, bbox_inches="tight",
+        path = OUTPUT / f"{name}.{extension}"
+        fig.savefig(path, dpi=600, bbox_inches="tight",
                     facecolor="white", pad_inches=0.02)
+        if extension == "svg":
+            path.write_text("\n".join(line.rstrip() for line in path.read_text().splitlines()) + "\n")
     plt.close(fig)
 
 
