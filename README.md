@@ -1,112 +1,141 @@
 # graspit-py
 
-[Documentation](https://clintonenwerem.com/graspit-py/) ·
-[GraspIt! Simulator](https://graspit-simulator.github.io/) ·
-[arXiv Preprint (Coming Soon)](https://clintonenwerem.com/graspit-py/references.html#software-preprint)
+[![License: GPL-3.0-or-later](https://img.shields.io/badge/license-GPL--3.0--or--later-blue)](LICENSE)
+[![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue)](setup.py)
+[![Documentation](https://img.shields.io/badge/docs-online-brightgreen)](https://clintonenwerem.com/graspit-py/)
 
 `graspit-py` exposes the [GraspIt! simulator](https://graspit-simulator.github.io/)
-as a Python library for grasp synthesis and evaluation with multifingered
-hands. The native bindings provide hand pose and joint control, autograsp,
-collision queries, contact geometry, and wrench-space metrics. The contact
-planner ranks simulated closures by Ferrari–Canny quality or task-wrench
-capacity under approach and friction uncertainty. The MuJoCo exporter
-generates GraspIt! hand and object descriptions and records the joint
-correspondence for transferring a planned configuration back to MuJoCo.
+as a Python library for grasp synthesis and evaluation with multifingered hands.
 
-Python imports use `graspit_py`:
+- **Native bindings:** set hand poses and joint coordinates, close fingers with autograsp, query collisions and contact geometry, and evaluate wrench-space metrics.
+- **Contact planner:** search approach commands and rank closures by Ferrari–Canny quality or task-wrench capacity under pose and friction uncertainty.
+- **MuJoCo exporter:** generate GraspIt! hand and object descriptions from a compiled MuJoCo scene, with a joint map for reconstructing planned configurations.
 
-```python
-from graspit_py.core import bindings
-from graspit_py.planning import ContactPlanner, HandFrame, PlannerConfig
-```
+Contact positions, normals, and sampled scores remain available to caller-defined
+numerical routines. The calling application supplies arm kinematics, trajectory
+planning, and execution. See the [manual](https://clintonenwerem.com/graspit-py/)
+for the mathematical formulation, API, and complete workflows.
 
-The original `graspit_python_wrapper` imports remain supported. Both names
-refer to the same modules, Python classes, and native GraspIt! state.
+## Installation
 
-## Installation on Linux
-
-The reference build uses Ubuntu 24.04 and Python 3.12. Docker builds the
-pinned public GraspIt! source with the supplied compatibility patch.
+The native extension targets Linux. The reference environment uses Ubuntu 24.04
+and Python 3.12; the package requires Python 3.10 or later. Docker supplies the
+Linux environment, pinned GraspIt! engine, and dependencies for the commands below.
 
 ```sh
 git clone https://github.com/coenwerem/graspit-py.git
 cd graspit-py
 docker buildx build --load -f docker/Dockerfile -t graspit-py .
+docker run --rm graspit-py python -m graspit_py.planning --help
 ```
 
-The [installation guide](docs/INSTALL.md) also covers native builds
-and headless execution.
+The final command prints the planner usage beginning with:
+
+```text
+usage: python -m graspit_py.planning [-h] --robot ROBOT --object OBJECT
+```
+
+The [installation guide](https://clintonenwerem.com/graspit-py/INSTALL.html)
+covers native builds, optional dependencies, and headless execution.
+Python imports use `graspit_py`; existing `graspit_python_wrapper` imports
+remain supported, as described in the guide.
+
+## First Grasp
+
+The image includes the native Barrett hand and a 50 mm cube, so this closure
+example requires no external model assets. Xvfb supplies the virtual display
+used by GraspIt! during headless execution.
+
+```sh
+mkdir -p output
+docker run --rm --user "$(id -u):$(id -g)" \
+    -v "$PWD/output:/output" graspit-py \
+    xvfb-run -a python /src/examples/contact_quality.py \
+    --robot /opt/graspit/models/robots/Barrett/Barrett.xml \
+    --object /opt/graspit/models/objects/cube.xml \
+    --object-position-mm 0 0 100 --out /output/barrett-cube.json
+```
+
+The command prints contact and quality measurements and writes
+`output/barrett-cube.json`. The [walkthrough](https://clintonenwerem.com/graspit-py/quickstart.html)
+explains the output and continues with RealHand L6 model export and planning.
 
 ## Grasp Planning
 
-The [RealHand L6 walkthrough](docs/quickstart.md) uses a user-supplied
-MuJoCo model of the right hand and a 50 mm cube. For an existing GraspIt!
-model, pass the robot XML, object XML, and a JSON configuration defining
-the hand axes, approach search, and any task loads. From the directory
-containing those files, run the planner in the Docker image.
+For an existing GraspIt! model, supply the robot XML, object XML, and a JSON
+configuration defining the hand axes, approach search, and task loads. Run
+from the directory containing those files; the mount and working directory
+make them available at `/work` inside the container.
 
 ```sh
-docker run --rm --user "$(id -u):$(id -g)" -v "$PWD:/work" graspit-py \
+docker run --rm --user "$(id -u):$(id -g)" \
+    -v "$PWD:/work" --workdir /work graspit-py \
     xvfb-run -a python -m graspit_py.planning \
     --robot hand.xml --object object.xml \
     --config problem.json --out candidates.json
 ```
 
-Each candidate contains the object-relative palm pose, closed joint
-coordinates, object-frame contacts, and sampled wrench scores. The
-[theory guide](docs/theory.md) defines those quantities and their
-coordinate conventions. The [supported-hands guide](docs/hands.md)
-documents native Barrett support and export coverage for the RealHand L6,
-LEAP, PSYONIC Ability, Shadow, and Inspire hands. It provides runnable
-kinematic profiles and records the operations evaluated for each model. The calling application supplies arm
-kinematics, trajectory planning, and execution.
+Each grasp record connects an object-relative palm pose and closed joint
+coordinates to nominal contacts and sampled wrench scores. The
+[planning guide](https://clintonenwerem.com/graspit-py/planning.html) provides
+configuration examples and output fields; the
+[theory guide](https://clintonenwerem.com/graspit-py/theory.html) defines the
+contact mechanics, coordinate conventions, and uncertainty objectives.
 
-## Planned Grasps and Simulated Execution
+## Supported Hands and Grasp Examples
+
+The [hand-model guide](https://clintonenwerem.com/graspit-py/hands.html) documents
+native Barrett support and MuJoCo export profiles for RealHand L6, LEAP,
+PSYONIC Ability, Shadow, and Inspire. It includes model sources, kinematic
+profiles, grasp records, and the operations evaluated for each hand.
 
 | RealHand L6 | LEAP Hand | PSYONIC Ability Hand |
 | :---: | :---: | :---: |
 | <img src="docs/figures/l6-insertion.png" alt="RealHand L6 fingers closed on the blue insertion key" height="200"> | <img src="docs/figures/leap-hold.png" alt="LEAP Hand holding a blue cube" height="200"> | <img src="docs/figures/ability-hold.png" alt="PSYONIC Ability Hand holding a blue sphere" height="200"> |
 | Planned key grasp | Simulated cube hold | Simulated sphere hold |
 
-The RealHand L6 image shows the planned GraspIt! closure. The LEAP
-and Ability images show final configurations from recorded MuJoCo
-lift-and-hold simulations. The [planning guide](docs/planning.md)
-reports Ferrari–Canny scores for the RealHand L6 and LEAP grasps.
+The L6 image shows a planned GraspIt! closure; the LEAP and Ability images
+show final MuJoCo lift-and-hold configurations.
 
 | Barrett Hand | Shadow Hand | Inspire Hand |
 | :---: | :---: | :---: |
-| <img src="docs/figures/barrett-grasp.png" alt="Native Barrett cube grasp with finger labels, contact markers, and palm and object frames" height="250"> | <img src="docs/figures/shadow-grasp.png" alt="Exported Shadow Hand sphere grasp with finger labels, contact markers, and palm and object frames" height="250"> | <img src="docs/figures/inspire-grasp.png" alt="Exported Inspire Hand sphere grasp with finger labels, contact markers, and palm and object frames" height="250"> |
-| Six contacts, Ferrari–Canny ε = 0.14587 | Eleven contacts, Ferrari–Canny ε = 0.42337 | Seven contacts, Ferrari–Canny ε = 0.53871 |
+| <img src="docs/figures/barrett-grasp.png" alt="Native Barrett cube grasp with finger labels, contact markers, and palm and object frames" height="250"> | <img src="docs/figures/shadow-grasp.png" alt="Shadow visual meshes at the closed sphere-grasp configuration, with finger labels and palm and object frames" height="250"> | <img src="docs/figures/inspire-grasp.png" alt="Exported Inspire sphere grasp with finger labels, contact markers, and palm and object frames" height="250"> |
+| 6 contacts, Ferrari–Canny ε = 0.146 | 11 contacts, Ferrari–Canny ε = 0.423 | 7 contacts, Ferrari–Canny ε = 0.539 |
 
-These GraspIt! closures use the native Barrett model and the Shadow
-and Inspire export profiles. The [hand-model guide](docs/hands.md)
-provides the illustrated grasp records, model sources, and coordinate conventions.
+Higher ε indicates greater worst-direction wrench resistance under the modeled
+force budget. Comparisons require common object, friction, torque-scaling, and
+force-budget conventions. The Shadow image uses visual meshes at the closed
+joint configuration; its contacts and quality were computed with collision geometry.
 
 ## MuJoCo Model Export
 
-| MuJoCo Source Workcell | Exported RealHand L6 in GraspIt! |
+| MuJoCo Source Scene | Exported RealHand L6 in GraspIt! |
 | :---: | :---: |
-| <img src="docs/figures/export-source-workcell.png" alt="MuJoCo workcell with two A7 arms and RealHand L6 hands during bimanual key insertion" height="210"> | <img src="docs/figures/export-grasp-frames.png" alt="GraspIt! export of the right RealHand L6 at the planned insertion-key grasp" height="210"> |
+| <img src="docs/figures/export-source-workcell.png" alt="MuJoCo scene with two A7 arms and RealHand L6 hands during bimanual key insertion" height="210"> | <img src="docs/figures/export-grasp-frames.png" alt="GraspIt! export of the right RealHand L6 at the planned insertion-key grasp" height="210"> |
 
-The MuJoCo panel shows a recorded bimanual key insertion. The
-GraspIt! panel shows the exported right hand closed on the key from
-a second viewpoint. The [export guide](docs/export.md) explains how
-to reconstruct planned configurations and compare link geometry.
-
-The [visualization roadmap](docs/roadmap.md) specifies the planned standalone
-viewer for model correspondence, grasp records, contact normals, and frames.
+The MuJoCo panel shows a bimanual key-insertion configuration. The GraspIt!
+panel shows the exported right hand closed on the key from a second viewpoint.
+The [export guide](https://clintonenwerem.com/graspit-py/export.html) explains the
+affine joint map, collision representations, configuration reconstruction, and
+link-geometry comparisons. The
+[visualization roadmap](https://clintonenwerem.com/graspit-py/roadmap.html)
+describes the planned standalone viewer for grasp records and model correspondence.
 
 ## Citation and References
 
-Cite the wrapper using [CITATION.cff](CITATION.cff) and record the
-software revision used. The wrapper is licensed under
-[GPL-3.0-or-later](LICENSE).
+Cite `graspit-py` using [CITATION.cff](CITATION.cff) and record the software
+revision used. The [companion paper](https://clintonenwerem.com/graspit-py/references.html#software-preprint)
+is in preparation for arXiv submission. Cite the corresponding simulator
+publication for experiments performed in GraspIt! or MuJoCo.
 
 - Miller, A. T., and Allen, P. K. (2004). [GraspIt! A Versatile Simulator for Robotic Grasping](https://www.cs.columbia.edu/~allen/PAPERS/graspit.final.pdf). *IEEE Robotics & Automation Magazine*, 11(4), 110–122.
-- Ferrari, C., and Canny, J. F. (1992). [Planning Optimal Grasps](https://doi.org/10.1109/ROBOT.1992.219918). *IEEE International Conference on Robotics and Automation*.
-- Todorov, E., Erez, T., and Tassa, Y. (2012). [MuJoCo: A Physics Engine for Model-Based Control](https://doi.org/10.1109/IROS.2012.6386109). *IEEE/RSJ International Conference on Intelligent Robots and Systems*.
-- Rockafellar, R. T., and Uryasev, S. (2002). [Conditional Value-at-Risk for General Loss Distributions](https://doi.org/10.1016/S0378-4266(02)00271-6). *Journal of Banking & Finance*, 26(7), 1443–1471.
-- Enwerem, C., Baras, J. S., and Belta, C. (2026). [FIRMGrasp: A Friction-Informed Risk Margin for Robust Grasp Synthesis](https://arxiv.org/abs/2607.25049). arXiv:2607.25049.
+- Todorov, E., Erez, T., and Tassa, Y. (2012). [MuJoCo: A Physics Engine for Model-Based Control](https://doi.org/10.1109/IROS.2012.6386109). *IEEE/RSJ International Conference on Intelligent Robots and Systems*, 5026–5033.
 
-See the [manual references](https://clintonenwerem.com/graspit-py/references.html)
-for sources on hand posture, frictional contact, and grasp wrench spaces.
+See the [full reference list](https://clintonenwerem.com/graspit-py/references.html)
+for contact mechanics, grasp quality, and risk-sensitive planning references.
+The software is licensed under [GPL-3.0-or-later](LICENSE).
+
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for development setup, issue reports,
+and contribution guidelines.

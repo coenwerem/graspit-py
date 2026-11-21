@@ -32,7 +32,9 @@ MuJoCo export profiles for Shadow and Inspire. Barrett grasps a 50 mm
 cube; Shadow and Inspire grasp a sphere of 60 mm diameter. Each image
 uses the queried closed joint state and object pose. Green markers
 identify recorded contacts; the annotations locate the fingers and
-palm/object frames. Select an image to view it at full size.
+palm/object frames. The Shadow view uses URDF visual meshes at the closed
+joint configuration; its contact positions and quality were computed with
+collision geometry. Select an image to view it at full size.
 
 ````{container} hand-gallery hand-detail-gallery
 ```{figure} figures/barrett-grasp.png
@@ -42,10 +44,10 @@ palm/object frames. Select an image to view it at full size.
 Native Barrett cube grasp.
 ```
 ```{figure} figures/shadow-grasp.png
-:alt: Exported Shadow palm grasp on a sphere with finger labels, coordinate frames, and contact markers.
+:alt: Shadow visual meshes closed around a sphere, with finger labels and palm and object frames.
 :target: _images/shadow-grasp.png
 
-Exported Shadow sphere grasp.
+Shadow sphere grasp, shown with visual meshes.
 ```
 ```{figure} figures/inspire-grasp.png
 :alt: Exported Inspire grasp on a sphere with finger labels, coordinate frames, and contact markers.

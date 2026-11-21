@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "scope": "Website and README rendering of the paper grasp configuration; no new closure or dynamics runs.",
+  "shadow": {
+    "render_geometry": "URDF visual meshes",
+    "metric_geometry": "GraspIt! collision geometry",
+    "contact_count": 11,
+    "native_ferrari_canny_epsilon": 0.42336790195685,
+    "grasp_record": "docs/examples/shadow-grasp.json",
+    "grasp_record_sha256": "5feb3fe61f2dd771f08b8a4d0bb481938965b256e57329cdd4110e480a67ff08",
+    "source_visual_image_sha256": "a99b2072a700ce07cee0f274377f285e7a7ed540c4ff0cebeeda009036aff2f2",
+    "source_annotated_panels_sha256": "bcc50db62734d558451bb3293ec4f75c2ec65e940fe7ba21a752a04b460a7b9b",
+    "rasterization_dpi": 300,
+    "detail_crop_fraction_x": [
+      0.33261802575107297,
+      0.6673819742489271
+    ]
+  },
+  "images": {
+    "docs/figures/shadow-grasp.png": "9fa1e1ce52a1987f512a7ed44740b41960d06451e70a7af37f57fef49b722dd5",
+    "docs/figures/shadow-grasp-preview.png": "a99b2072a700ce07cee0f274377f285e7a7ed540c4ff0cebeeda009036aff2f2",
+    "docs/figures/supported-hand-grasps.png": "ff6b2540e51ed74199b890ff92ed7594a53d430e368ec8fa7f00fb5303f65c74",
+    "docs/figures/barrett-grasp.png": "f72a73df5a5fd026f04f021c5d862369f3f370cb96fb09629f971c28f32fb28b",
+    "docs/figures/inspire-grasp.png": "21f1d6d57eb259fe51f9b771f17e21cb9c0e4ef0e31210c307d345a7567d7796"
+  }
+}

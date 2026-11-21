@@ -45,7 +45,7 @@ for software citation metadata and the
 ```
 ```{figure} figures/shadow-grasp-preview.png
 :target: hands.html#grasps-on-native-and-exported-hands
-:alt: Exported Shadow hand grasping a sphere with all five fingers.
+:alt: Shadow Hand visual meshes at the closed sphere-grasp configuration.
 
 **Shadow Hand.** Planned sphere grasp.
 ```
