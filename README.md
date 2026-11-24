@@ -3,6 +3,7 @@
 [![License: GPL-3.0-or-later](https://img.shields.io/badge/license-GPL--3.0--or--later-blue)](LICENSE)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue)](setup.py)
 [![Documentation](https://img.shields.io/badge/docs-online-brightgreen)](https://clintonenwerem.com/graspit-py/)
+[![arXiv:2611.29011](https://img.shields.io/badge/arXiv-2611.29011-b31b1b)](https://arxiv.org/abs/2611.29011)
 
 `graspit-py` exposes the [GraspIt! simulator](https://graspit-simulator.github.io/)
 as a Python library for grasp synthesis and evaluation with multifingered hands.
@@ -124,10 +125,12 @@ describes the planned standalone viewer for grasp records and model corresponden
 ## Citation and References
 
 Cite `graspit-py` using [CITATION.cff](CITATION.cff) and record the software
-revision used. The [companion paper](https://clintonenwerem.com/graspit-py/references.html#software-preprint)
-is in preparation for arXiv submission. Cite the corresponding simulator
-publication for experiments performed in GraspIt! or MuJoCo.
+revision used. The [companion paper](https://arxiv.org/abs/2611.29011)
+describes the interface, mathematical formulation, and software evaluation.
+Cite the corresponding simulator publication for experiments performed in
+GraspIt! or MuJoCo.
 
+- Enwerem, C., Baras, J. S., and Belta, C. (2026). [graspit-py: A Python Interface to GraspIt! for Grasp Planning Under Pose and Friction Uncertainty](https://arxiv.org/abs/2611.29011). arXiv:2611.29011.
 - Miller, A. T., and Allen, P. K. (2004). [GraspIt! A Versatile Simulator for Robotic Grasping](https://www.cs.columbia.edu/~allen/PAPERS/graspit.final.pdf). *IEEE Robotics & Automation Magazine*, 11(4), 110–122.
 - Todorov, E., Erez, T., and Tassa, Y. (2012). [MuJoCo: A Physics Engine for Model-Based Control](https://doi.org/10.1109/IROS.2012.6386109). *IEEE/RSJ International Conference on Intelligent Robots and Systems*, 5026–5033.
 

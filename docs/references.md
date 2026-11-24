@@ -10,8 +10,22 @@ publication for experiments run in GraspIt! or MuJoCo.
 (software-preprint)=
 ## Companion Paper
 
-The companion software paper is being prepared for submission. A preprint link
-will appear here and on my [research page](https://clintonenwerem.com/research.html).
+Enwerem, C., Baras, J. S., and Belta, C. (2026). *graspit-py: A Python Interface
+to GraspIt! for Grasp Planning Under Pose and Friction Uncertainty*.
+arXiv:2611.29011. [Abstract](https://arxiv.org/abs/2611.29011) ·
+[PDF](https://arxiv.org/pdf/2611.29011).
+
+```bibtex
+@misc{enwerem2026graspitpy,
+  title = {{graspit-py}: {A} {Python} {Interface} to {GraspIt!} for {Grasp} {Planning} under {Pose} and {Friction} {Uncertainty}},
+  author = {Enwerem, Clinton and Baras, John S. and Belta, Calin},
+  year = {2026},
+  eprint = {2611.29011},
+  archivePrefix = {arXiv},
+  primaryClass = {cs.RO},
+  url = {https://arxiv.org/abs/2611.29011}
+}
+```
 
 ## Simulator and Planning References
 

@@ -17,9 +17,9 @@ compiled MuJoCo scene. It records the joint and link correspondence needed
 to transfer planned configurations to the source model. The application
 uses the resulting targets for arm kinematics, motion planning, and
 execution. The [source repository](https://github.com/coenwerem/graspit-py)
-contains the code and examples. See [Citation and References](references.md)
-for software citation metadata and the
-{ref}`companion paper <software-preprint>`. A preprint link will be added here when available.
+contains the code and examples. The [companion paper on arXiv](https://arxiv.org/abs/2611.29011)
+describes the interface and its evaluation. See [Citation and References](references.md)
+for the paper citation and software metadata.
 
 ````{container} hand-gallery hand-gallery-overview
 ```{figure} figures/l6-insertion.png
