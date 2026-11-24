@@ -1,5 +1,5 @@
 cff-version: 1.2.0
-message: "If you use this software, please cite it using these metadata, and record the commit you used."
+message: "If you use this software, please cite the companion preprint and record the software commit you used."
 title: "graspit-py: Python bindings and risk-sensitive contact planning for GraspIt!"
 type: software
 authors:
@@ -21,3 +21,17 @@ keywords:
   - GraspIt
   - grasp planning
   - MuJoCo
+preferred-citation:
+  type: article
+  title: "graspit-py: A Python Interface to GraspIt! for Grasp Planning Under Pose and Friction Uncertainty"
+  authors:
+    - family-names: Enwerem
+      given-names: Clinton
+    - family-names: Baras
+      given-names: John S.
+    - family-names: Belta
+      given-names: Calin
+  journal: arXiv
+  year: 2026
+  month: 11
+  url: "https://arxiv.org/pdf/2611.29011"

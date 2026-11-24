@@ -17,6 +17,7 @@ html_theme_options = {
     "color_mode": "auto",
     "nav_links": [
         {"title": "GitHub", "url": "https://github.com/coenwerem/graspit-py"},
+        {"title": "Paper", "url": "https://arxiv.org/pdf/2611.29011"},
     ],
 }
 html_show_sourcelink = False
