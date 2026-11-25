@@ -6,6 +6,7 @@ on:
     paths:
       - 'docs/**'
       - '.github/workflows/pages.yml'
+      - '.github/scripts/wait-for-pages-artifact*'
   workflow_dispatch:
 
 permissions:
@@ -28,11 +29,28 @@ jobs:
       - uses: actions/setup-python@v6
         with:
           python-version: '3.12'
+      - name: Verify artifact discovery retries
+        run: node --test .github/scripts/wait-for-pages-artifact.test.cjs
       - uses: actions/configure-pages@v5
       - run: python -m pip install -r docs/requirements.txt
       - run: python -m sphinx -nW -b html docs docs/_build/html
+      - name: Install artifact lookup client
+        run: >-
+          npm install --prefix "$RUNNER_TEMP/pages-artifact" --ignore-scripts
+          --no-audit --no-fund --package-lock=false @actions/artifact@2.1.3
       - uses: actions/upload-pages-artifact@v4
+        id: upload
         with:
           path: docs/_build/html
+      - name: Wait for Pages artifact visibility
+        timeout-minutes: 3
+        uses: actions/github-script@v8
+        env:
+          PAGES_ARTIFACT_ID: ${{ steps.upload.outputs.artifact_id }}
+        with:
+          script: |
+            const { DefaultArtifactClient } = require(`${process.env.RUNNER_TEMP}/pages-artifact/node_modules/@actions/artifact`)
+            const { waitForPagesArtifact } = require(`${process.env.GITHUB_WORKSPACE}/.github/scripts/wait-for-pages-artifact.cjs`)
+            await waitForPagesArtifact(new DefaultArtifactClient(), process.env.PAGES_ARTIFACT_ID, { log: core.info })
       - uses: actions/deploy-pages@v4
         id: deployment
