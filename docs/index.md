@@ -64,6 +64,11 @@ The [export guide](export.md) covers model conversion and transfer back
 to MuJoCo. The [theory guide](theory.md) derives the joint mapping and
 wrench scores used in both guides.
 
+The [static-grasp dataset guide](datasets.md) connects these operations to
+learning experiments. It includes household-object examples, a downloadable
+NPZ archive, and NumPy/PyTorch loading with named coordinates, object-frame
+poses, contacts, and quality samples.
+
 ## From Models to Grasp Records
 
 ```{figure} figures/architecture.png
@@ -84,6 +89,7 @@ theory
 export
 planning
 hands
+datasets
 api
 roadmap
 references

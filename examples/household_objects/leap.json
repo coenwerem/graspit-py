@@ -1,0 +1,108 @@
+{
+  "hand": {
+    "approach_axis": [
+      0,
+      0,
+      -1
+    ],
+    "finger_axis": [
+      1,
+      0,
+      0
+    ],
+    "grasp_center_mm": [
+      -20,
+      -37,
+      -60
+    ]
+  },
+  "dof_names": [
+    "leap_1",
+    "leap_0",
+    "leap_2",
+    "leap_3",
+    "leap_5",
+    "leap_4",
+    "leap_6",
+    "leap_7",
+    "leap_9",
+    "leap_8",
+    "leap_10",
+    "leap_11",
+    "leap_12",
+    "leap_13",
+    "leap_14",
+    "leap_15"
+  ],
+  "planner": {
+    "n_directions": 24,
+    "n_rolls": 3,
+    "standoff_mm": 220,
+    "approach_step_mm": 4,
+    "min_contacts": 3,
+    "n_pose_samples": 1,
+    "pose_sigma_mm": 2,
+    "pose_sigma_deg": 2,
+    "friction_samples": [
+      0.4,
+      0.6,
+      0.8
+    ],
+    "tail_mass": 0.5,
+    "preshapes": [
+      [
+        0.45,
+        0,
+        0.6,
+        0.4,
+        0.45,
+        0,
+        0.6,
+        0.4,
+        0.45,
+        0,
+        0.6,
+        0.4,
+        1.3,
+        0.05,
+        0.1,
+        0.2
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1.3,
+        0,
+        0,
+        0
+      ]
+    ],
+    "closing_sets": [
+      [
+        0,
+        2,
+        3,
+        4,
+        6,
+        7,
+        8,
+        10,
+        11,
+        13,
+        14,
+        15
+      ]
+    ],
+    "seed": 20261126
+  }
+}

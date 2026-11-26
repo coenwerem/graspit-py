@@ -1,0 +1,12 @@
+{
+  "hand": {"approach_axis": [0, 0, 1], "finger_axis": [1, 0, 0], "grasp_center_mm": [0, 0, 100]},
+  "dof_names": ["spread", "finger_1", "finger_2", "finger_3"],
+  "planner": {
+    "n_directions": 24, "n_rolls": 3, "standoff_mm": 220,
+    "approach_step_mm": 4, "min_contacts": 3,
+    "n_pose_samples": 1, "pose_sigma_mm": 2, "pose_sigma_deg": 2,
+    "friction_samples": [0.4, 0.6, 0.8], "tail_mass": 0.5,
+    "preshapes": [[0, 0, 0, 0], [1.5707963267948966, 0, 0, 0]],
+    "closing_sets": [[1, 2, 3]], "seed": 20261126
+  }
+}

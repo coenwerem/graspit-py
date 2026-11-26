@@ -10,6 +10,7 @@ as a Python library for grasp synthesis and evaluation with multifingered hands.
 
 - **Native bindings:** set hand poses and joint coordinates, close fingers with autograsp, query collisions and contact geometry, and evaluate wrench-space metrics.
 - **Contact planner:** search approach commands and rank closures by Ferrari–Canny quality or task-wrench capacity under pose and friction uncertainty.
+- **Learning data:** export named hand coordinates, object-frame poses and contacts, point clouds, and sampled quality labels to versioned NPZ archives for NumPy or PyTorch.
 - **MuJoCo exporter:** generate GraspIt! hand and object descriptions from a compiled MuJoCo scene, with a joint map for reconstructing planned configurations.
 
 Contact positions, normals, and sampled scores remain available to caller-defined
@@ -82,6 +83,24 @@ coordinates to nominal contacts and sampled wrench scores. The
 configuration examples and output fields; the
 [theory guide](https://clintonenwerem.com/graspit-py/theory.html) defines the
 contact mechanics, coordinate conventions, and uncertainty objectives.
+
+## Household Objects and Learning Data
+
+The [household-object workflow](examples/household_objects/README.md) generates
+new grasps on YCB meshes and exports per-hand/object datasets. Examples cover a
+sugar box, soup can, mustard bottle, tuna fish can, banana, and apple with the
+Barrett and LEAP hands. Each record retains the named coordinate order,
+object-relative hand pose, contacts, and individual pose/friction quality samples.
+
+| Mustard Bottle | Banana | Tomato Soup Can |
+| :---: | :---: | :---: |
+| <img src="docs/figures/household/leap_ycb_mustard_bottle.png" alt="Fresh LEAP grasp on a YCB mustard-bottle mesh with green contact markers" height="240"> | <img src="docs/figures/household/leap_ycb_banana.png" alt="LEAP fingers around a curved YCB banana mesh" height="240"> | <img src="docs/figures/household/leap_ycb_tomato_soup_can.png" alt="LEAP grasp around a YCB soup-can mesh" height="240"> |
+
+The [dataset guide](https://clintonenwerem.com/graspit-py/datasets.html) defines
+the SI coordinate contract, ragged contact/sample arrays, model hashes, and
+NumPy/PyTorch loading. Dataset reading requires no native GraspIt installation.
+Object meshes remain user-supplied; the guide includes a downloadable learning
+example with its source attribution.
 
 ## Supported Hands and Grasp Examples
 

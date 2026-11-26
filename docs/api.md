@@ -206,3 +206,14 @@ epsilon: 0.408248
 
 The [theory guide](theory.md#force-closure-and-ferraricanny-epsilon)
 derives the wrench normalization and the two closure criteria.
+
+
+## Static Grasp Datasets
+
+`graspit_py.dataset.export_dataset(source, out_npz, *, hand_id, object_id,
+dof_names, ...)` writes a versioned NPZ archive and JSON metadata from planner
+records. `load_dataset(path)` validates their coordinate, unit, shape, and
+presence-mask contracts and returns numerical arrays with their metadata.
+These functions require NumPy and do not initialize the native simulator.
+The [dataset guide](datasets.md) defines all fields and provides a downloadable
+example and training-batch loading.

@@ -1,0 +1,10 @@
+Example dataset: Creative Commons Attribution 4.0 International (CC BY 4.0).
+https://creativecommons.org/licenses/by/4.0/
+
+Object geometry and sampled surfaces: YCB Object and Model Set, Berk Calli
+and collaborators, 2015. https://www.ycbbenchmarks.com/
+Grasp poses and contact-quality records: Clinton Enwerem and collaborators, 2026.
+https://arxiv.org/abs/2611.29011
+
+Hand meshes are not included in these archives. Software and source-model
+assets retain their respective licenses.
