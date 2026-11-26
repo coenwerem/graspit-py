@@ -6,7 +6,10 @@
 [![arXiv:2611.29011](https://img.shields.io/badge/arXiv-2611.29011-b31b1b)](https://arxiv.org/abs/2611.29011)
 
 `graspit-py` exposes the [GraspIt! simulator](https://graspit-simulator.github.io/)
-as a Python library for grasp synthesis and evaluation with multifingered hands.
+as a Python library for multifingered grasp synthesis, contact analysis, and
+grasp-dataset generation. Researchers can close a hand on an object, evaluate
+its contacts under pose and friction uncertainty, and carry the resulting
+configurations and quality samples into numerical or learning workflows.
 
 - **Native bindings:** set hand poses and joint coordinates, close fingers with autograsp, query collisions and contact geometry, and evaluate wrench-space metrics.
 - **Contact planner:** search approach commands and rank closures by Ferrari–Canny quality or task-wrench capacity under pose and friction uncertainty.
@@ -86,21 +89,48 @@ contact mechanics, coordinate conventions, and uncertainty objectives.
 
 ## Household Objects and Learning Data
 
-The [household-object workflow](examples/household_objects/README.md) generates
-new grasps on YCB meshes and exports per-hand/object datasets. Examples cover a
-sugar box, soup can, mustard bottle, tuna fish can, banana, and apple with the
-Barrett and LEAP hands. Each record retains the named coordinate order,
+The [household-object workflow](examples/household_objects/README.md) connects
+grasp synthesis to learning-data preparation. It preserves the physical scale
+of a YCB mesh, samples its surface, runs native hand closure, and exports the
+resulting configurations and quality labels. The example collection contains
+**288 static grasp candidates: 24 for each of six objects on Barrett and LEAP**.
+The objects are a sugar box, tomato soup can, mustard bottle, tuna fish can,
+banana, and apple. Each record retains the named coordinate order,
 object-relative hand pose, contacts, and individual pose/friction quality samples.
 
 | Mustard Bottle | Banana | Tomato Soup Can |
 | :---: | :---: | :---: |
-| <img src="docs/figures/household/leap_ycb_mustard_bottle.png" alt="Fresh LEAP grasp on a YCB mustard-bottle mesh with green contact markers" height="240"> | <img src="docs/figures/household/leap_ycb_banana.png" alt="LEAP fingers around a curved YCB banana mesh" height="240"> | <img src="docs/figures/household/leap_ycb_tomato_soup_can.png" alt="LEAP grasp around a YCB soup-can mesh" height="240"> |
+| <img src="docs/figures/household/leap_ycb_mustard_bottle.png" alt="LEAP grasp on a YCB mustard-bottle mesh with green contact markers" height="240"> | <img src="docs/figures/household/leap_ycb_banana.png" alt="LEAP fingers around a curved YCB banana mesh" height="240"> | <img src="docs/figures/household/leap_ycb_tomato_soup_can.png" alt="LEAP grasp around a YCB soup-can mesh" height="240"> |
+| 27 contacts; native Ferrari–Canny ε = 0.321 | 9 contacts; native Ferrari–Canny ε = 0.118 | 9 contacts; native Ferrari–Canny ε = 0.412 |
+
+The illustrated LEAP grasps were closed again from their saved commands before
+rendering. The labels quantify static contact quality under the native model.
 
 The [dataset guide](https://clintonenwerem.com/graspit-py/datasets.html) defines
 the SI coordinate contract, ragged contact/sample arrays, model hashes, and
-NumPy/PyTorch loading. Dataset reading requires no native GraspIt installation.
-Object meshes remain user-supplied; the guide includes a downloadable learning
-example with its source attribution.
+NumPy/PyTorch loading. Poses and contact positions use meters; independent hand
+coordinates use radians. Archives also retain 2,048 object-surface points,
+preshapes, closing-coordinate masks, and separate native and recomputed quality
+values. These fields support quality prediction, candidate ranking, and
+point-cloud-conditioned grasp generation with caller-defined acceptance criteria.
+
+Download the [LEAP mustard-bottle example](https://clintonenwerem.com/graspit-py/datasets.html#household-object-examples)
+to read 24 records without a simulator:
+
+```python
+from graspit_py.dataset import load_dataset
+
+data = load_dataset("ycb_mustard_bottle.npz").arrays
+poses_m = data["T_object_hand_m"]  # (24, 4, 4)
+dofs_rad = data["dofs_rad"]       # (24, 16)
+points_m = data["object_pointcloud_m"]  # (2048, 3)
+```
+
+Loading requires NumPy and the Python standard library; the native GraspIt!
+extension is needed for synthesis. A [PyTorch DataLoader example](examples/household_objects/load_torch.py)
+shows tensor batching. Keep training and evaluation object identities disjoint
+when measuring generalization to unseen objects. Object meshes remain
+user-supplied, and the downloadable example includes source attribution.
 
 ## Supported Hands and Grasp Examples
 
