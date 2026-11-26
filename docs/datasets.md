@@ -17,6 +17,43 @@ and writes the archives. Its PyTorch example reads those archives into training
 batches on the CPU. The native GraspIt! engine is needed for generation; consumers
 can read the NPZ arrays directly with NumPy without installing the simulator.
 
+## Public Hugging Face Collection
+
+The [Household Grasps dataset](https://huggingface.co/datasets/cenwerem/graspit-py-household)
+contains **288 static grasp candidates across six objects and two hands** under
+CC BY 4.0. The Dataset Viewer exposes two configurations: `grasps` has 288 rows
+of poses, named coordinates, contacts, and quality samples; `objects` has six
+rows of object geometry metadata and paths to shared surface clouds. Both use
+an `examples` split. Define object-disjoint training and evaluation partitions
+for learning studies.
+
+Install `datasets` to load the Parquet tables without a GraspIt! runtime or a
+Hugging Face login:
+
+```python
+from datasets import load_dataset
+
+grasps = load_dataset("cenwerem/graspit-py-household", "grasps", split="examples")
+objects = load_dataset("cenwerem/graspit-py-household", "objects", split="examples")
+```
+
+The Hub also hosts the twelve complete NPZ/JSON banks, six 2,048-point object
+clouds, source attribution, and a SHA-256 release manifest. To use the NumPy
+loader below, install `huggingface_hub` and download an NPZ file with its JSON
+sidecar:
+
+```python
+from pathlib import Path
+from huggingface_hub import snapshot_download
+from graspit_py.dataset import load_dataset as load_grasp_bank
+
+root = snapshot_download(
+    "cenwerem/graspit-py-household", repo_type="dataset",
+    allow_patterns=["npz/leap/ycb_mustard_bottle.*"], token=False)
+bank = load_grasp_bank(Path(root) / "npz/leap/ycb_mustard_bottle.npz")
+poses_m = bank.arrays["T_object_hand_m"]  # (24, 4, 4)
+```
+
 ## Household-Object Examples
 
 The example collection contains 24 saved candidates for each of six YCB objects

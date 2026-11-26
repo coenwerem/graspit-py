@@ -23,6 +23,11 @@ for the paper citation and software metadata.
 
 ## Household Objects and Learning Data
 
+The public [Household Grasps dataset](https://huggingface.co/datasets/cenwerem/graspit-py-household)
+provides the full collection as browsable Parquet tables and downloadable
+NPZ/JSON archives under CC BY 4.0. Its Dataset Viewer includes grasp-level and
+object-level configurations.
+
 The [household-object workflow](https://github.com/coenwerem/graspit-py/tree/main/examples/household_objects)
 generates static grasp candidates on metric YCB meshes and exports their
 configurations, contacts, and quality samples. The example collection contains

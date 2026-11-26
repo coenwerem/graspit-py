@@ -18,6 +18,7 @@ html_theme_options = {
     "nav_links": [
         {"title": "GitHub", "url": "https://github.com/coenwerem/graspit-py"},
         {"title": "Paper", "url": "https://arxiv.org/pdf/2611.29011"},
+        {"title": "Dataset", "url": "https://huggingface.co/datasets/cenwerem/graspit-py-household"},
     ],
 }
 html_show_sourcelink = False

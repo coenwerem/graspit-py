@@ -3,6 +3,7 @@
 [![License: GPL-3.0-or-later](https://img.shields.io/badge/license-GPL--3.0--or--later-blue)](LICENSE)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue)](setup.py)
 [![Documentation](https://img.shields.io/badge/docs-online-brightgreen)](https://clintonenwerem.com/graspit-py/)
+[![Household Dataset](https://img.shields.io/badge/dataset-Hugging%20Face-ffd21e)](https://huggingface.co/datasets/cenwerem/graspit-py-household)
 [![arXiv:2611.29011](https://img.shields.io/badge/arXiv-2611.29011-b31b1b)](https://arxiv.org/abs/2611.29011)
 
 `graspit-py` exposes the [GraspIt! simulator](https://graspit-simulator.github.io/)
@@ -88,6 +89,11 @@ configuration examples and output fields; the
 contact mechanics, coordinate conventions, and uncertainty objectives.
 
 ## Household Objects and Learning Data
+
+Download the public [Household Grasps dataset](https://huggingface.co/datasets/cenwerem/graspit-py-household)
+or browse its `grasps` and `objects` tables in the Hugging Face Dataset Viewer.
+The collection is available under CC BY 4.0, with Parquet tables and the complete
+NPZ/JSON archives.
 
 The [household-object workflow](examples/household_objects/README.md) connects
 grasp synthesis to learning-data preparation. It preserves the physical scale
