@@ -1,6 +1,6 @@
 # graspit-py
 
-**graspit-py** is a Python library for planning and evaluating robotic grasps using simulated finger closure and contact-force analysis.
+**graspit-py** connects simulated hand closure and contact mechanics to Python grasp synthesis, numerical analysis, and learning-data generation.
 
 It provides direct access to the
 [GraspIt! simulator](https://graspit-simulator.github.io/) for planning
@@ -20,6 +20,52 @@ execution. The [source repository](https://github.com/coenwerem/graspit-py)
 contains the code and examples. The [companion paper on arXiv](https://arxiv.org/abs/2611.29011)
 describes the interface and its evaluation. See [Citation and References](references.md)
 for the paper citation and software metadata.
+
+## Household Objects and Learning Data
+
+The [household-object workflow](https://github.com/coenwerem/graspit-py/tree/main/examples/household_objects)
+generates static grasp candidates on metric YCB meshes and exports their
+configurations, contacts, and quality samples. The example collection contains
+**288 candidates across six objects using Barrett and LEAP hands**: a sugar box,
+tomato soup can, mustard bottle, tuna fish can, banana, and apple.
+The subcaptions report contact count and native GraspIt! Ferrari–Canny quality
+$\varepsilon_{\mathrm{GI}}$.
+
+````{container} hand-gallery hand-gallery-overview
+```{figure} figures/household/leap_ycb_mustard_bottle.png
+:target: datasets.html#household-object-examples
+:alt: LEAP Hand closed around the YCB mustard bottle, with green contact markers.
+
+**Mustard Bottle.** 27 contacts; $\varepsilon_{\mathrm{GI}}=0.321$.
+```
+```{figure} figures/household/leap_ycb_banana.png
+:target: datasets.html#household-object-examples
+:alt: LEAP fingers closed around the curved YCB banana mesh.
+
+**Banana.** 9 contacts; $\varepsilon_{\mathrm{GI}}=0.118$.
+```
+```{figure} figures/household/leap_ycb_tomato_soup_can.png
+:target: datasets.html#household-object-examples
+:alt: LEAP Hand grasping the YCB tomato soup can mesh.
+
+**Tomato Soup Can.** 9 contacts; $\varepsilon_{\mathrm{GI}}=0.412$.
+```
+````
+
+Each NPZ/JSON archive associates named hand coordinates and object-relative
+poses with contacts, 2,048 object-surface points, and individual pose/friction
+quality samples. Positions use meters, and hand coordinates use radians.
+Native and recomputed quality values remain distinct. These static records
+support quality prediction, candidate ranking, and point-cloud-conditioned
+grasp-generation studies with explicit geometric acceptance criteria.
+
+The [dataset guide](datasets.md) includes a downloadable LEAP mustard-bottle
+example and NumPy/PyTorch loading instructions. Reading the arrays requires
+NumPy and the Python standard library; new closures require native GraspIt!.
+The illustrated grasps were closed again from their saved commands before
+rendering. Their labels quantify the modeled contact geometry.
+
+## Supported Hands
 
 ````{container} hand-gallery hand-gallery-overview
 ```{figure} figures/l6-insertion.png
@@ -63,11 +109,6 @@ approach specification, task loading, and the grasp records shown above.
 The [export guide](export.md) covers model conversion and transfer back
 to MuJoCo. The [theory guide](theory.md) derives the joint mapping and
 wrench scores used in both guides.
-
-The [static-grasp dataset guide](datasets.md) connects these operations to
-learning experiments. It includes household-object examples, a downloadable
-NPZ archive, and NumPy/PyTorch loading with named coordinates, object-frame
-poses, contacts, and quality samples.
 
 ## From Models to Grasp Records
 
