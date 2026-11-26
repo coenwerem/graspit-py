@@ -282,7 +282,7 @@ values, and `P` the optional point count.
 | `epsilon_samples` | `(E,)` | float64 | Flattened recomputed pose/friction epsilon matrices |
 | `epsilon_sample_offsets` | `(N+1,)` | int64 | Epsilon value boundaries per record |
 | `epsilon_sample_shapes` | `(N,2)` | int64 | Original pose-by-friction matrix shapes |
-| `task_present` | `(N,)` | bool | Whether the record contains task samples |
+| `task_present` | `(N,)` | bool | Task-sample array presence |
 | `task_samples` | `(K,)` | float64 | Flattened task wrench capacity matrices |
 | `task_sample_offsets` | `(N+1,)` | int64 | Task value boundaries per record |
 | `task_sample_shapes` | `(N,2)` | int64 | Original task matrix shapes, `(0,0)` when absent |
