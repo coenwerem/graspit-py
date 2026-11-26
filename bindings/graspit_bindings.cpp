@@ -96,8 +96,15 @@ static py::dict transf_to_py(const transf& tr) {
     out["translation"] = py::make_tuple(t.x(), t.y(), t.z());
     out["quat_wxyz"] = py::make_tuple(q.w(), q.x(), q.y(), q.z());
 
-    double m[4][4];
-    tr.toRowMajorMatrix(m);
+    // GraspIt's matrix exporter transposes the rotation. Match the active
+    // quaternion action used by transf * position, with translation in mm.
+    const mat3 R = q.toRotationMatrix();
+    double m[4][4] = {
+        {R(0, 0), R(0, 1), R(0, 2), t.x()},
+        {R(1, 0), R(1, 1), R(1, 2), t.y()},
+        {R(2, 0), R(2, 1), R(2, 2), t.z()},
+        {0.0, 0.0, 0.0, 1.0}
+    };
     py::list rows;
     for (int i = 0; i < 4; ++i) {
         py::list row;
