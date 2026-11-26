@@ -1,6 +1,6 @@
 # First Grasps with Barrett and RealHand L6
 
-A first native closure establishes the connection between a hand configuration, object contacts, and grasp quality. The bundled Barrett model provides this example without external mesh assets. The RealHand L6 walkthrough then adds MuJoCo model export and uncertainty-aware approach planning. Both routes use the image built in [Installation](INSTALL.md).
+The first example generates a Barrett grasp on a cube and computes its contact geometry and quality using models included in the Docker image. The RealHand L6 example extends these operations to MuJoCo model export and grasp planning under uncertainty. Both examples use the image built in [Installation](INSTALL.md).
 
 ## First Closure with the Bundled Barrett Hand
 
@@ -49,7 +49,7 @@ The L6 example requires an MJCF scene and its collision meshes in addition to th
  'l6_middle_mcp_pitch', 'l6_ring_mcp_pitch', 'l6_pinky_mcp_pitch']
 ```
 
-The [vendor's public L6 description](https://github.com/RealHand-Robotics/Realhand_description/tree/main/l6/right) provides a URDF and meshes for preparing a source scene. It uses different body/joint names, including `hand_base_link` and `thunb_cmc_roll`, and different source couplings. It is an asset starting point, so adapt the [hand profile](hands.md#write-a-profile-for-a-new-hand), palm frame, and preshapes to the actual source model. The bundled Barrett route above remains available without these external assets.
+The [vendor's public L6 description](https://github.com/RealHand-Robotics/Realhand_description/tree/main/l6/right) provides a URDF and meshes for preparing a source scene. It uses different body/joint names, including `hand_base_link` and `thunb_cmc_roll`, and different source couplings. Adapt the [hand profile](hands.md#write-a-profile-for-a-new-hand), palm frame, and preshapes to the actual source model. The bundled Barrett route above remains available without these external assets.
 
 If the evaluated xArm7–L6 asset tree is already available locally, the repository's [complete L6 workflow](https://github.com/coenwerem/graspit-py/tree/main/examples/l6_workflow) supplies an MJCF scene and an export–plan–reconstruct program. Its README specifies the required `arm/meshes/` and `hand/meshes/` layout. For the export commands below, place a matching `scene.xml` and its meshes under `input/`, preserving relative mesh paths.
 
@@ -132,4 +132,4 @@ A nonempty result supplies the palm transform, closed coordinates, nominal conta
 | `contact_outside_region` | Check the allowed contact box in object-frame millimeters. |
 | `below_support`, `in_keepout` | Check the support normal/offset and fixture box centers/half extents in the object frame. These predicates inspect the final nominal hand vertices. |
 
-The [planning guide](planning.md) gives defaults and input requirements for each setting. The [theory guide](theory.md) explains the contact and score calculations, and [Model Export](export.md) reconstructs a selected command in its MuJoCo source scene.
+The [planning guide](planning.md) gives defaults and input requirements for each setting. The [theory guide](theory.md) explains the contact and score calculations, and [Model Export](export.md) explains how to reconstruct a selected grasp in its MuJoCo source scene.

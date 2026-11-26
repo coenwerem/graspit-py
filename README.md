@@ -8,9 +8,9 @@
 
 `graspit-py` exposes the [GraspIt! simulator](https://graspit-simulator.github.io/)
 as a Python library for multifingered grasp synthesis, contact analysis, and
-grasp-dataset generation. Researchers can close a hand on an object, evaluate
-its contacts under pose and friction uncertainty, and carry the resulting
-configurations and quality samples into numerical or learning workflows.
+grasp-dataset generation. Researchers can generate grasps, characterize their
+contact properties and quality under uncertainty in object pose and friction, and use the resulting
+data for numerical analysis, optimization, and learning.
 
 - **Native bindings:** set hand poses and joint coordinates, close fingers with autograsp, query collisions and contact geometry, and evaluate wrench-space metrics.
 - **Contact planner:** search approach commands and rank closures by Ferrari–Canny quality or task-wrench capacity under pose and friction uncertainty.
@@ -95,10 +95,9 @@ or browse its `grasps` and `objects` tables in the Hugging Face Dataset Viewer.
 The collection is available under CC BY 4.0, with Parquet tables and the complete
 NPZ/JSON archives.
 
-The [household-object workflow](examples/household_objects/README.md) connects
-grasp synthesis to learning-data preparation. It preserves the physical scale
-of a YCB mesh, samples its surface, runs native hand closure, and exports the
-resulting configurations and quality labels. The example collection contains
+The [household-object workflow](examples/household_objects/README.md) preserves
+the physical scale of a YCB mesh, samples its surface, generates grasps through
+native finger closure, and exports the resulting configurations and quality labels. The example collection contains
 **288 static grasp candidates: 24 for each of six objects on Barrett and LEAP**.
 The objects are a sugar box, tomato soup can, mustard bottle, tuna fish can,
 banana, and apple. Each record retains the named coordinate order,

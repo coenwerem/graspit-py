@@ -61,8 +61,7 @@ kind of label.
 
 Each profile evaluates 144 approach/preshape combinations with friction values
 0.4, 0.6, and 0.8 and one perturbed closure in addition to nominal closure. The
-saved top 24 candidates include their individual samples. Their count and
-quality describe this example configuration, not a learning benchmark.
+saved top 24 candidates include their individual samples.
 
 ## Use Another Mesh
 

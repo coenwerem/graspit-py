@@ -1,16 +1,17 @@
 # graspit-py
 
-**graspit-py** connects simulated hand closure and contact mechanics to Python grasp synthesis, numerical analysis, and learning-data generation.
+**graspit-py** is a Python interface to the
+[GraspIt! simulator](https://graspit-simulator.github.io/) for multifingered
+grasp planning and contact-wrench analysis. Researchers can generate grasps,
+characterize their contact properties and quality under uncertainty in object
+pose and friction, and use the resulting data for numerical analysis,
+optimization, and learning.
 
-It provides direct access to the
-[GraspIt! simulator](https://graspit-simulator.github.io/) for planning
-and evaluating grasps with multifingered hands. See
+The interface provides native scene access, articulated finger closure,
+object-frame contact positions and normals, and wrench-space quality measures.
+The approach planner samples palm poses and finger preshapes and ranks the
+resulting grasps by Ferrari–Canny quality or task-wrench capacity. See
 {ref}`Miller and Allen <ref-miller-allen>` for the simulator's design.
-A Python program can set the palm pose and finger coordinates, invoke
-closure, and retrieve object-frame contact positions and normals. This interface makes each simulated closure
-available for inspection and external scoring. A planner built on the
-interface enumerates approaches and ranks their closures by general-purpose
-or task-specific wrench capacity under approach and friction uncertainty.
 
 The MuJoCo exporter produces GraspIt! robot and object models from a
 compiled MuJoCo scene. It records the joint and link correspondence needed
@@ -126,7 +127,7 @@ wrench scores used in both guides.
 Model conversion supplies geometry and the joint map. Native closure provides contacts, and numerical analysis supplies wrench-quality samples. A grasp record connects the selected command to its nominal contacts and scores. Select the figure for a full-size view.
 ```
 
-The [API reference](api.md) groups the corresponding operations by scene setup, hand state, contacts, and geometry. The [theory guide](theory.md) connects their numerical inputs to the contact and wrench models.
+The [API reference](api.md) groups the corresponding operations by scene setup, hand state, contacts, and geometry. The [theory guide](theory.md) defines the contact and wrench models used by these operations.
 
 ```{toctree}
 :maxdepth: 2

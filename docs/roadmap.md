@@ -11,8 +11,7 @@ GraspIt! remains responsible for closure and contact queries; the
 viewer consumes exported geometry, named joint states, and saved
 contact records. This separation permits inspection on a machine
 without the native Qt interface and preserves the existing Python
-planning workflow. The viewer is a future extension; the current
-release provides geometry queries and serialized grasp records.
+planning workflow.
 
 The viewport will expose palm, object, and contact frames with the
 coordinate conventions in the [theory guide](theory.md). Users will
