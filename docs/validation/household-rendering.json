@@ -1,0 +1,1782 @@
+{
+  "schema": "graspit-py.static-grasp-rendering.v1",
+  "arm_hand_model": "ZArm\u2013LEAP",
+  "model_sha256": "86fe8d5e9251ab984f6c694c229d7df5188665fb7fd68c44d5f38b08bda34fe6",
+  "world_up": [
+    0,
+    0,
+    1
+  ],
+  "renderer": {
+    "closeup": {
+      "vendor": "Mesa",
+      "renderer": "llvmpipe (LLVM 20.1.2, 256 bits)",
+      "version": "4.5 (Core Profile) Mesa 25.2.8-0ubuntu0.24.04.4"
+    },
+    "arm_scene": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)"
+  },
+  "verification_kind": "static closure, joint limits, FK, and stated collision checks",
+  "collision_scope": {
+    "arm_fixtures": "Source arm collision model from frogger ZarmReachChecker, source mounting table box .81x1.09x.747 at [.5,.003,-.4235], conservative square pedestal .15x.15x.05 at [.5,0,-.025]. Only base/table mounting contact is excluded.",
+    "arm_hand": "Complete mounted source URDF collision surfaces converted STL to OBJ without coordinate changes, excluding Drake native adjacent/welded-body filters. Pairwise signed-distance query; hand-self collision verified separately by native GraspIt.",
+    "arm_object": "Conservative convex hull of each exact saved native object source surface in its preserved object frame; >=50mm means no pair found within50mm query radius.",
+    "hand_fixtures": "Every hand source vertex is at least25mm above pedestal top plane; source triangles are linear, so the entire hand surface lies above that plane. Table top is50mm lower."
+  },
+  "grasps": [
+    {
+      "grasp_id": "leap/ycb_mustard_bottle/000000",
+      "native_epsilon": 0.3205706940965233,
+      "contacts": 27,
+      "physical_state": {
+        "world_up": [
+          0,
+          0,
+          1
+        ],
+        "gravity_direction_convention": [
+          0,
+          0,
+          -1
+        ],
+        "gravity_simulation_performed": false,
+        "X_world_object": [
+          [
+            1.0,
+            0.0,
+            0.0,
+            0.5
+          ],
+          [
+            0.0,
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0,
+            0.1556542265
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "X_world_palm_target": [
+          [
+            0.9881024180712955,
+            0.006408221092653116,
+            -0.1536637436225161,
+            0.510161362462768
+          ],
+          [
+            -0.15379730622367443,
+            0.041170934086304074,
+            -0.9872443176766339,
+            -0.06631424952993809
+          ],
+          [
+            0.0,
+            0.9991315673568165,
+            0.04166666666666676,
+            0.1781503594922022
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "T_object_hand_m": [
+          [
+            0.9881024180712955,
+            0.006408221092653116,
+            -0.1536637436225161,
+            0.010161362462768015
+          ],
+          [
+            -0.15379730622367443,
+            0.041170934086304074,
+            -0.9872443176766339,
+            -0.06631424952993809
+          ],
+          [
+            0.0,
+            0.9991315673568165,
+            0.04166666666666676,
+            0.02249613299220222
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "relative_grasp_transform_max_abs_error": 1.734723475976807e-17,
+        "arm_joint_names": [
+          "shoulder_pan_joint",
+          "shoulder_lift_joint",
+          "elbow_joint",
+          "wrist_1_joint",
+          "wrist_2_joint",
+          "wrist_3_joint"
+        ],
+        "q_arm_rad": [
+          -0.9299493701402851,
+          -0.7898896927712655,
+          2.201276056035654,
+          -4.5113045882616225,
+          -1.5806465688939633,
+          1.5712107376139943
+        ],
+        "arm_joint_limits_rad": {
+          "shoulder_pan_joint": [
+            -3.0543,
+            3.0543
+          ],
+          "shoulder_lift_joint": [
+            -4.6251,
+            1.4835
+          ],
+          "elbow_joint": [
+            -2.8274,
+            2.8274
+          ],
+          "wrist_1_joint": [
+            -4.6251,
+            1.4835
+          ],
+          "wrist_2_joint": [
+            -3.0543,
+            3.0543
+          ],
+          "wrist_3_joint": [
+            -3.0543,
+            3.0543
+          ]
+        },
+        "arm_min_joint_limit_margin_rad": 0.11379541173837726,
+        "hand_joint_names": [
+          "leap_1",
+          "leap_0",
+          "leap_2",
+          "leap_3",
+          "leap_5",
+          "leap_4",
+          "leap_6",
+          "leap_7",
+          "leap_9",
+          "leap_8",
+          "leap_10",
+          "leap_11",
+          "leap_12",
+          "leap_13",
+          "leap_14",
+          "leap_15"
+        ],
+        "q_hand_rad": [
+          0.34200000000000025,
+          0.0,
+          1.153000000000001,
+          1.153000000000001,
+          0.4040000000000003,
+          0.0,
+          1.1150000000000009,
+          1.1150000000000009,
+          0.3940000000000003,
+          0.0,
+          1.0850000000000009,
+          1.0850000000000009,
+          1.3,
+          0.32000000000000023,
+          0.32000000000000023,
+          0.8440000000000006
+        ],
+        "hand_min_z_m": 0.07432982221454343,
+        "table_top_z_m": -0.05,
+        "pedestal_top_z_m": 0,
+        "hand_pedestal_top_plane_clearance_m": 0.07432982221454343,
+        "hand_table_top_plane_clearance_m": 0.12432982221454343
+      },
+      "verification": {
+        "full_mounted_Drake_palm_position_residual_m": 1.070779926773885e-14,
+        "full_mounted_Drake_palm_orientation_residual_rad": 2.426338440064637e-14,
+        "native_to_mounted_URDF_max_symmetric_vertex_set_error_m": 7.05586983667062e-08,
+        "arm_self_and_fixture_min_clearance_m": 0.004433694168924874,
+        "arm_hand_min_clearance_m": 0.016881819180878624,
+        "arm_object_min_clearance_m": 0.04845055782962898,
+        "arm_object_conservative_geometry": "conservative convex hull of exact saved native object surface; >=50mm recorded when no pair occurs below query threshold",
+        "arm_fixture_closest_pairs": [
+          {
+            "a": "zarm::Mesh",
+            "b": "zarm::Mesh",
+            "distance_m": 0.004433694168924874
+          },
+          {
+            "a": "zarm::Mesh",
+            "b": "zarm::Mesh",
+            "distance_m": 0.0161758263525437
+          },
+          {
+            "a": "zarm::Mesh",
+            "b": "zarm::Mesh",
+            "distance_m": 0.01841971396384257
+          },
+          {
+            "a": "zarm::Mesh",
+            "b": "zarm::Mesh",
+            "distance_m": 0.019326211576322392
+          },
+          {
+            "a": "zarm::Mesh",
+            "b": "zarm::Mesh",
+            "distance_m": 0.029914902765628085
+          }
+        ],
+        "arm_hand_closest_pairs": [
+          {
+            "a_body": "wrist3_link",
+            "b_body": "leap_pip_4",
+            "distance_m": 0.016881819180878624
+          },
+          {
+            "a_body": "wrist3_link",
+            "b_body": "leap_pip_4",
+            "distance_m": 0.020238744767117005
+          },
+          {
+            "a_body": "wrist3_link",
+            "b_body": "leap_pip_4",
+            "distance_m": 0.021835315710466992
+          },
+          {
+            "a_body": "wrist3_link",
+            "b_body": "leap_pip_4",
+            "distance_m": 0.02300603061453062
+          },
+          {
+            "a_body": "wrist3_link",
+            "b_body": "leap_mcp_joint_2",
+            "distance_m": 0.028991650027285487
+          },
+          {
+            "a_body": "wrist3_link",
+            "b_body": "leap_mcp_joint_2",
+            "distance_m": 0.02906423097418448
+          },
+          {
+            "a_body": "wrist3_link",
+            "b_body": "leap_mcp_joint_2",
+            "distance_m": 0.029580270930670713
+          },
+          {
+            "a_body": "wrist3_link",
+            "b_body": "leap_mcp_joint",
+            "distance_m": 0.030930553477957822
+          },
+          {
+            "a_body": "wrist3_link",
+            "b_body": "leap_mcp_joint",
+            "distance_m": 0.03145678763677569
+          },
+          {
+            "a_body": "wrist3_link",
+            "b_body": "leap_mcp_joint_2",
+            "distance_m": 0.03282276874710367
+          },
+          {
+            "a_body": "wrist3_link",
+            "b_body": "leap_mcp_joint_2",
+            "distance_m": 0.033342195045693336
+          },
+          {
+            "a_body": "wrist3_link",
+            "b_body": "leap_mcp_joint",
+            "distance_m": 0.03541916895347961
+          }
+        ],
+        "arm_object_closest_pairs": [
+          {
+            "arm_body": "wrist3_link",
+            "distance_m": 0.04845055782962898
+          },
+          {
+            "arm_body": "wrist3_link",
+            "distance_m": 0.04847228059481749
+          },
+          {
+            "arm_body": "wrist3_link",
+            "distance_m": 0.048550668615968115
+          }
+        ]
+      },
+      "native_replay": {
+        "q_max_error_rad": 0.0,
+        "epsilon_abs_error": 2.220446049250313e-16,
+        "native_hand_object_and_self_no_penetration": true
+      }
+    },
+    {
+      "grasp_id": "leap/ycb_banana/000001",
+      "native_epsilon": 0.11831373332002501,
+      "contacts": 9,
+      "physical_state": {
+        "world_up": [
+          0,
+          0,
+          1
+        ],
+        "gravity_direction_convention": [
+          0,
+          0,
+          -1
+        ],
+        "gravity_simulation_performed": false,
+        "X_world_object": [
+          [
+            2.220446049250313e-16,
+            -1.0,
+            0.0,
+            0.5
+          ],
+          [
+            1.0,
+            2.220446049250313e-16,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0,
+            0.11890080064815084
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "X_world_palm_target": [
+          [
+            -0.3671432200533517,
+            0.4277895710175043,
+            -0.8259551676074894,
+            0.4267442559827665
+          ],
+          [
+            0.3562647975437035,
+            -0.7555807917944052,
+            -0.5497027024696932,
+            -0.08476348594803376
+          ],
+          [
+            -0.8592329428042202,
+            -0.49607837082461065,
+            0.12499999999999999,
+            0.09232629107155584
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "T_object_hand_m": [
+          [
+            0.35626479754370344,
+            -0.7555807917944051,
+            -0.5497027024696934,
+            -0.08476348594803378
+          ],
+          [
+            0.36714322005335176,
+            -0.4277895710175045,
+            0.8259551676074893,
+            0.0732557440172335
+          ],
+          [
+            -0.8592329428042202,
+            -0.49607837082461065,
+            0.12499999999999999,
+            -0.026574509576595
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "relative_grasp_transform_max_abs_error": 3.469446951953614e-18,
+        "arm_joint_names": [
+          "shoulder_pan_joint",
+          "shoulder_lift_joint",
+          "elbow_joint",
+          "wrist_1_joint",
+          "wrist_2_joint",
+          "wrist_3_joint"
+        ],
+        "q_arm_rad": [
+          -0.5984554003760096,
+          -1.1902779498173188,
+          1.5332628344261896,
+          -0.030245472569356828,
+          2.7231683039515286,
+          0.8108869916835927
+        ],
+        "arm_joint_limits_rad": {
+          "shoulder_pan_joint": [
+            -3.0543,
+            3.0543
+          ],
+          "shoulder_lift_joint": [
+            -4.6251,
+            1.4835
+          ],
+          "elbow_joint": [
+            -2.8274,
+            2.8274
+          ],
+          "wrist_1_joint": [
+            -4.6251,
+            1.4835
+          ],
+          "wrist_2_joint": [
+            -3.0543,
+            3.0543
+          ],
+          "wrist_3_joint": [
+            -3.0543,
+            3.0543
+          ]
+        },
+        "arm_min_joint_limit_margin_rad": 0.33113169604847137,
+        "hand_joint_names": [
+          "leap_1",
+          "leap_0",
+          "leap_2",
+          "leap_3",
+          "leap_5",
+          "leap_4",
+          "leap_6",
+          "leap_7",
+          "leap_9",
+          "leap_8",
+          "leap_10",
+          "leap_11",
+          "leap_12",
+          "leap_13",
+          "leap_14",
+          "leap_15"
+        ],
+        "q_hand_rad": [
+          0.8760000000000008,
+          0.0,
+          0.8760000000000008,
+          0.8760000000000008,
+          0.6810000000000005,
+          0.0,
+          1.034000000000001,
+          1.034000000000001,
+          0.22500000000000014,
+          0.0,
+          1.250000000000001,
+          1.250000000000001,
+          1.3,
+          0.08900000000000002,
+          0.08900000000000002,
+          0.08900000000000002
+        ],
+        "hand_min_z_m": 0.025000001590987822,
+        "table_top_z_m": -0.05,
+        "pedestal_top_z_m": 0,
+        "hand_pedestal_top_plane_clearance_m": 0.025000001590987822,
+        "hand_table_top_plane_clearance_m": 0.07500000159098782
+      },
+      "verification": {
+        "full_mounted_Drake_palm_position_residual_m": 1.8121011437500493e-15,
+        "full_mounted_Drake_palm_orientation_residual_rad": 6.326033964612262e-15,
+        "native_to_mounted_URDF_max_symmetric_vertex_set_error_m": 8.888294035292926e-08,
+        "arm_self_and_fixture_min_clearance_m": 0.015935747513546494,
+        "arm_hand_min_clearance_m": 0.01688181918087872,
+        "arm_object_min_clearance_m": 0.05,
+        "arm_object_conservative_geometry": "conservative convex hull of exact saved native object surface; >=50mm recorded when no pair occurs below query threshold",
+        "arm_fixture_closest_pairs": [
+          {
+            "a": "zarm::Mesh",
+            "b": "zarm::Mesh",
+            "a_body": "wrist1_link",
+            "b_body": "wrist3_link",
+            "distance_m": 0.015935747513546494
+          },
+          {
+            "a": "zarm::Mesh",
+            "b": "zarm::Mesh",
+            "a_body": "forearm_link",
+            "b_body": "wrist2_link",
+            "distance_m": 0.016434921913449307
+          },
+          {
+            "a": "zarm::Mesh",
+            "b": "zarm::Mesh",
+            "a_body": "base_link",
+            "b_body": "upperarm_link",
+            "distance_m": 0.01850509623933719
+          },
+          {
+            "a": "zarm::Mesh",
+            "b": "zarm::Mesh",
+            "a_body": "forearm_link",
+            "b_body": "wrist3_link",
+            "distance_m": 0.024632001454894605
+          }
+        ],
+        "arm_hand_closest_pairs": [
+          {
+            "a_body": "wrist3_link",
+            "b_body": "leap_pip_4",
+            "distance_m": 0.01688181918087872
+          },
+          {
+            "a_body": "forearm_link",
+            "b_body": "leap_palm_lower",
+            "distance_m": 0.018536348233714518
+          },
+          {
+            "a_body": "wrist3_link",
+            "b_body": "leap_pip_4",
+            "distance_m": 0.020238744767117154
+          },
+          {
+            "a_body": "wrist3_link",
+            "b_body": "leap_pip_4",
+            "distance_m": 0.021835315710467054
+          },
+          {
+            "a_body": "wrist3_link",
+            "b_body": "leap_pip_4",
+            "distance_m": 0.023006030614530725
+          },
+          {
+            "a_body": "wrist3_link",
+            "b_body": "leap_mcp_joint_2",
+            "distance_m": 0.029086658147636692
+          },
+          {
+            "a_body": "wrist3_link",
+            "b_body": "leap_mcp_joint_2",
+            "distance_m": 0.0290916903441358
+          },
+          {
+            "a_body": "wrist3_link",
+            "b_body": "leap_mcp_joint_2",
+            "distance_m": 0.02958805177203348
+          },
+          {
+            "a_body": "wrist3_link",
+            "b_body": "leap_mcp_joint",
+            "distance_m": 0.031729064896277824
+          },
+          {
+            "a_body": "wrist3_link",
+            "b_body": "leap_mcp_joint",
+            "distance_m": 0.031780313107810446
+          },
+          {
+            "a_body": "wrist3_link",
+            "b_body": "leap_mcp_joint_2",
+            "distance_m": 0.03292584595003645
+          },
+          {
+            "a_body": "wrist3_link",
+            "b_body": "leap_mcp_joint_2",
+            "distance_m": 0.03347551050770242
+          }
+        ],
+        "arm_object_closest_pairs": []
+      },
+      "native_replay": {
+        "q_max_error_rad": 0.0,
+        "epsilon_abs_error": 3.7470027081099033e-16,
+        "native_hand_object_and_self_no_penetration": true
+      }
+    },
+    {
+      "grasp_id": "leap/ycb_tuna_fish_can/000005",
+      "native_epsilon": 0.3369654397346438,
+      "contacts": 6,
+      "physical_state": {
+        "world_up": [
+          0,
+          0,
+          1
+        ],
+        "gravity_direction_convention": [
+          0,
+          0,
+          -1
+        ],
+        "gravity_simulation_performed": false,
+        "X_world_object": [
+          [
+            1.0,
+            0.0,
+            0.0,
+            0.5
+          ],
+          [
+            0.0,
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0,
+            0.1175337306856247
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "X_world_palm_target": [
+          [
+            -0.2991324319693392,
+            0.8853063159557952,
+            0.3560231945714868,
+            0.5544910712275536
+          ],
+          [
+            -0.5639786090601681,
+            0.13693096085213588,
+            -0.8143574402451722,
+            -0.06975516696879777
+          ],
+          [
+            -0.7697063834129655,
+            -0.4443901876604489,
+            0.45833333333333315,
+            0.12127296707392875
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "T_object_hand_m": [
+          [
+            -0.2991324319693392,
+            0.8853063159557952,
+            0.3560231945714868,
+            0.0544910712275536
+          ],
+          [
+            -0.5639786090601681,
+            0.13693096085213588,
+            -0.8143574402451722,
+            -0.06975516696879777
+          ],
+          [
+            -0.7697063834129655,
+            -0.4443901876604489,
+            0.45833333333333315,
+            0.0037392363883040503
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "relative_grasp_transform_max_abs_error": 1.3877787807814457e-17,
+        "arm_joint_names": [
+          "shoulder_pan_joint",
+          "shoulder_lift_joint",
+          "elbow_joint",
+          "wrist_1_joint",
+          "wrist_2_joint",
+          "wrist_3_joint"
+        ],
+        "q_arm_rad": [
+          -1.42037958278665,
+          -1.29363439286043,
+          2.270250119574485,
+          -3.3174329804484564,
+          -0.6924652168725425,
+          2.994295275906314
+        ],
+        "arm_joint_limits_rad": {
+          "shoulder_pan_joint": [
+            -3.0543,
+            3.0543
+          ],
+          "shoulder_lift_joint": [
+            -4.6251,
+            1.4835
+          ],
+          "elbow_joint": [
+            -2.8274,
+            2.8274
+          ],
+          "wrist_1_joint": [
+            -4.6251,
+            1.4835
+          ],
+          "wrist_2_joint": [
+            -3.0543,
+            3.0543
+          ],
+          "wrist_3_joint": [
+            -3.0543,
+            3.0543
+          ]
+        },
+        "arm_min_joint_limit_margin_rad": 0.06000472409368607,
+        "hand_joint_names": [
+          "leap_1",
+          "leap_0",
+          "leap_2",
+          "leap_3",
+          "leap_5",
+          "leap_4",
+          "leap_6",
+          "leap_7",
+          "leap_9",
+          "leap_8",
+          "leap_10",
+          "leap_11",
+          "leap_12",
+          "leap_13",
+          "leap_14",
+          "leap_15"
+        ],
+        "q_hand_rad": [
+          0.8025000000000007,
+          0.0,
+          0.8025000000000007,
+          0.8025000000000007,
+          0.6855000000000006,
+          0.0,
+          0.9425000000000009,
+          0.9425000000000009,
+          0.8235000000000008,
+          0.0,
+          0.8235000000000008,
+          0.8235000000000008,
+          1.3,
+          0.4915000000000004,
+          0.4915000000000004,
+          0.4915000000000004
+        ],
+        "hand_min_z_m": 0.024999946012530957,
+        "table_top_z_m": -0.05,
+        "pedestal_top_z_m": 0,
+        "hand_pedestal_top_plane_clearance_m": 0.024999946012530957,
+        "hand_table_top_plane_clearance_m": 0.07499994601253096
+      },
+      "verification": {
+        "full_mounted_Drake_palm_position_residual_m": 9.862874766377284e-10,
+        "full_mounted_Drake_palm_orientation_residual_rad": 8.82421808748822e-09,
+        "native_to_mounted_URDF_max_symmetric_vertex_set_error_m": 7.45346565289941e-08,
+        "arm_self_and_fixture_min_clearance_m": 0.014333192310727364,
+        "arm_hand_min_clearance_m": 0.016881819180878662,
+        "arm_object_min_clearance_m": 0.04545460028059515,
+        "arm_object_conservative_geometry": "conservative convex hull of exact saved native object surface; >=50mm recorded when no pair occurs below query threshold",
+        "arm_fixture_closest_pairs": [
+          {
+            "a": "zarm::Mesh",
+            "b": "zarm::Mesh",
+            "a_body": "forearm_link",
+            "b_body": "wrist2_link",
+            "distance_m": 0.014333192310727364
+          },
+          {
+            "a": "zarm::Mesh",
+            "b": "zarm::Mesh",
+            "a_body": "wrist1_link",
+            "b_body": "wrist3_link",
+            "distance_m": 0.016317792209404332
+          },
+          {
+            "a": "zarm::Mesh",
+            "b": "zarm::Mesh",
+            "a_body": "base_link",
+            "b_body": "upperarm_link",
+            "distance_m": 0.018519765306981087
+          }
+        ],
+        "arm_hand_closest_pairs": [
+          {
+            "a_body": "wrist3_link",
+            "b_body": "leap_pip_4",
+            "distance_m": 0.016881819180878662
+          },
+          {
+            "a_body": "wrist3_link",
+            "b_body": "leap_pip_4",
+            "distance_m": 0.020238744767117033
+          },
+          {
+            "a_body": "wrist3_link",
+            "b_body": "leap_pip_4",
+            "distance_m": 0.02183531571046698
+          },
+          {
+            "a_body": "wrist3_link",
+            "b_body": "leap_pip_4",
+            "distance_m": 0.023006030614530628
+          },
+          {
+            "a_body": "wrist3_link",
+            "b_body": "leap_mcp_joint_2",
+            "distance_m": 0.029089521033318955
+          },
+          {
+            "a_body": "wrist3_link",
+            "b_body": "leap_mcp_joint_2",
+            "distance_m": 0.02909524328916588
+          },
+          {
+            "a_body": "wrist3_link",
+            "b_body": "leap_mcp_joint_2",
+            "distance_m": 0.02958500537262248
+          },
+          {
+            "a_body": "wrist3_link",
+            "b_body": "leap_mcp_joint",
+            "distance_m": 0.03161429457508129
+          },
+          {
+            "a_body": "wrist3_link",
+            "b_body": "leap_mcp_joint",
+            "distance_m": 0.03173205396146195
+          },
+          {
+            "a_body": "wrist3_link",
+            "b_body": "leap_mcp_joint_2",
+            "distance_m": 0.03292715813915311
+          },
+          {
+            "a_body": "wrist3_link",
+            "b_body": "leap_mcp_joint_2",
+            "distance_m": 0.033476421052516414
+          },
+          {
+            "a_body": "wrist3_link",
+            "b_body": "leap_mcp_joint",
+            "distance_m": 0.03564548820673143
+          }
+        ],
+        "arm_object_closest_pairs": [
+          {
+            "arm_body": "wrist3_link",
+            "distance_m": 0.04545460028059515
+          },
+          {
+            "arm_body": "wrist3_link",
+            "distance_m": 0.04546263681327804
+          },
+          {
+            "arm_body": "wrist3_link",
+            "distance_m": 0.04554514445114679
+          }
+        ]
+      },
+      "native_replay": {
+        "q_max_error_rad": 0.0,
+        "epsilon_abs_error": 3.941291737419306e-15,
+        "native_hand_object_and_self_no_penetration": true
+      }
+    },
+    {
+      "grasp_id": "leap/ycb_tomato_soup_can/000021",
+      "native_epsilon": 0.35028460586992693,
+      "contacts": 5,
+      "physical_state": {
+        "world_up": [
+          0,
+          0,
+          1
+        ],
+        "gravity_direction_convention": [
+          0,
+          0,
+          -1
+        ],
+        "gravity_simulation_performed": false,
+        "X_world_object": [
+          [
+            -1.0,
+            -1.2246467991473532e-16,
+            0.0,
+            0.5
+          ],
+          [
+            1.2246467991473532e-16,
+            -1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0,
+            0.1173067020336496
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "X_world_palm_target": [
+          [
+            -0.4762197615336638,
+            -0.6863247610441694,
+            0.5497027024696933,
+            0.503675652783571
+          ],
+          [
+            -0.18690502594853037,
+            -0.531850140902175,
+            -0.8259551676074894,
+            -0.08139675246487531
+          ],
+          [
+            0.8592329428042198,
+            -0.4960783708246112,
+            0.12499999999999999,
+            0.12441743516922338
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "T_object_hand_m": [
+          [
+            0.4762197615336638,
+            0.6863247610441693,
+            -0.5497027024696934,
+            -0.003675652783570996
+          ],
+          [
+            0.18690502594853042,
+            0.5318501409021751,
+            0.8259551676074893,
+            0.08139675246487531
+          ],
+          [
+            0.8592329428042198,
+            -0.4960783708246112,
+            0.12499999999999999,
+            0.007110733135573778
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "relative_grasp_transform_max_abs_error": 3.642919299551295e-17,
+        "arm_joint_names": [
+          "shoulder_pan_joint",
+          "shoulder_lift_joint",
+          "elbow_joint",
+          "wrist_1_joint",
+          "wrist_2_joint",
+          "wrist_3_joint"
+        ],
+        "q_arm_rad": [
+          -1.5311361667761225,
+          -1.0710448434827036,
+          1.717756262223533,
+          -0.1556565972230571,
+          0.26828191563046133,
+          2.1419383930152223
+        ],
+        "arm_joint_limits_rad": {
+          "shoulder_pan_joint": [
+            -3.0543,
+            3.0543
+          ],
+          "shoulder_lift_joint": [
+            -4.6251,
+            1.4835
+          ],
+          "elbow_joint": [
+            -2.8274,
+            2.8274
+          ],
+          "wrist_1_joint": [
+            -4.6251,
+            1.4835
+          ],
+          "wrist_2_joint": [
+            -3.0543,
+            3.0543
+          ],
+          "wrist_3_joint": [
+            -3.0543,
+            3.0543
+          ]
+        },
+        "arm_min_joint_limit_margin_rad": 0.9123616069847778,
+        "hand_joint_names": [
+          "leap_1",
+          "leap_0",
+          "leap_2",
+          "leap_3",
+          "leap_5",
+          "leap_4",
+          "leap_6",
+          "leap_7",
+          "leap_9",
+          "leap_8",
+          "leap_10",
+          "leap_11",
+          "leap_12",
+          "leap_13",
+          "leap_14",
+          "leap_15"
+        ],
+        "q_hand_rad": [
+          0.9310000000000007,
+          0.0,
+          0.9310000000000007,
+          0.9310000000000007,
+          0.10800000000000004,
+          0.0,
+          0.9410000000000007,
+          0.9410000000000007,
+          0.22000000000000014,
+          0.0,
+          0.9980000000000008,
+          0.9980000000000008,
+          1.3,
+          0.3830000000000003,
+          0.3830000000000003,
+          0.3830000000000003
+        ],
+        "hand_min_z_m": 0.025000030926502062,
+        "table_top_z_m": -0.05,
+        "pedestal_top_z_m": 0,
+        "hand_pedestal_top_plane_clearance_m": 0.025000030926502062,
+        "hand_table_top_plane_clearance_m": 0.07500003092650206
+      },
+      "verification": {
+        "full_mounted_Drake_palm_position_residual_m": 8.078837269341871e-12,
+        "full_mounted_Drake_palm_orientation_residual_rad": 6.70080037178e-11,
+        "native_to_mounted_URDF_max_symmetric_vertex_set_error_m": 7.503730349821945e-08,
+        "arm_self_and_fixture_min_clearance_m": 0.0162703876362711,
+        "arm_hand_min_clearance_m": 0.016881819180878676,
+        "arm_object_min_clearance_m": 0.0485083631329522,
+        "arm_object_conservative_geometry": "conservative convex hull of exact saved native object surface; >=50mm recorded when no pair occurs below query threshold",
+        "arm_fixture_closest_pairs": [
+          {
+            "a": "zarm::Mesh",
+            "b": "zarm::Mesh",
+            "a_body": "wrist1_link",
+            "b_body": "wrist3_link",
+            "distance_m": 0.0162703876362711
+          },
+          {
+            "a": "zarm::Mesh",
+            "b": "zarm::Mesh",
+            "a_body": "forearm_link",
+            "b_body": "wrist2_link",
+            "distance_m": 0.016465057032837627
+          },
+          {
+            "a": "zarm::Mesh",
+            "b": "zarm::Mesh",
+            "a_body": "base_link",
+            "b_body": "upperarm_link",
+            "distance_m": 0.018483368822926866
+          },
+          {
+            "a": "zarm::Mesh",
+            "b": "reach_object_pedestal_box_collision",
+            "a_body": "wrist3_link",
+            "b_body": "world",
+            "distance_m": 0.04981414214833653
+          }
+        ],
+        "arm_hand_closest_pairs": [
+          {
+            "a_body": "wrist3_link",
+            "b_body": "leap_pip_4",
+            "distance_m": 0.016881819180878676
+          },
+          {
+            "a_body": "wrist3_link",
+            "b_body": "leap_pip_4",
+            "distance_m": 0.02023874476711705
+          },
+          {
+            "a_body": "wrist3_link",
+            "b_body": "leap_pip_4",
+            "distance_m": 0.021835315710466964
+          },
+          {
+            "a_body": "wrist3_link",
+            "b_body": "leap_pip_4",
+            "distance_m": 0.023006030614530656
+          },
+          {
+            "a_body": "wrist3_link",
+            "b_body": "leap_mcp_joint_2",
+            "distance_m": 0.024386224386331833
+          },
+          {
+            "a_body": "wrist3_link",
+            "b_body": "leap_mcp_joint_2",
+            "distance_m": 0.027459618528065787
+          },
+          {
+            "a_body": "wrist3_link",
+            "b_body": "leap_mcp_joint_2",
+            "distance_m": 0.028298452926856774
+          },
+          {
+            "a_body": "wrist3_link",
+            "b_body": "leap_mcp_joint_2",
+            "distance_m": 0.030115577395698347
+          },
+          {
+            "a_body": "wrist3_link",
+            "b_body": "leap_mcp_joint_2",
+            "distance_m": 0.030491786519219636
+          },
+          {
+            "a_body": "wrist3_link",
+            "b_body": "leap_mcp_joint",
+            "distance_m": 0.03174781718747507
+          },
+          {
+            "a_body": "wrist3_link",
+            "b_body": "leap_mcp_joint",
+            "distance_m": 0.03180329999650213
+          },
+          {
+            "a_body": "wrist3_link",
+            "b_body": "leap_mcp_joint_3",
+            "distance_m": 0.03509914258339745
+          }
+        ],
+        "arm_object_closest_pairs": [
+          {
+            "arm_body": "wrist3_link",
+            "distance_m": 0.0485083631329522
+          },
+          {
+            "arm_body": "wrist3_link",
+            "distance_m": 0.04888150146002943
+          },
+          {
+            "arm_body": "wrist3_link",
+            "distance_m": 0.04888246607685082
+          }
+        ]
+      },
+      "native_replay": {
+        "q_max_error_rad": 0.0,
+        "epsilon_abs_error": 8.604228440844963e-15,
+        "native_hand_object_and_self_no_penetration": true
+      }
+    },
+    {
+      "grasp_id": "leap/ycb_sugar_box/000000",
+      "native_epsilon": 0.335078264504319,
+      "contacts": 15,
+      "physical_state": {
+        "world_up": [
+          0,
+          0,
+          1
+        ],
+        "gravity_direction_convention": [
+          0,
+          0,
+          -1
+        ],
+        "gravity_simulation_performed": false,
+        "X_world_object": [
+          [
+            -2.220446049250313e-16,
+            1.0,
+            0.0,
+            0.5
+          ],
+          [
+            -1.0,
+            -2.220446049250313e-16,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0,
+            0.1479957675
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "X_world_palm_target": [
+          [
+            0.7808589402851197,
+            0.026029474325085355,
+            0.624164867517517,
+            0.5649415380220969
+          ],
+          [
+            0.6247073838020484,
+            -0.03253578917854666,
+            -0.7801808168916545,
+            -0.04934964424111429
+          ],
+          [
+            0.0,
+            0.9991315673568166,
+            -0.04166666666666667,
+            0.1797722804922022
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "T_object_hand_m": [
+          [
+            -0.6247073838020486,
+            0.03253578917854665,
+            0.7801808168916544,
+            0.04934964424111428
+          ],
+          [
+            0.7808589402851196,
+            0.026029474325085362,
+            0.6241648675175172,
+            0.0649415380220969
+          ],
+          [
+            0.0,
+            0.9991315673568166,
+            -0.04166666666666667,
+            0.031776512992202216
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "relative_grasp_transform_max_abs_error": 0.0,
+        "arm_joint_names": [
+          "shoulder_pan_joint",
+          "shoulder_lift_joint",
+          "elbow_joint",
+          "wrist_1_joint",
+          "wrist_2_joint",
+          "wrist_3_joint"
+        ],
+        "q_arm_rad": [
+          -1.523588714580102,
+          -1.5340522711188131,
+          2.0821977727715684,
+          -0.807503957469638,
+          0.163216140132251,
+          -1.3147303117895808
+        ],
+        "arm_joint_limits_rad": {
+          "shoulder_pan_joint": [
+            -3.0543,
+            3.0543
+          ],
+          "shoulder_lift_joint": [
+            -4.6251,
+            1.4835
+          ],
+          "elbow_joint": [
+            -2.8274,
+            2.8274
+          ],
+          "wrist_1_joint": [
+            -4.6251,
+            1.4835
+          ],
+          "wrist_2_joint": [
+            -3.0543,
+            3.0543
+          ],
+          "wrist_3_joint": [
+            -3.0543,
+            3.0543
+          ]
+        },
+        "arm_min_joint_limit_margin_rad": 0.7452022272284315,
+        "hand_joint_names": [
+          "leap_1",
+          "leap_0",
+          "leap_2",
+          "leap_3",
+          "leap_5",
+          "leap_4",
+          "leap_6",
+          "leap_7",
+          "leap_9",
+          "leap_8",
+          "leap_10",
+          "leap_11",
+          "leap_12",
+          "leap_13",
+          "leap_14",
+          "leap_15"
+        ],
+        "q_hand_rad": [
+          0.5640000000000004,
+          0.0,
+          0.9960000000000008,
+          1.0480000000000007,
+          0.4560000000000003,
+          0.0,
+          1.074500000000001,
+          1.074500000000001,
+          0.2880000000000002,
+          0.0,
+          1.159500000000001,
+          1.159500000000001,
+          1.3,
+          0.14400000000000007,
+          0.14400000000000007,
+          0.14400000000000007
+        ],
+        "hand_min_z_m": 0.07857768016953533,
+        "table_top_z_m": -0.05,
+        "pedestal_top_z_m": 0,
+        "hand_pedestal_top_plane_clearance_m": 0.07857768016953533,
+        "hand_table_top_plane_clearance_m": 0.12857768016953533
+      },
+      "verification": {
+        "full_mounted_Drake_palm_position_residual_m": 6.878452279697969e-11,
+        "full_mounted_Drake_palm_orientation_residual_rad": 3.508529839733024e-10,
+        "native_to_mounted_URDF_max_symmetric_vertex_set_error_m": 8.68238464852669e-08,
+        "arm_self_and_fixture_min_clearance_m": 0.01622238223643448,
+        "arm_hand_min_clearance_m": 0.016881819180878704,
+        "arm_object_min_clearance_m": 0.05,
+        "arm_object_conservative_geometry": "conservative convex hull of exact saved native object surface; >=50mm recorded when no pair occurs below query threshold",
+        "arm_fixture_closest_pairs": [
+          {
+            "a": "zarm::Mesh",
+            "b": "zarm::Mesh",
+            "a_body": "wrist1_link",
+            "b_body": "wrist3_link",
+            "distance_m": 0.01622238223643448
+          },
+          {
+            "a": "zarm::Mesh",
+            "b": "zarm::Mesh",
+            "a_body": "forearm_link",
+            "b_body": "wrist2_link",
+            "distance_m": 0.01646549130235179
+          },
+          {
+            "a": "zarm::Mesh",
+            "b": "zarm::Mesh",
+            "a_body": "base_link",
+            "b_body": "upperarm_link",
+            "distance_m": 0.018365032233940707
+          }
+        ],
+        "arm_hand_closest_pairs": [
+          {
+            "a_body": "wrist3_link",
+            "b_body": "leap_pip_4",
+            "distance_m": 0.016881819180878704
+          },
+          {
+            "a_body": "wrist3_link",
+            "b_body": "leap_pip_4",
+            "distance_m": 0.02023874476711705
+          },
+          {
+            "a_body": "wrist3_link",
+            "b_body": "leap_pip_4",
+            "distance_m": 0.021835315710466978
+          },
+          {
+            "a_body": "wrist3_link",
+            "b_body": "leap_pip_4",
+            "distance_m": 0.0230060306145307
+          },
+          {
+            "a_body": "wrist3_link",
+            "b_body": "leap_mcp_joint_2",
+            "distance_m": 0.02907424077877989
+          },
+          {
+            "a_body": "wrist3_link",
+            "b_body": "leap_mcp_joint_2",
+            "distance_m": 0.029099792080815617
+          },
+          {
+            "a_body": "wrist3_link",
+            "b_body": "leap_mcp_joint_2",
+            "distance_m": 0.02954610129889606
+          },
+          {
+            "a_body": "wrist3_link",
+            "b_body": "leap_mcp_joint",
+            "distance_m": 0.03149654543588659
+          },
+          {
+            "a_body": "wrist3_link",
+            "b_body": "leap_mcp_joint",
+            "distance_m": 0.03152894055814696
+          },
+          {
+            "a_body": "wrist3_link",
+            "b_body": "leap_mcp_joint_2",
+            "distance_m": 0.03293396606457029
+          },
+          {
+            "a_body": "wrist3_link",
+            "b_body": "leap_mcp_joint_2",
+            "distance_m": 0.03347408534228052
+          },
+          {
+            "a_body": "wrist3_link",
+            "b_body": "leap_mcp_joint",
+            "distance_m": 0.035418493804684655
+          }
+        ],
+        "arm_object_closest_pairs": []
+      },
+      "native_replay": {
+        "q_max_error_rad": 0.0,
+        "epsilon_abs_error": 1.4988010832439613e-15,
+        "native_hand_object_and_self_no_penetration": true
+      }
+    },
+    {
+      "grasp_id": "leap/ycb_apple/000001",
+      "native_epsilon": 0.4038949154028113,
+      "contacts": 12,
+      "physical_state": {
+        "world_up": [
+          0,
+          0,
+          1
+        ],
+        "gravity_direction_convention": [
+          0,
+          0,
+          -1
+        ],
+        "gravity_simulation_performed": false,
+        "X_world_object": [
+          [
+            1.0,
+            0.0,
+            0.0,
+            0.5
+          ],
+          [
+            0.0,
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0,
+            0.09590568499999999
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "X_world_palm_target": [
+          [
+            0.0,
+            0.9592777051847249,
+            -0.28246466033032847,
+            0.5150342372273905
+          ],
+          [
+            -0.999015538622145,
+            -0.012530590760653411,
+            -0.04255511586982724,
+            -0.023656575204954296
+          ],
+          [
+            -0.04436162295842427,
+            0.28218658478162434,
+            0.9583333333333333,
+            0.17715102384441828
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "T_object_hand_m": [
+          [
+            0.0,
+            0.9592777051847249,
+            -0.28246466033032847,
+            0.015034237227390513
+          ],
+          [
+            -0.999015538622145,
+            -0.012530590760653411,
+            -0.04255511586982724,
+            -0.023656575204954296
+          ],
+          [
+            -0.04436162295842427,
+            0.28218658478162434,
+            0.9583333333333333,
+            0.08124533884441829
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "relative_grasp_transform_max_abs_error": 1.214306433183765e-17,
+        "arm_joint_names": [
+          "shoulder_pan_joint",
+          "shoulder_lift_joint",
+          "elbow_joint",
+          "wrist_1_joint",
+          "wrist_2_joint",
+          "wrist_3_joint"
+        ],
+        "q_arm_rad": [
+          -0.9142956133682818,
+          -1.1548562520233299,
+          1.4769300358755721,
+          -1.9746165384299135,
+          -1.8490223604389577,
+          3.007641365271139
+        ],
+        "arm_joint_limits_rad": {
+          "shoulder_pan_joint": [
+            -3.0543,
+            3.0543
+          ],
+          "shoulder_lift_joint": [
+            -4.6251,
+            1.4835
+          ],
+          "elbow_joint": [
+            -2.8274,
+            2.8274
+          ],
+          "wrist_1_joint": [
+            -4.6251,
+            1.4835
+          ],
+          "wrist_2_joint": [
+            -3.0543,
+            3.0543
+          ],
+          "wrist_3_joint": [
+            -3.0543,
+            3.0543
+          ]
+        },
+        "arm_min_joint_limit_margin_rad": 0.04665863472886089,
+        "hand_joint_names": [
+          "leap_1",
+          "leap_0",
+          "leap_2",
+          "leap_3",
+          "leap_5",
+          "leap_4",
+          "leap_6",
+          "leap_7",
+          "leap_9",
+          "leap_8",
+          "leap_10",
+          "leap_11",
+          "leap_12",
+          "leap_13",
+          "leap_14",
+          "leap_15"
+        ],
+        "q_hand_rad": [
+          0.8340000000000006,
+          0.0,
+          0.8340000000000006,
+          0.8340000000000006,
+          0.6470000000000005,
+          0.0,
+          0.8260000000000006,
+          0.8260000000000006,
+          0.8810000000000007,
+          0.0,
+          0.8810000000000007,
+          0.8810000000000007,
+          1.3,
+          0.5510000000000004,
+          0.5510000000000004,
+          0.5510000000000004
+        ],
+        "hand_min_z_m": 0.03418284388853127,
+        "table_top_z_m": -0.05,
+        "pedestal_top_z_m": 0,
+        "hand_pedestal_top_plane_clearance_m": 0.03418284388853127,
+        "hand_table_top_plane_clearance_m": 0.08418284388853127
+      },
+      "verification": {
+        "full_mounted_Drake_palm_position_residual_m": 1.4548570534398645e-15,
+        "full_mounted_Drake_palm_orientation_residual_rad": 1.1689091492311362e-14,
+        "native_to_mounted_URDF_max_symmetric_vertex_set_error_m": 7.588077620470273e-08,
+        "arm_self_and_fixture_min_clearance_m": 0.016316457154154976,
+        "arm_hand_min_clearance_m": 0.016881819180878648,
+        "arm_object_min_clearance_m": 0.049241523178065266,
+        "arm_object_conservative_geometry": "conservative convex hull of exact saved native object surface; >=50mm recorded when no pair occurs below query threshold",
+        "arm_fixture_closest_pairs": [
+          {
+            "a": "zarm::Mesh",
+            "b": "zarm::Mesh",
+            "a_body": "wrist1_link",
+            "b_body": "wrist3_link",
+            "distance_m": 0.016316457154154976
+          },
+          {
+            "a": "zarm::Mesh",
+            "b": "zarm::Mesh",
+            "a_body": "forearm_link",
+            "b_body": "wrist2_link",
+            "distance_m": 0.01642270675807041
+          },
+          {
+            "a": "zarm::Mesh",
+            "b": "zarm::Mesh",
+            "a_body": "base_link",
+            "b_body": "upperarm_link",
+            "distance_m": 0.018363811439682454
+          },
+          {
+            "a": "zarm::Mesh",
+            "b": "zarm::Mesh",
+            "a_body": "forearm_link",
+            "b_body": "wrist3_link",
+            "distance_m": 0.04439006973300822
+          }
+        ],
+        "arm_hand_closest_pairs": [
+          {
+            "a_body": "wrist3_link",
+            "b_body": "leap_pip_4",
+            "distance_m": 0.016881819180878648
+          },
+          {
+            "a_body": "wrist3_link",
+            "b_body": "leap_pip_4",
+            "distance_m": 0.020238744767117095
+          },
+          {
+            "a_body": "wrist3_link",
+            "b_body": "leap_pip_4",
+            "distance_m": 0.02183531571046694
+          },
+          {
+            "a_body": "wrist3_link",
+            "b_body": "leap_pip_4",
+            "distance_m": 0.023006030614530694
+          },
+          {
+            "a_body": "wrist3_link",
+            "b_body": "leap_mcp_joint_2",
+            "distance_m": 0.029057058058205975
+          },
+          {
+            "a_body": "wrist3_link",
+            "b_body": "leap_mcp_joint_2",
+            "distance_m": 0.029070061979560458
+          },
+          {
+            "a_body": "wrist3_link",
+            "b_body": "leap_mcp_joint_2",
+            "distance_m": 0.02958650746113022
+          },
+          {
+            "a_body": "wrist3_link",
+            "b_body": "leap_mcp_joint",
+            "distance_m": 0.031659266359270126
+          },
+          {
+            "a_body": "wrist3_link",
+            "b_body": "leap_mcp_joint",
+            "distance_m": 0.031771318056159265
+          },
+          {
+            "a_body": "wrist3_link",
+            "b_body": "leap_mcp_joint_2",
+            "distance_m": 0.03292243766301118
+          },
+          {
+            "a_body": "wrist3_link",
+            "b_body": "leap_mcp_joint_2",
+            "distance_m": 0.03347434404387673
+          },
+          {
+            "a_body": "wrist3_link",
+            "b_body": "leap_mcp_joint",
+            "distance_m": 0.0357072222026682
+          }
+        ],
+        "arm_object_closest_pairs": [
+          {
+            "arm_body": "wrist3_link",
+            "distance_m": 0.049241523178065266
+          }
+        ]
+      },
+      "native_replay": {
+        "q_max_error_rad": 0.0,
+        "epsilon_abs_error": 2.120525977034049e-14,
+        "native_hand_object_and_self_no_penetration": true
+      }
+    }
+  ]
+}

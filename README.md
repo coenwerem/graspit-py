@@ -106,14 +106,21 @@ object-relative hand pose, contacts, and individual pose/friction quality sample
 
 | Mustard Bottle | Banana | Tomato Soup Can |
 | :---: | :---: | :---: |
-| <img src="docs/figures/household/leap_ycb_mustard_bottle.png" alt="LEAP grasp on a YCB mustard-bottle mesh with green contact markers" height="240"> | <img src="docs/figures/household/leap_ycb_banana.png" alt="LEAP fingers around a curved YCB banana mesh" height="240"> | <img src="docs/figures/household/leap_ycb_tomato_soup_can.png" alt="LEAP grasp around a YCB soup-can mesh" height="240"> |
-| 27 contacts; native Ferrari–Canny ε = 0.321 | 9 contacts; native Ferrari–Canny ε = 0.118 | 9 contacts; native Ferrari–Canny ε = 0.412 |
+| <img src="docs/figures/household/leap_ycb_mustard_bottle.png" alt="LEAP fingers wrapped around an upright YCB mustard bottle at a verified wrist pose" height="240"> | <img src="docs/figures/household/leap_ycb_banana.png" alt="LEAP fingers around a curved YCB banana mesh" height="240"> | <img src="docs/figures/household/leap_ycb_tomato_soup_can.png" alt="LEAP grasp around a YCB soup-can mesh" height="240"> |
+| 27 contacts; native Ferrari–Canny ε = 0.321 | 9 contacts; native Ferrari–Canny ε = 0.118 | 5 contacts; native Ferrari–Canny ε = 0.350 |
 
 The illustrated LEAP grasps were closed again from their saved commands before
-rendering. The labels quantify static contact quality under the native model.
+rendering. Their wrist poses satisfy joint-limit and collision checks in the
+ZArm–LEAP model, with upright object frames preserved. The labels quantify static
+contact quality under the native model.
 
-The [dataset guide](https://clintonenwerem.com/graspit-py/datasets.html) defines
-the SI coordinate contract, ragged contact/sample arrays, model hashes, and
+<img src="docs/figures/household/leap_ycb_mustard_bottle_arm.png" alt="ZArm–LEAP at a verified side-grasp wrist pose on an upright mustard bottle above a pedestal" width="640">
+
+The arm scene is a Drake MeshCat rendering of the mounted URDF model at a
+verified planning configuration.
+
+The [dataset guide](https://clintonenwerem.com/graspit-py/datasets.html) describes
+the wrist-pose checks, SI coordinate contract, ragged contact/sample arrays, model hashes, and
 NumPy/PyTorch loading. Poses and contact positions use meters; independent hand
 coordinates use radians. Archives also retain 2,048 object-surface points,
 preshapes, closing-coordinate masks, and separate native and recomputed quality

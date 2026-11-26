@@ -53,7 +53,7 @@ $\varepsilon_{\mathrm{GI}}$.
 :target: datasets.html#household-object-examples
 :alt: LEAP Hand grasping the YCB tomato soup can mesh.
 
-**Tomato Soup Can.** 9 contacts; $\varepsilon_{\mathrm{GI}}=0.412$.
+**Tomato Soup Can.** 5 contacts; $\varepsilon_{\mathrm{GI}}=0.350$.
 ```
 ````
 
@@ -68,7 +68,9 @@ The [dataset guide](datasets.md) includes a downloadable LEAP mustard-bottle
 example and NumPy/PyTorch loading instructions. Reading the arrays requires
 NumPy and the Python standard library; new closures require native GraspIt!.
 The illustrated grasps were closed again from their saved commands before
-rendering. Their labels quantify the modeled contact geometry.
+rendering. Their wrist poses satisfy ZArm–LEAP joint-limit and collision checks,
+and the object-up direction is preserved. See [Arm-Feasible Wrist Poses](datasets.md#arm-feasible-wrist-poses)
+for the arm scene and verification scope.
 
 ## Supported Hands
 

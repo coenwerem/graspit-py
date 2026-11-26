@@ -60,24 +60,27 @@ The example collection contains 24 saved candidates for each of six YCB objects
 and two hands, Barrett and LEAP. The LEAP configurations below were reconstructed
 and closed again before rendering. Green markers show contact locations, and
 $\varepsilon_{\mathrm{GI}}$ denotes native GraspIt! Ferrari--Canny quality.
-Each illustrated configuration was selected by the largest native quality among
-its saved candidates. These geometric labels describe the modeled closure.
+For these illustrations, we selected saved candidates in descending native
+quality, subject to a reachable ZArm–LEAP wrist pose with a sideward or downward
+approach direction.
+The object frame remains upright, so the images preserve its orientation with
+respect to gravity. These geometric labels describe the modeled closure.
 
 ````{container} hand-gallery hand-gallery-overview
 ```{figure} figures/household/leap_ycb_tomato_soup_can.png
 :alt: LEAP Hand closed around the YCB tomato soup can mesh, with green native contact markers.
 
-**Tomato Soup Can.** 9 contacts; $\varepsilon_{\mathrm{GI}}=0.412$.
+**Tomato Soup Can.** 5 contacts; $\varepsilon_{\mathrm{GI}}=0.350$.
 ```
 ```{figure} figures/household/leap_ycb_mustard_bottle.png
-:alt: LEAP Hand closed around the YCB mustard bottle mesh, with green native contact markers.
+:alt: LEAP Hand closed around an upright YCB mustard bottle at a verified wrist pose.
 
 **Mustard Bottle.** 27 contacts; $\varepsilon_{\mathrm{GI}}=0.321$.
 ```
 ```{figure} figures/household/leap_ycb_tuna_fish_can.png
 :alt: LEAP Hand closed around the YCB tuna fish can mesh, with green native contact markers.
 
-**Tuna Fish Can.** 8 contacts; $\varepsilon_{\mathrm{GI}}=0.414$.
+**Tuna Fish Can.** 6 contacts; $\varepsilon_{\mathrm{GI}}=0.337$.
 ```
 ```{figure} figures/household/leap_ycb_banana.png
 :alt: LEAP Hand closed around the YCB banana mesh, with green native contact markers.
@@ -111,6 +114,25 @@ with np.load("ycb_mustard_bottle.npz", allow_pickle=False) as data:
     q_rad = data["dofs_rad"]               # (24,16)
     dof_names = data["dof_names"]          # (16,), ordered labels
 ```
+
+## Arm-Feasible Wrist Poses
+
+```{figure} figures/household/leap_ycb_mustard_bottle_arm.png
+:alt: ZArm–LEAP side grasp on an upright mustard bottle, with the fingers and object visibly clear of the pedestal.
+:width: 680px
+
+**ZArm–LEAP Planning Configuration.** At the saved GraspIt! grasp, the arm satisfies joint-limit and collision constraints. We rendered the URDF geometry in Drake MeshCat.
+```
+
+All six illustrated grasp commands were replayed in GraspIt! and mapped to the
+mounted ZArm–LEAP model. Verification covered arm joint limits, palm position and
+orientation, arm self-collision, arm–hand clearance, arm–object clearance, and the
+table and pedestal. Each hand surface remains at least 25 mm above the pedestal
+top plane. The largest palm forward-kinematics residual was below 1 µm in translation and
+$10^{-6}$ rad in rotation. Native and mounted palm-frame vertex sets agreed to
+within 0.1 µm. The verification concerns the static grasp pose. The
+{download}`verification data <validation/household-rendering.json>` include saved
+grasp identifiers, frame transforms, arm coordinates, and clearance values.
 
 ## Export
 
@@ -191,6 +213,16 @@ Record order is preserved. A candidate's optional `grasp_id` is retained.
 Otherwise its ID is `hand_id/object_id/000000`, with the zero-based source row
 index. These generated IDs refer to rows in that export, not persistent
 identities across reordered source files.
+
+## Barrett Breakaway Coordinates
+
+The native Barrett model uses breakaway DOFs. Its four independent values are
+actuator coordinates; the finger joint configuration also depends on contacts
+formed during closure. Reload the native hand model and replay the stored
+preshape, palm pose, closing-coordinate mask, and autograsp settings to
+reconstruct a grasp. Assigning the closed DOF values alone does not restore the
+complete articulation. The saved contacts and quality labels describe the
+generated closure. LEAP coordinates specify its independently actuated joints.
 
 ## Coordinates and Precision
 
